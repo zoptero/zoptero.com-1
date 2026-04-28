@@ -49,4 +49,4 @@ Follow these steps to get your project up and running locally:
 
 - Node.js version 20 and above.
 
-Note: If you experience problems with versions above Node.js v20, please replace with version v20.
+Note: If you experience problems with versions above Node.js v20, please replace with version v20.# zoptero.com-1
