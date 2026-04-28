@@ -158,16 +158,22 @@ export const columns: ColumnDef<ApiKey>[] = [
     cell: ({ row }) => {
       const status = row.original.status;
 
-      const statusMap = {
-        active: "success",
-        inactive: "destructive",
-        expired: "warning"
-      } as const;
-
-      const statusClass = statusMap[status] ?? "default";
-
+      // Map status to supported variants and custom classes
+      let variant: "default" | "secondary" | "destructive" | "outline" | undefined = "default";
+      let customClass = "capitalize";
+      if (status === "active") {
+        // Use custom green styling for active
+        variant = undefined;
+        customClass += " bg-emerald-100 text-emerald-800 border-emerald-200";
+      } else if (status === "inactive") {
+        variant = "destructive";
+      } else if (status === "expired") {
+        // Use custom yellow styling for expired
+        variant = undefined;
+        customClass += " bg-yellow-100 text-yellow-800 border-yellow-200";
+      }
       return (
-        <Badge variant={statusClass} className="capitalize">
+        <Badge variant={variant} className={customClass}>
           {status.replace("-", " ")}
         </Badge>
       );
