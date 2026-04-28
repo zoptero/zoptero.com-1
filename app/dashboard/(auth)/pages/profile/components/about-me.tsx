@@ -84,19 +84,21 @@ export function AboutMe() {
           </TableHeader>
           <TableBody>
             {transactions.map((transaction) => {
-              const statusMap = {
-                pending: "warning",
-                failed: "destructive",
-                paid: "success"
-              } as const;
-
-              const statusClass = statusMap[transaction.status] ?? "secondary";
-
+              // Map to allowed variants and custom classes
+              let variant: "default" | "secondary" | "destructive" | "outline" = "secondary";
+              let customClass = "";
+              if (transaction.status === "pending") {
+                customClass = "bg-yellow-100 text-yellow-800 border-yellow-200";
+              } else if (transaction.status === "failed") {
+                variant = "destructive";
+              } else if (transaction.status === "paid") {
+                customClass = "bg-emerald-100 text-emerald-800 border-emerald-200";
+              }
               return (
                 <TableRow key={transaction.id}>
                   <TableCell>{transaction.product}</TableCell>
                   <TableCell>
-                    <Badge variant={statusClass}>{transaction.status}</Badge>
+                    <Badge variant={variant} className={customClass}>{transaction.status}</Badge>
                   </TableCell>
                   <TableCell>{transaction.date}</TableCell>
                   <TableCell className="text-right font-medium">{transaction.amount}</TableCell>

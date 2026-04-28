@@ -161,7 +161,14 @@ export function CalendarWidget() {
                   {format(item.date, "MMM d, yyyy")}
                 </p>
               </div>
-              <Badge variant={item.type === "assigned" ? "warning" : "secondary"} className="ms-auto capitalize">
+              <Badge
+                variant={item.type === "assigned" ? "secondary" : "secondary"}
+                className={
+                  (item.type === "assigned"
+                    ? "bg-yellow-100 text-yellow-800 border-yellow-200 "
+                    : "") + "ms-auto capitalize"
+                }
+              >
                 {item.type === "schedule" ? "my schedule" : item.type}
               </Badge>
             </div>

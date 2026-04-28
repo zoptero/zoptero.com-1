@@ -180,20 +180,21 @@ export const columns: ColumnDef<Order>[] = [
     cell: ({ row }) => {
       const status = row.original.status;
 
-      const statusMap = {
-        active: "success",
-        transportation: "info",
-        pending: "warning",
-        cancel: "destructive",
-        completed: "success",
-        delivered: "success"
-      } as const;
-
-      const statusClass = statusMap[status] ?? "secondary";
-
+      // Map to allowed variants and custom classes
+      let variant: "default" | "secondary" | "destructive" | "outline" = "secondary";
+      let customClass = "capitalize";
+      if (status === "active" || status === "completed") {
+        customClass += " bg-emerald-100 text-emerald-800 border-emerald-200";
+      } else if (status === "transportation") {
+        customClass += " bg-blue-100 text-blue-800 border-blue-200";
+      } else if (status === "pending") {
+        customClass += " bg-yellow-100 text-yellow-800 border-yellow-200";
+      } else if (status === "cancel") {
+        variant = "destructive";
+      }
       return (
         <div>
-          <Badge variant={statusClass} className="capitalize">
+          <Badge variant={variant} className={customClass}>
             {status.replaceAll("-", " ")}
           </Badge>
         </div>

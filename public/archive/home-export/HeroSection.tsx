@@ -5,13 +5,13 @@ import { Plus, ArrowUp, CheckIcon, MoonIcon, SunIcon } from "lucide-react";
 import { useState, useEffect } from "react";
 
 // Minimal Button, Badge, and Textarea components for portability
-function Button({ children, ...props }) {
+function Button({ children, ...props }: { children: React.ReactNode } & React.ButtonHTMLAttributes<HTMLButtonElement>) {
   return <button {...props} style={{ borderRadius: 8, padding: '8px 16px', border: '1px solid #ccc', background: '#fff', cursor: 'pointer' }}>{children}</button>;
 }
-function Badge({ children }) {
+function Badge({ children }: { children: React.ReactNode }) {
   return <span style={{ display: 'inline-flex', alignItems: 'center', border: '1px solid #ccc', borderRadius: 999, padding: '2px 8px', fontSize: 12 }}>{children}</span>;
 }
-function Textarea(props) {
+function Textarea(props: React.TextareaHTMLAttributes<HTMLTextAreaElement>) {
   return <textarea {...props} style={{ width: '100%', minHeight: 48, borderRadius: 8, border: '1px solid #ccc', padding: 8 }} />;
 }
 
@@ -43,7 +43,9 @@ export default function HeroSection() {
           <span style={{ position: 'absolute', left: -9999 }}>Shadcn UI Kit</span>
         </Link>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <Button as="a" href="/sign-in">Ienākt</Button>
+          <Link href="/sign-in" passHref legacyBehavior>
+            <a style={{ textDecoration: 'none' }}><Button>Ienākt</Button></a>
+          </Link>
           <ThemeSwitch />
         </div>
       </nav>

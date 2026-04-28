@@ -167,16 +167,18 @@ export const columns: ColumnDef<User>[] = [
     cell: ({ row }) => {
       const status = row.original.status;
 
-      const statusMap = {
-        active: "success",
-        inactive: "destructive",
-        pending: "warning"
-      } as const;
-
-      const statusClass = statusMap[status] ?? "outline";
-
+      // Map to allowed variants and custom classes
+      let variant: "default" | "secondary" | "destructive" | "outline" = "outline";
+      let customClass = "capitalize";
+      if (status === "active") {
+        customClass += " bg-emerald-100 text-emerald-800 border-emerald-200";
+      } else if (status === "inactive") {
+        variant = "destructive";
+      } else if (status === "pending") {
+        customClass += " bg-yellow-100 text-yellow-800 border-yellow-200";
+      }
       return (
-        <Badge variant={statusClass} className="capitalize">
+        <Badge variant={variant} className={customClass}>
           {status.replace("-", " ")}
         </Badge>
       );

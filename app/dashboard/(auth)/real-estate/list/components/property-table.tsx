@@ -51,21 +51,27 @@
     items: RealEstateProperty[];
   }
 
-  const getStatusVariant = (
-    status: string
-  ): NonNullable<React.ComponentProps<typeof Badge>["variant"]> => {
+  const getStatusProps = (status: string) => {
+    // Only allowed variants: "default" | "secondary" | "destructive" | "outline"
+    let variant: "default" | "secondary" | "destructive" | "outline" = "outline";
+    let className = "";
     switch (status) {
       case "On rent":
-        return "success";
+        className = "bg-emerald-100 text-emerald-800 border-emerald-200";
+        break;
       case "On sell":
-        return "info";
+        className = "bg-blue-100 text-blue-800 border-blue-200";
+        break;
       case "Renovation":
-        return "warning";
+        className = "bg-yellow-100 text-yellow-800 border-yellow-200";
+        break;
       case "On Construction":
-        return "secondary";
+        variant = "secondary";
+        break;
       default:
-        return "outline";
+        variant = "outline";
     }
+    return { variant, className };
   };
 
   const getProgressColor = (value: number): string => {
@@ -119,7 +125,8 @@
         cell: ({ row }) => {
           const statusLabel = row.original.status?.trim() || "Unknown";
 
-          return <Badge variant={getStatusVariant(statusLabel)}>{statusLabel}</Badge>;
+          const { variant, className } = getStatusProps(statusLabel);
+          return <Badge variant={variant} className={className}>{statusLabel}</Badge>;
         }
       },
       {

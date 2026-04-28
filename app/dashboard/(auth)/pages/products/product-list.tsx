@@ -199,18 +199,19 @@ export const columns: ColumnDef<Product>[] = [
     cell: ({ row }) => {
       const status = row.original.status;
 
-      const statusMap = {
-        active: "success",
-        "out-of-stock": "warning",
-        "closed-for-sale": "destructive",
-        completed: "success"
-      } as const;
-
-      const statusClass = statusMap[status] ?? "default";
-
+      // Map to allowed variants and custom classes
+      let variant: "default" | "secondary" | "destructive" | "outline" = "default";
+      let customClass = "capitalize";
+      if (status === "active") {
+        customClass += " bg-emerald-100 text-emerald-800 border-emerald-200";
+      } else if (status === "out-of-stock") {
+        customClass += " bg-yellow-100 text-yellow-800 border-yellow-200";
+      } else if (status === "closed-for-sale") {
+        variant = "destructive";
+      }
       return (
         <div>
-          <Badge variant={statusClass} className="capitalize">
+          <Badge variant={variant} className={customClass}>
             {status.replaceAll("-", " ")}
           </Badge>
         </div>
