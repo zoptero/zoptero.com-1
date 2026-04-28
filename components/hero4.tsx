@@ -1,5 +1,6 @@
 "use client";
 import BadgeHero from "@/components/badge-hero";
+
 import ThemeSwitch from "@/components/layout/header/theme-switch";
 import Link from "next/link";
 import { AlignJustify, Plus, Send } from "lucide-react";
@@ -82,8 +83,8 @@ export default function HeroSection() {
         <BadgeHero />
         <header className="space-y-3">
           <h1 className="text-3xl leading-tight font-bold lg:text-4xl">Expertu meklētājs.</h1>
-          <p className="text-muted-foreground text-base">
-            Meklē uzticamus ekspertus un pakalpojumus ar MI.
+          <p className="text-muted-foreground text-sm">
+            Meklē uzticamu informāciju ar MI.
           </p>
         </header>
         <div className="bg-muted mt-4 w-full space-y-4 overflow-hidden rounded-xl focus-within:ring-2 focus-within:ring-white/40">
