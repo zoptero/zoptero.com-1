@@ -7,7 +7,7 @@ export enum EnumTableStatus {
 export const EnumTableStatusColor: Record<
   EnumTableStatus,
   {
-    badge: "success" | "info" | "destructive";
+    badge: "default" | "secondary" | "destructive" | "outline";
     card: string;
     text: string;
   }
