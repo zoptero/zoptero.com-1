@@ -8,7 +8,7 @@ export default function ApiCallsCard() {
       <CardHeader>
         <CardDescription>API Calls</CardDescription>
         <CardAction>
-          <Badge variant="success">2.3%</Badge>
+          <Badge className="bg-emerald-100 text-emerald-800 border-emerald-200">2.3%</Badge>
         </CardAction>
         <div className="font-display text-3xl">
           <CountAnimation number={4328} />
