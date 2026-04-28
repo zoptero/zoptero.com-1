@@ -33,16 +33,7 @@ export default function HeroSection() {
   return (
     <section className="flex min-h-screen flex-col items-center justify-between bg-[radial-gradient(125%_125%_at_50%_90%,#ffffff_40%,var(--color-purple-200)_100%)] bg-cover bg-center text-center text-sm max-md:px-4 dark:bg-[radial-gradient(125%_125%_at_50%_90%,var(--color-background)_40%,var(--color-purple-800)_100%)]">
       <nav className="flex w-full items-center justify-between py-4 md:px-16 lg:px-24 xl:px-32">
-        <Link href="#" className="shrink-0">
-          <Image
-            src="https://media.zoptero.com/img/zoptero-logo-32x32.svg"
-            alt="zoptero.com logo"
-            width={40}
-            height={40}
-            className="size-7"
-          />
-          <span className="sr-only">Shadcn UI Kit</span>
-        </Link>
+        {/* Logo removed as requested */}
 
         <NavigationMenu
           viewport={false}
