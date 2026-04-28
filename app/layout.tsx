@@ -1,3 +1,4 @@
+
 import React from "react";
 import { cookies } from "next/headers";
 import { cn } from "@/lib/utils";
@@ -6,12 +7,15 @@ import GoogleAnalyticsInit from "@/lib/ga";
 import { fontVariables } from "@/lib/fonts";
 import NextTopLoader from "nextjs-toploader";
 import Script from "next/script";
+// Providers are now imported from components/Providers
+import { Providers } from "@/components/Providers";
 
 import "./globals.css";
 
 import { ActiveThemeProvider } from "@/components/active-theme";
 import { DEFAULT_THEME } from "@/lib/themes";
 import { Toaster } from "@/components/ui/sonner";
+
 
 export default async function RootLayout({
   children
@@ -42,18 +46,20 @@ export default async function RootLayout({
         suppressHydrationWarning
         className={cn("bg-background group/layout font-sans", fontVariables)}
         {...bodyAttributes}>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="light"
-          enableSystem
-          disableTransitionOnChange>
-          <ActiveThemeProvider initialTheme={themeSettings}>
-            {children}
-            <Toaster position="top-center" richColors />
-            <NextTopLoader color="var(--primary)" showSpinner={false} height={2} shadow-sm="none" />
-            {process.env.NODE_ENV === "production" ? <GoogleAnalyticsInit /> : null}
-          </ActiveThemeProvider>
-        </ThemeProvider>
+        <Providers>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="light"
+            enableSystem
+            disableTransitionOnChange>
+            <ActiveThemeProvider initialTheme={themeSettings}>
+              {children}
+              <Toaster position="top-center" richColors />
+              <NextTopLoader color="var(--primary)" showSpinner={false} height={2} shadow-sm="none" />
+              {process.env.NODE_ENV === "production" ? <GoogleAnalyticsInit /> : null}
+            </ActiveThemeProvider>
+          </ThemeProvider>
+        </Providers>
       </body>
     </html>
   );

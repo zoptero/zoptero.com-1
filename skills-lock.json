@@ -36,6 +36,30 @@
       "sourceType": "github",
       "skillPath": "skills/features/clerk-webhooks/SKILL.md",
       "computedHash": "79c157a9459431a6e03359a0ab343d08e8e48bdf1319f207ee542f5ef634a28e"
+    },
+    "convex-best-practices": {
+      "source": "waynesutton/convexskills",
+      "sourceType": "github",
+      "skillPath": "skills/convex-best-practices/SKILL.md",
+      "computedHash": "1e0008cecaa0bca3b0e1aa8c31a7f59417907088cd9309402739e71f249287c2"
+    },
+    "convex-performance-audit": {
+      "source": "get-convex/agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/convex-performance-audit/SKILL.md",
+      "computedHash": "c150925d80d8b003b25dd80a52da016bce2451ebb9da5b4adc75cbf6b6ff37c9"
+    },
+    "convex-quickstart": {
+      "source": "get-convex/agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/convex-quickstart/SKILL.md",
+      "computedHash": "60bb7707dc0a87a51f17cfeb004e3fd403346e56694076f30a746ad285a5a7cc"
+    },
+    "convex-setup-auth": {
+      "source": "get-convex/agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/convex-setup-auth/SKILL.md",
+      "computedHash": "152289aa8150432c2c843e5861b554a46aa5992eb44a67041c333a8679d6c5f8"
     }
   }
 }
