@@ -1,7 +1,7 @@
 "use client";
-import BadgeHero from "@/components/badge-hero";
 
 import ThemeSwitch from "@/components/layout/header/theme-switch";
+import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import { AlignJustify, Plus, Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -35,11 +35,11 @@ export default function HeroSection() {
       <nav className="flex w-full items-center justify-between py-4 md:px-16 lg:px-24 xl:px-32">
         <Link href="#" className="shrink-0">
           <Image
-            src="/logo.svg"
-            alt="shadcn ui kit svg logo"
+            src="https://media.zoptero.com/img/zoptero-logo-32x32.svg"
+            alt="zoptero.com logo"
             width={40}
             height={40}
-            className="size-7 rounded-sm"
+            className="size-7"
           />
           <span className="sr-only">Shadcn UI Kit</span>
         </Link>
@@ -54,33 +54,16 @@ export default function HeroSection() {
         <div className="flex items-center gap-2">
           <ThemeSwitch />
           <Button variant="outline" className="rounded-full" size="lg" asChild>
-            <Link href="#">Get Started</Link>
+            <Link href="/sign-in">Ienākt</Link>
           </Button>
-          <Sheet>
-            <SheetTrigger asChild>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="md:hidden"
-                aria-label="Open menu"
-              >
-                <AlignJustify className="size-6" />
-              </Button>
-            </SheetTrigger>
-            <SheetContent side="right">
-              <div className="flex h-full w-full flex-col justify-center gap-6 p-4 text-left text-lg backdrop-blur md:w-[320px]">
-                {/* Navigation links removed as requested */}
-                <Button asChild variant="outline" className="rounded-full">
-                  <Link href="#">Get Started</Link>
-                </Button>
-              </div>
-            </SheetContent>
-          </Sheet>
         </div>
       </nav>
 
       <div className="flex w-full max-w-xl flex-1 flex-col items-center justify-center space-y-4">
-        <BadgeHero />
+        <Badge className="gap-1 mb-2" variant="outline">
+          <svg aria-hidden="true" className="text-emerald-600" width="12" height="12" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6.00016 11.1998L2.80016 7.99984L1.86683 8.93317L6.00016 13.0665L15.0002 4.0665L14.0668 3.13317L6.00016 11.1998Z" fill="currentColor"/></svg>
+          Informācijas platforma
+        </Badge>
         <header className="space-y-3">
           <h1 className="text-3xl leading-tight font-bold lg:text-4xl">Expertu meklētājs.</h1>
           <p className="text-muted-foreground text-sm">
@@ -108,17 +91,6 @@ export default function HeroSection() {
           </div>
         </div>
 
-        <div className="grid w-full gap-2 md:mt-4 md:grid-cols-2 md:gap-3">
-          {SUGGESTIONS.map((text, i) => (
-            <Link
-              key={i}
-              href="#"
-              className="hover:text-primary hover:bg-accent/50 block rounded-full border p-2 text-sm"
-            >
-              {text}
-            </Link>
-          ))}
-        </div>
       </div>
 
       <p className="text-muted-foreground pb-3 text-xs">
