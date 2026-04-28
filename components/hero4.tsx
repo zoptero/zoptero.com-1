@@ -3,7 +3,9 @@
 import ThemeSwitch from "@/components/layout/header/theme-switch";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
-import { AlignJustify, Plus, Send } from "lucide-react";
+import { AlignJustify, Plus, ArrowRight } from "lucide-react";
+// import { Tooltip8 } from "@/components/ui/tooltip8";
+// import Footer1 from "@/components/footer1";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import {
@@ -42,9 +44,9 @@ export default function HeroSection() {
           {/* Navigation links removed as requested */}
         </NavigationMenu>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 w-full justify-end md:w-auto md:justify-start">
           <ThemeSwitch />
-          <Button variant="outline" className="rounded-full" size="lg" asChild>
+          <Button variant="outline" className="rounded-full" size="sm" asChild>
             <Link href="/sign-in">Ienākt</Link>
           </Button>
         </div>
@@ -56,16 +58,16 @@ export default function HeroSection() {
           Informācijas platforma
         </Badge>
         <header className="space-y-3">
-          <h1 className="text-3xl leading-tight font-bold lg:text-4xl">Expertu meklētājs.</h1>
+          <h1 className="text-3xl leading-tight font-bold lg:text-5xl xl:text-6xl">Expertu meklētājs.</h1>
           <p className="text-muted-foreground text-sm">
             Meklē uzticamu informāciju ar MI.
           </p>
         </header>
         <div className="bg-muted mt-4 w-full space-y-4 overflow-hidden rounded-xl focus-within:ring-2 focus-within:ring-white/40">
           <Textarea
-            placeholder="Describe the interface you want to design"
+            placeholder="Kas nepieciešams atrast?"
             rows={3}
-            className="min-h-16 resize-none border-0 bg-transparent! p-4 pb-0 shadow-none focus-visible:ring-0"
+            className="min-h-16 resize-none border-0 bg-transparent! p-4 pb-0 shadow-none focus-visible:ring-0 text-sm placeholder:text-sm"
           />
           <div className="flex items-center justify-between px-3 pb-3">
             <Button
@@ -77,24 +79,30 @@ export default function HeroSection() {
               <Plus />
             </Button>
             <Button size="icon-sm" aria-label="Send" className="rounded-full">
-              <Send />
+              <ArrowRight />
             </Button>
           </div>
         </div>
 
       </div>
 
-      <p className="text-muted-foreground pb-3 text-xs">
-        By messaging us, you agree to our{" "}
-        <Link href="#" className="hover:text-primary underline">
-          Terms of Use
-        </Link>{" "}
-        and confirm you&apos;ve read our{" "}
-        <Link href="#" className="hover:text-primary underline">
-          Privacy Policy
-        </Link>
-        .
-      </p>
+      <footer
+        className="w-full flex flex-col items-center justify-center text-center text-muted-foreground text-xs pb-3 pt-6 md:pb-5 md:pt-0 mt-10 md:mt-16"
+      >
+        <div className="w-full flex flex-col items-center justify-center text-center gap-2">
+          <div className="flex flex-wrap items-center justify-center gap-2">
+            <span>&copy; {new Date().getFullYear()} Zoptero</span>
+            <span className="hidden md:inline">·</span>
+            <Link href="#" className="hover:text-primary no-underline">Par mums</Link>
+            <span className="hidden md:inline">·</span>
+            <Link href="#" className="hover:text-primary no-underline">Kontakti</Link>
+            <span className="hidden md:inline">·</span>
+            <Link href="#" className="hover:text-primary no-underline">Privātuma politika</Link>
+            <span className="hidden md:inline">·</span>
+            <Link href="#" className="hover:text-primary no-underline">Sīkdatņu politika</Link>
+          </div>
+        </div>
+      </footer>
     </section>
   );
 }
