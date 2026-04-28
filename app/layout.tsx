@@ -6,7 +6,6 @@ import { ThemeProvider } from "next-themes";
 import GoogleAnalyticsInit from "@/lib/ga";
 import { fontVariables } from "@/lib/fonts";
 import NextTopLoader from "nextjs-toploader";
-import Script from "next/script";
 // Providers are now imported from components/Providers
 import { Providers } from "@/components/Providers";
 
@@ -48,7 +47,7 @@ export default async function RootLayout({
     return (
       <html lang='lv' suppressHydrationWarning>
         <head>
-          <Script src="https://dashboard.shadcnuikit.com/iframe-listener.js" strategy="afterInteractive" />
+          <link rel="icon" type="image/svg+xml" href="https://media.zoptero.com/img/zoptero-logo-32x32.svg" />
         </head>
         <body
           suppressHydrationWarning
