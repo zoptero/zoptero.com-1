@@ -210,9 +210,20 @@ export default function PlannedCalendar() {
                   {item.description} at {item.hour}
                 </p>
               </div>
-              <Badge variant={item.statusColor} className="ms-auto capitalize">
-                {item.status}
-              </Badge>
+              {(() => {
+                let variant: "default" | "secondary" | "destructive" | "outline" = "default";
+                let customClass = "ms-auto capitalize";
+                if (item.statusColor === "success") {
+                  customClass += " bg-emerald-100 text-emerald-800 border-emerald-200";
+                } else if (item.statusColor === "warning") {
+                  customClass += " bg-yellow-100 text-yellow-800 border-yellow-200";
+                }
+                return (
+                  <Badge variant={variant} className={customClass}>
+                    {item.status}
+                  </Badge>
+                );
+              })()}
             </div>
           </div>
         ))}
