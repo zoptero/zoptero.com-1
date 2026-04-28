@@ -306,17 +306,20 @@ const columns: ColumnDef<Order>[] = [
     cell: ({ row }) => {
       const status = row.original.status;
 
-      const statusMap = {
-        success: "success",
-        processing: "info",
-        paid: "warning",
-        failed: "destructive"
-      } as const;
-
-      const statusClass = statusMap[status] ?? "default";
-
+      // Map to allowed variants and custom classes
+      let variant: "default" | "secondary" | "destructive" | "outline" = "default";
+      let customClass = "capitalize";
+      if (status === "success") {
+        customClass += " bg-emerald-100 text-emerald-800 border-emerald-200";
+      } else if (status === "processing") {
+        customClass += " bg-blue-100 text-blue-800 border-blue-200";
+      } else if (status === "paid") {
+        customClass += " bg-yellow-100 text-yellow-800 border-yellow-200";
+      } else if (status === "failed") {
+        variant = "destructive";
+      }
       return (
-        <Badge variant={statusClass} className="capitalize">
+        <Badge variant={variant} className={customClass}>
           {status.replace("-", " ")}
         </Badge>
       );
