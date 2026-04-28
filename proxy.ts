@@ -1,14 +1,17 @@
-import { NextResponse, type NextRequest } from "next/server";
+import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server';
 
-export function proxy(request: NextRequest) {
-  // Only redirect /dashboard to /dashboard/default, leave root (/) as home
-  if (request.nextUrl.pathname === "/dashboard") {
-    return NextResponse.redirect(new URL("/dashboard/default", request.url));
+const isPublicRoute = createRouteMatcher(['/sign-in(.*)', '/sign-up(.*)', '/']);
+
+export default clerkMiddleware(async (auth, req) => {
+  // Fix: await auth() and only destructure userId
+  const { userId } = await auth();
+  const isProtectedRoute = req.nextUrl.pathname.startsWith('/onboarding') || req.nextUrl.pathname.startsWith('/dashboard');
+
+  if (!userId && isProtectedRoute) {
+    return (await auth()).redirectToSignIn();
   }
-  // For root, do nothing (let Next.js serve /)
-  return NextResponse.next();
-}
+});
 
 export const config = {
-  matcher: ["/dashboard", "/"]
+  matcher: ['/((?!_next|[^?]*\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)', '/(api|trpc)(.*)'],
 };

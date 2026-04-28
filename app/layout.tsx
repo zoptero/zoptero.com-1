@@ -37,30 +37,38 @@ export default async function RootLayout({
       .map(([key, value]) => [`data-theme-${key.replace(/([A-Z])/g, "-$1").toLowerCase()}`, value])
   );
 
-  return (
-    <html lang="en" suppressHydrationWarning>
-      <head>
-        <Script src="https://dashboard.shadcnuikit.com/iframe-listener.js" strategy="afterInteractive" />
-      </head>
-      <body
-        suppressHydrationWarning
-        className={cn("bg-background group/layout font-sans", fontVariables)}
-        {...bodyAttributes}>
-        <Providers>
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="light"
-            enableSystem
-            disableTransitionOnChange>
-            <ActiveThemeProvider initialTheme={themeSettings}>
-              {children}
-              <Toaster position="top-center" richColors />
-              <NextTopLoader color="var(--primary)" showSpinner={false} height={2} shadow-sm="none" />
-              {process.env.NODE_ENV === "production" ? <GoogleAnalyticsInit /> : null}
-            </ActiveThemeProvider>
-          </ThemeProvider>
-        </Providers>
-      </body>
-    </html>
-  );
+    const lvLV = {
+      locale: 'lv-LV',
+      translations: {
+        'signIn.title': 'Ienākt Zoptero',
+        'signIn.subtitle': 'Lai turpinātu, lūdzu, pierakstieties',
+      }
+    };
+
+    return (
+      <html lang='lv' suppressHydrationWarning>
+        <head>
+          <Script src="https://dashboard.shadcnuikit.com/iframe-listener.js" strategy="afterInteractive" />
+        </head>
+        <body
+          suppressHydrationWarning
+          className={cn("bg-background group/layout font-sans", fontVariables)}
+          {...bodyAttributes}>
+          <Providers>
+            <ThemeProvider
+              attribute="class"
+              defaultTheme="light"
+              enableSystem
+              disableTransitionOnChange>
+              <ActiveThemeProvider initialTheme={themeSettings}>
+                {children}
+                <Toaster position="top-center" richColors />
+                <NextTopLoader color="var(--primary)" showSpinner={false} height={2} shadow-sm="none" />
+                {process.env.NODE_ENV === "production" ? <GoogleAnalyticsInit /> : null}
+              </ActiveThemeProvider>
+            </ThemeProvider>
+          </Providers>
+        </body>
+      </html>
+    );
 }
