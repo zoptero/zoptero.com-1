@@ -96,7 +96,7 @@ export default function Page() {
                     <TableHead key={index} className="text-center">
                       {tier.name}
                       {isYearly && (
-                        <Badge variant="success" className="absolute ms-2">
+                        <Badge className="absolute ms-2 bg-emerald-100 text-emerald-800 border-emerald-200">
                           Save {calculateYearlySavings(tier.monthlyPrice, tier.yearlyPrice)}%
                         </Badge>
                       )}

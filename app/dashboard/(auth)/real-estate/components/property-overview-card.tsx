@@ -70,14 +70,14 @@ export function PropertyOverviewCard() {
             <span className="size-2 rounded-full bg-green-600" />
             <p className="text-sm font-medium">Listed Property</p>
             <p className="text-muted-foreground ms-auto text-sm">{listedCount} </p>
-            <Badge variant="success">{listedPercent}%</Badge>
+            <Badge className="bg-emerald-100 text-emerald-800 border-emerald-200">{listedPercent}%</Badge>
           </div>
 
           <div className="bg-muted flex items-center gap-2 rounded-md p-4">
             <span className="size-2 rounded-full bg-green-800" />
             <p className="text-sm font-medium">Property Sold</p>
             <p className="text-muted-foreground ms-auto text-sm">{soldCount} </p>
-            <Badge variant="success">{soldPercent}%</Badge>
+            <Badge className="bg-emerald-100 text-emerald-800 border-emerald-200">{soldPercent}%</Badge>
           </div>
         </div>
       </CardContent>

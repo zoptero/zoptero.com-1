@@ -205,7 +205,7 @@ export default function Page() {
                 color="bg-green-200 dark:bg-green-800"
               />
               <div className="text-muted-foreground text-xs">
-                <Badge variant="info" className="me-1">
+                <Badge className="me-1 bg-blue-100 text-blue-800 border-blue-200">
                   {currentStep}
                 </Badge>{" "}
                 on December 23, 2024

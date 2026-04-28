@@ -16,7 +16,7 @@ export function ProfileCard() {
             </Avatar>
             <div className="text-center">
               <h5 className="flex items-center gap-2 text-xl font-semibold">
-                Anshan Haso <Badge variant="info">Pro</Badge>
+                Anshan Haso <Badge className="bg-blue-100 text-blue-800 border-blue-200">Pro</Badge>
               </h5>
               <div className="text-muted-foreground text-sm">Project Manager</div>
             </div>

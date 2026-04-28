@@ -33,7 +33,7 @@ export default function TableDetailDialog({ table, order, open, setOpen }: Table
           {order ? (
             <div className="space-y-4">
               <div className="flex items-center justify-between">
-                <Badge variant="success">{order.items.length} items</Badge>
+                <Badge className="bg-emerald-100 text-emerald-800 border-emerald-200">{order.items.length} items</Badge>
                 <div className="text-muted-foreground text-sm">
                   Created: {order.createdAt.toLocaleString()}
                 </div>

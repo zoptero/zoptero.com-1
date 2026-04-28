@@ -8,7 +8,7 @@ export default function SuccessfulConversionsCard() {
       <CardHeader>
         <CardDescription>Successful conversions</CardDescription>
         <CardAction>
-          <Badge variant="success">+10.3%</Badge>
+          <Badge className="bg-emerald-100 text-emerald-800 border-emerald-200">+10.3%</Badge>
         </CardAction>
         <div className="font-display text-3xl">
           <CountAnimation number={1204} />

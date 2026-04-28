@@ -148,7 +148,7 @@ export default function Page() {
                   <Button className="w-full">Start Plan</Button>
 
                   {isAnnual && (
-                    <Badge variant="success" className="absolute end-4 top-2">
+                    <Badge className="absolute end-4 top-2 bg-emerald-100 text-emerald-800 border-emerald-200">
                       Save {savings}%
                     </Badge>
                   )}

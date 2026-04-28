@@ -125,7 +125,7 @@ export default function Page() {
                   <span className="text-sm font-normal">/{isYearly ? "year" : "month"}</span>
                 </p>
                 {isYearly && (
-                  <Badge variant="success" className="absolute end-4 top-4">
+                  <Badge className="absolute end-4 top-4 bg-emerald-100 text-emerald-800 border-emerald-200">
                     Save {calculateYearlySavings(tier.monthlyPrice, tier.yearlyPrice)}%
                   </Badge>
                 )}
