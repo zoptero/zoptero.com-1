@@ -214,19 +214,13 @@ const columns: ColumnDef<Order>[] = [
       const status = row.original.status;
 
       // Map status to supported variants and custom classes
-      let variant: "default" | "secondary" | "destructive" | "outline" | undefined = "default";
+      let variant: "default" | "secondary" | "destructive" | "outline" = "default";
       let customClass = "capitalize";
       if (status === "completed") {
-        // Use custom green styling for completed
-        variant = undefined;
         customClass += " bg-emerald-100 text-emerald-800 border-emerald-200";
       } else if (status === "new-order") {
-        // Use custom blue styling for info
-        variant = undefined;
         customClass += " bg-blue-100 text-blue-800 border-blue-200";
       } else if (status === "in-progress" || status === "on-hold") {
-        // Use custom yellow styling for warning
-        variant = undefined;
         customClass += " bg-yellow-100 text-yellow-800 border-yellow-200";
       } else if (status === "return") {
         variant = "destructive";
