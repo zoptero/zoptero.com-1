@@ -68,7 +68,7 @@ export function WorkoutsCard() {
                 </p>
               </div>
             </div>
-            <Badge className={`${workout.statusColor} rounded-full px-3 py-1 text-xs font-medium`}>
+            <Badge variant="default" className={`${workout.statusColor} rounded-full px-3 py-1 text-xs font-medium`}>
               {workout.status}
             </Badge>
           </div>

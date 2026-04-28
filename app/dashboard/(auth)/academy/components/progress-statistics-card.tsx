@@ -32,7 +32,7 @@ export function ProgressStatisticsCard() {
               </div>
               <span className="text-2xl font-semibold">30</span>
             </div>
-            <Badge className="h-auto bg-orange-500 px-4 py-2 text-sm">In Progress</Badge>
+            <Badge variant="default" className="h-auto bg-orange-500 px-4 py-2 text-sm">In Progress</Badge>
           </div>
           <div className="flex items-center justify-between rounded-md border p-4">
             <div className="flex items-center gap-4">
@@ -41,7 +41,7 @@ export function ProgressStatisticsCard() {
               </div>
               <span className="text-2xl font-semibold">18</span>
             </div>
-            <Badge className="h-auto bg-green-500 px-4 py-2 text-sm">Completed</Badge>
+            <Badge variant="default" className="h-auto bg-green-500 px-4 py-2 text-sm">Completed</Badge>
           </div>
         </div>
       </CardContent>

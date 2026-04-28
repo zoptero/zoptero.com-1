@@ -42,14 +42,15 @@ export default function TableListItem({ table }: TableListItem) {
             const badge = EnumTableStatusColor[table.status as EnumTableStatus].badge;
             let variant = "default";
             let customClass = "capitalize";
-            if (badge === "success") {
-              variant = undefined;
-              customClass += " bg-emerald-100 text-emerald-800 border-emerald-200";
-            } else if (badge === "info") {
-              variant = undefined;
-              customClass += " bg-blue-100 text-blue-800 border-blue-200";
-            } else if (badge === "destructive") {
+            // Only handle allowed badge variants
+            if (badge === "destructive") {
               variant = "destructive";
+            } else if (badge === "secondary") {
+              variant = "secondary";
+            } else if (badge === "outline") {
+              variant = "outline";
+            } else {
+              variant = "default";
             }
             return (
               <Badge variant={variant} className={customClass}>

@@ -31,7 +31,7 @@ export function DistanceCard() {
               <AvatarFallback>U2</AvatarFallback>
             </Avatar>
           </div>
-          <Badge className="bg-primary text-primary-foreground rounded-full px-3 py-1 text-xs font-medium">
+          <Badge variant="default" className="bg-primary text-primary-foreground rounded-full px-3 py-1 text-xs font-medium">
             Running <ArrowRight className="ml-1 inline h-3 w-3" />
           </Badge>
         </div>

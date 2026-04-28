@@ -35,7 +35,7 @@ export function CourseProgressByMonth() {
         <CardTitle>Course Progress by Month</CardTitle>
         <CardDescription className="flex items-center gap-2">
           Compared to previous month 50.56%
-          <Badge>+2.5%</Badge>
+          <Badge variant="default">+2.5%</Badge>
         </CardDescription>
         <CardAction>
           <CalendarDateRangePicker />
