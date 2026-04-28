@@ -1,6 +1,7 @@
 "use client";
 
 import ThemeSwitch from "@/components/layout/header/theme-switch";
+import ProgressUnderSearchbox from "@/components/progress-under-searchbox";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import { AlignJustify, Plus, ArrowRight } from "lucide-react";
@@ -83,6 +84,7 @@ export default function HeroSection() {
             </Button>
           </div>
         </div>
+        <ProgressUnderSearchbox />
 
       </div>
 

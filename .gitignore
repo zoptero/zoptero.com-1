@@ -44,3 +44,6 @@ next-env.d.ts
 
 .cursorrules
 .cursor
+
+# Local desktop backup, do not push to GitHub
+/bizzigo.lv-NEW/

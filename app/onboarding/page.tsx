@@ -1,13 +1,17 @@
 // app/onboarding/page.tsx
 "use client";
 
+import OnboardingCards from "@/components/OnboardingCards";
+
 export default function OnboardingPage() {
+  const handleContinue = (selected: string) => {
+    // TODO: Replace with Convex mutation and redirect logic
+    console.log("Selected account type:", selected);
+  };
+
   return (
     <div className="flex min-h-screen items-center justify-center bg-white px-4">
-      <div className="text-center">
-        <h1 className="text-2xl font-bold mb-4">Reģistrācija veiksmīga!</h1>
-        <p className="text-lg text-zinc-700">Šobrīd būvējam šo visu...</p>
-      </div>
+      <OnboardingCards onContinue={handleContinue} />
     </div>
   );
 }
