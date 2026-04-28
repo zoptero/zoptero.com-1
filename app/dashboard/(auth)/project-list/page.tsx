@@ -51,7 +51,7 @@ export default function Page() {
                     <span className="text-sm opacity-90">Progress</span>
                     <span className="text-sm font-semibold">{project.progress}%</span>
                   </div>
-                  <Progress value={project.progress} indicatorColor={project.progressColor} />
+                  <Progress value={project.progress} />
                 </div>
 
                 <div className="flex items-center justify-between">

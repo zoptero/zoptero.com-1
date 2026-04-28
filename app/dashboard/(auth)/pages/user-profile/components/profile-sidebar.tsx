@@ -16,7 +16,7 @@ export function ProfileSidebar() {
         </CardHeader>
         <CardContent>
           <div className="flex items-center gap-3">
-            <Progress value={profileCompletion} className="flex-1" indicatorColor="bg-green-500" />
+            <Progress value={profileCompletion} className="flex-1" />
             <span className="text-muted-foreground text-xs">{profileCompletion}%</span>
           </div>
         </CardContent>

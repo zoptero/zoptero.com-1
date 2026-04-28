@@ -128,7 +128,7 @@ export function DailyActivityCard() {
                 <p className="text-muted-foreground text-sm">{activity.percentage}%</p>
               </div>
             </div>
-            <Progress value={activity.percentage} indicatorColor={activity.color} />
+            <Progress value={activity.percentage} />
           </div>
         ))}
       </div>

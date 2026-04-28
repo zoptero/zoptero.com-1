@@ -15,7 +15,7 @@ export function SleepCard() {
       <CardContent className="space-y-3">
         <div className="text-3xl font-bold">7h 32m</div>
         <div className="space-y-2">
-          <Progress value={89} className="h-2" indicatorColor="bg-purple-500" />
+          <Progress value={89} className="h-2" />
           <p className="text-muted-foreground text-xs">Quality: 89%</p>
         </div>
       </CardContent>

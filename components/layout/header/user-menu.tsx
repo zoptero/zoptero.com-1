@@ -71,7 +71,7 @@ export default function UserMenu() {
                 <ChevronRightIcon className="ml-1 h-4 w-4" />
               </div>
             </div>
-            <Progress value={40} indicatorColor="bg-primary" />
+            <Progress value={40} />
             <div className="text-muted-foreground flex items-center text-sm">
               Daily credits used first
             </div>

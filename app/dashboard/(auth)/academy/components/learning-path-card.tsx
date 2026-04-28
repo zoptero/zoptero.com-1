@@ -22,7 +22,7 @@ export function LearningPathCard() {
         <Link href="#" className="hover:bg-muted block rounded-md border p-4 transition-colors">
           <div className="space-y-2">
             <div className="text-xl font-semibold">Full-Stack Developer</div>
-            <Progress value={pathProgress} indicatorColor="bg-green-600" />
+            <Progress value={pathProgress} />
             <p className="text-muted-foreground text-xs">
               {completedModules} of {totalModules} modules completed
             </p>
@@ -33,7 +33,7 @@ export function LearningPathCard() {
           className="hover:bg-muted block space-y-4 rounded-md border p-4 transition-colors">
           <div className="space-y-2">
             <div className="text-xl font-semibold">Full-Stack Developer</div>
-            <Progress value={pathProgress} indicatorColor="bg-orange-600" />
+            <Progress value={pathProgress} />
             <p className="text-muted-foreground text-xs">
               {completedModules} of {totalModules} modules completed
             </p>

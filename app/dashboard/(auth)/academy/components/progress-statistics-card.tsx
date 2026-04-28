@@ -16,11 +16,11 @@ export function ProgressStatisticsCard() {
         </div>
         <div className="grid w-full gap-8 lg:grid-cols-2">
           <div className="flex items-center gap-2">
-            <Progress value={65} indicatorColor="bg-orange-500" />
+            <Progress value={65} />
             <div className="text-muted-foreground text-sm">65%</div>
           </div>
           <div className="flex items-center gap-2">
-            <Progress value={50} indicatorColor="bg-green-500" />
+            <Progress value={50} />
             <div className="text-muted-foreground text-sm">50%</div>
           </div>
         </div>

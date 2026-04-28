@@ -20,9 +20,13 @@ export async function POST(req: NextRequest) {
   // Step 2: Listen for user.deleted event
   if (evt.type === 'user.deleted') {
     const { id } = evt.data;
+    if (!id || typeof id !== 'string') {
+      console.error('Missing or invalid Clerk user id in webhook event:', id);
+      return new Response('Invalid Clerk user id', { status: 400 });
+    }
     try {
-      // Step 3: Call Convex internal action to cascade delete user
-      await convex.mutation(internal.users.deleteUserCascadeInternal, { clerkId: id });
+      // Step 3: Call Convex public action to cascade delete user
+      await convex.action(api.users.deleteUserCascadePublic, { clerkId: id });
     } catch (err) {
       console.error('Convex cascade deletion failed:', err);
       return new Response('Convex deletion failed', { status: 500 });

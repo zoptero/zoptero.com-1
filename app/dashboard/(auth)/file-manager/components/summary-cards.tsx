@@ -77,7 +77,7 @@ export function SummaryCards() {
               <CountAnimation number={item.count} />
             </div>
             <div className="space-y-2">
-              <Progress value={item.usagePercentage} indicatorColor={item.indicatorColor} />
+              <Progress value={item.usagePercentage} />
               <div className="flex items-center justify-between">
                 <span className="text-muted-foreground text-sm">{item.size} used</span>
                 <span className="text-muted-foreground text-sm">{item.usagePercentage}%</span>

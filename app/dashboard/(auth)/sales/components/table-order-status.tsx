@@ -297,7 +297,7 @@ export function TableOrderStatus() {
             <Progress
               value={43}
               className="h-2 bg-blue-100 dark:bg-blue-950"
-              indicatorColor="bg-blue-400"
+
             />
           </div>
           <div className="space-y-2">
@@ -312,7 +312,7 @@ export function TableOrderStatus() {
             <Progress
               value={25}
               className="h-2 bg-teal-100 dark:bg-teal-950"
-              indicatorColor="bg-teal-400"
+
             />
           </div>
           <div className="space-y-2">
@@ -327,7 +327,7 @@ export function TableOrderStatus() {
             <Progress
               value={40}
               className="h-2 bg-green-100 dark:bg-green-950"
-              indicatorColor="bg-green-400"
+
             />
           </div>
           <div className="space-y-2">
@@ -342,7 +342,7 @@ export function TableOrderStatus() {
             <Progress
               value={48}
               className="h-2 bg-orange-100 dark:bg-orange-950"
-              indicatorColor="bg-orange-400"
+
             />
           </div>
         </div>

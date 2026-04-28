@@ -21,8 +21,8 @@ export default function OnboardingCards({ onContinue }: { onContinue?: (selected
           <svg aria-hidden="true" className="text-emerald-600" width="12" height="12" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6.00016 11.1998L2.80016 7.99984L1.86683 8.93317L6.00016 13.0665L15.0002 4.0665L14.0668 3.13317L6.00016 11.1998Z" fill="currentColor"/></svg>
           Informācijas platforma
         </Badge>
-        <h1 className="text-3xl leading-tight font-bold lg:text-5xl xl:text-6xl text-center mb-2">Expertu meklētājs.</h1>
-        <p className="text-muted-foreground text-sm text-center mb-4">Meklē uzticamu informāciju ar MI.</p>
+        <h1 className="text-3xl leading-tight font-bold lg:text-5xl xl:text-6xl text-center mb-2">Es darbošos kā</h1>
+        <p className="text-muted-foreground text-sm text-center mb-4">Izvēlies piemērotāko veidu</p>
       </div>
       {/* Cards Section */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">

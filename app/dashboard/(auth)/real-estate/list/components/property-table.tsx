@@ -165,7 +165,7 @@
             <Progress
               value={row.original.complain}
               className="w-20 bg-muted"
-              indicatorColor={getProgressColor(row.original.complain)}
+
             />
             <span className="text-muted-foreground text-xs">{row.original.complain}%</span>
           </div>

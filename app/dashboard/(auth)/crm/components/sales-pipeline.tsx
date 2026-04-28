@@ -95,7 +95,6 @@ export function SalesPipeline() {
                   <Progress
                     value={(stage.count / totalCount) * 100}
                     className="h-2"
-                    indicatorColor={stage.color}
                   />
                   <span className="text-muted-foreground w-10 text-right text-xs">
                     {Math.round((stage.value / totalValue) * 100)}%

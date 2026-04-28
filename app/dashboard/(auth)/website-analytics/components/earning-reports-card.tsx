@@ -117,7 +117,7 @@ export function EarningReportsCard() {
                   </div>
                   <div className="font-semibold">$545.69</div>
                 </div>
-                <Progress className="h-1" indicatorColor="bg-black dark:bg-white/90" value={70} />
+                <Progress className="h-1" value={70} />
               </div>
               <div className="bg-muted border-border flex flex-col gap-4 rounded-md border p-4">
                 <div className="flex items-center justify-between gap-4">
@@ -129,7 +129,7 @@ export function EarningReportsCard() {
                   </div>
                   <div className="font-semibold">$256.34</div>
                 </div>
-                <Progress className="h-1" indicatorColor="bg-black dark:bg-white/90" value={45} />
+                <Progress className="h-1" value={45} />
               </div>
               <div className="bg-muted border-border flex flex-col gap-4 rounded-md border p-4">
                 <div className="flex items-center justify-between gap-4">
@@ -141,7 +141,7 @@ export function EarningReportsCard() {
                   </div>
                   <div className="font-semibold">$74.19</div>
                 </div>
-                <Progress className="h-1" indicatorColor="bg-black dark:bg-white/90" value={80} />
+                <Progress className="h-1" value={80} />
               </div>
             </div>
           </div>

@@ -30,7 +30,7 @@ export default function SavingGoal() {
           <Progress
             value={75}
             className="h-3"
-            indicatorColor="bg-linear-to-r from-chart-1 to-chart-3"
+
           />
         </div>
       </CardContent>
