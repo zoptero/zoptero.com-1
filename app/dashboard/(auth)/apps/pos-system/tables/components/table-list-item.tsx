@@ -40,20 +40,9 @@ export default function TableListItem({ table }: TableListItem) {
           {/* Patch for shadcn/ui strict Badge variants */}
           {(() => {
             const badge = EnumTableStatusColor[table.status as EnumTableStatus].badge;
-            let variant = "default";
-            let customClass = "capitalize";
-            // Only handle allowed badge variants
-            if (badge === "destructive") {
-              variant = "destructive";
-            } else if (badge === "secondary") {
-              variant = "secondary";
-            } else if (badge === "outline") {
-              variant = "outline";
-            } else {
-              variant = "default";
-            }
+            const customClass = "capitalize";
             return (
-              <Badge variant={variant} className={customClass}>
+              <Badge variant={badge} className={customClass}>
                 {table.status}
               </Badge>
             );
