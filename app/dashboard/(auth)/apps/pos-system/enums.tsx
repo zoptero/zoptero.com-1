@@ -13,12 +13,12 @@ export const EnumTableStatusColor: Record<
   }
 > = {
   [EnumTableStatus.AVAILABLE]: {
-    badge: "success",
+    badge: "default",
     card: "border-green-500 bg-green-50 dark:border-green-900 dark:bg-green-950/70",
     text: "text-green-600"
   },
   [EnumTableStatus.RESERVED]: {
-    badge: "info",
+    badge: "secondary",
     card: "border-blue-500 bg-blue-50 dark:border-blue-900 dark:bg-blue-950/70",
     text: "text-blue-600"
   },

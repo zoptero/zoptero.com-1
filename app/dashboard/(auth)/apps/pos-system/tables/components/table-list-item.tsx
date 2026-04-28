@@ -37,11 +37,26 @@ export default function TableListItem({ table }: TableListItem) {
         )}>
         <div className="mb-2 flex items-center justify-between">
           <h3 className="font-medium lg:text-lg">{table.name}</h3>
-          <Badge
-            variant={EnumTableStatusColor[table.status as EnumTableStatus].badge}
-            className="capitalize">
-            {table.status}
-          </Badge>
+          {/* Patch for shadcn/ui strict Badge variants */}
+          {(() => {
+            const badge = EnumTableStatusColor[table.status as EnumTableStatus].badge;
+            let variant = "default";
+            let customClass = "capitalize";
+            if (badge === "success") {
+              variant = undefined;
+              customClass += " bg-emerald-100 text-emerald-800 border-emerald-200";
+            } else if (badge === "info") {
+              variant = undefined;
+              customClass += " bg-blue-100 text-blue-800 border-blue-200";
+            } else if (badge === "destructive") {
+              variant = "destructive";
+            }
+            return (
+              <Badge variant={variant} className={customClass}>
+                {table.status}
+              </Badge>
+            );
+          })()}
         </div>
 
         {tableOrder && (
