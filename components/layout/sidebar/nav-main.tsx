@@ -76,13 +76,14 @@ type NavGroup = {
 
 type NavItem = {
   title: string;
-  href: string;
+  href?: string;
   icon?: LucideIcon;
   isComing?: boolean;
   isDataBadge?: string;
   isNew?: boolean;
   newTab?: boolean;
   items?: NavItem;
+  lock?: boolean;
 }[];
 
 export const navItems: NavGroup[] = [
@@ -272,10 +273,14 @@ export function NavMain() {
                                 <SidebarMenuSubButton
                                   className="hover:text-foreground active:text-foreground hover:bg-[var(--primary)]/10 active:bg-[var(--primary)]/10"
                                   isActive={pathname === subItem.href}
-                                  asChild>
-                                  <Link href={subItem.href} target={subItem.newTab ? "_blank" : ""}>
+                                  asChild={!!subItem.href}>
+                                  {subItem.href ? (
+                                    <Link href={subItem.href} target={subItem.newTab ? "_blank" : ""}>
+                                      <span>{subItem.title}</span>
+                                    </Link>
+                                  ) : (
                                     <span>{subItem.title}</span>
-                                  </Link>
+                                  )}
                                 </SidebarMenuSubButton>
                               </SidebarMenuSubItem>
                             ))}
@@ -288,11 +293,18 @@ export function NavMain() {
                       className="hover:text-foreground active:text-foreground hover:bg-[var(--primary)]/10 active:bg-[var(--primary)]/10"
                       isActive={pathname === item.href}
                       tooltip={item.title}
-                      asChild>
-                      <Link href={item.href} target={item.newTab ? "_blank" : ""}>
-                        {item.icon && <item.icon />}
-                        <span>{item.title}</span>
-                      </Link>
+                      asChild={!!item.href}>
+                      {item.href ? (
+                        <Link href={item.href} target={item.newTab ? "_blank" : ""}>
+                          {item.icon && <item.icon />}
+                          <span>{item.title}</span>
+                        </Link>
+                      ) : (
+                        <span>
+                          {item.icon && <item.icon />}
+                          <span>{item.title}</span>
+                        </span>
+                      )}
                     </SidebarMenuButton>
                   )}
                   {!!item.isComing && (
