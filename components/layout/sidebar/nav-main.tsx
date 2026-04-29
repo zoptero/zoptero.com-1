@@ -106,7 +106,7 @@ export const navItems: NavGroup[] = [
       },
       // Real Estate removed
       // Sales removed
-      { title: "CRM", href: "/dashboard/crm", icon: ChartBarDecreasingIcon },
+      // CRM removed
       {
         title: "Website Analytics",
         href: "/dashboard/website-analytics",
