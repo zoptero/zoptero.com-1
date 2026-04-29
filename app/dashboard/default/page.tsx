@@ -1,36 +1,54 @@
-"use client";
+import { generateMeta } from "@/lib/utils";
 
-import { useEffect } from "react";
-import { useUser } from "@clerk/nextjs";
-import { useRouter } from "next/navigation";
-import { useQuery } from "convex/react";
-import { api } from "@/convex/_generated/api";
+import CustomDateRangePicker from "@/components/custom-date-range-picker";
+import { Button } from "@/components/ui/button";
 
-export default function DashboardDefaultPage() {
-  const { user, isLoaded } = useUser();
-  const router = useRouter();
-  const me = useQuery(api.users.getMe, {});
+import {
+  ChatWidget,
+  ExerciseMinutes,
+  LatestPayments,
+  PaymentMethodCard,
+  SubscriptionsCard,
+  TeamMembersCard,
+  TotalRevenueCard
+} from "./components";
+import { Download } from "lucide-react";
 
-  useEffect(() => {
-    if (!isLoaded || !user || me === undefined) return;
-    // If onboarding is not complete, redirect to onboarding
-    if (!me || me.onboardingComplete === false) {
-      router.replace("/onboarding");
-    }
-    // else, show dashboard (do nothing)
-  }, [isLoaded, user, me, router]);
+export async function generateMetadata() {
+  return generateMeta({
+    title: "Admin Dashboard Template",
+    description:
+      "Track revenue, subscriptions, and team activity with a modern interface. A professional admin page built with React, Next.js, TypeScript, Tailwind CSS, and shadcn/ui.",
+    canonical: "/default"
+  });
+}
 
-  if (!isLoaded || !user || me === undefined) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-background px-4">
-        <span>Loading...</span>
-      </div>
-    );
-  }
-
+export default function Page() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background px-4">
-      <h1 className="text-2xl font-bold">Welcome to your dashboard!</h1>
+    <div className="space-y-4">
+      <div className="flex flex-row items-center justify-between">
+        <h1 className="text-xl font-bold tracking-tight lg:text-2xl">Dashboard</h1>
+        <div className="flex items-center space-x-2">
+          <CustomDateRangePicker />
+          <Button>
+            <Download />
+            <span className="hidden lg:inline">Download</span>
+          </Button>
+        </div>
+      </div>
+      <div className="gap-4 space-y-4 lg:grid lg:grid-cols-3 lg:space-y-0">
+        <TeamMembersCard />
+        <SubscriptionsCard />
+        <TotalRevenueCard />
+        <ChatWidget />
+        <div className="lg:col-span-2">
+          <ExerciseMinutes />
+        </div>
+        <div className="lg:col-span-2">
+          <LatestPayments />
+        </div>
+        <PaymentMethodCard />
+      </div>
     </div>
   );
 }
