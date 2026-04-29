@@ -132,7 +132,7 @@ export const navItems: NavGroup[] = [
       },
       { title: "Crypto", href: "/dashboard/crypto", icon: WalletMinimalIcon },
       { title: "Academy/School", href: "/dashboard/academy", icon: GraduationCapIcon },
-      { title: "Hospital Management", href: "/dashboard/hospital-management", icon: ActivityIcon },
+      // Hospital Management removed
       {
         title: "Finance Dashboard",
         href: "/dashboard/finance",
