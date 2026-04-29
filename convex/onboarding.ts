@@ -29,6 +29,7 @@ export const setAccountTypeForUserAndProfile = mutation({
         email: args.email,
         name: args.name,
         avatarUrl: args.avatarUrl,
+        onboardingComplete: true,
       });
     }
 
