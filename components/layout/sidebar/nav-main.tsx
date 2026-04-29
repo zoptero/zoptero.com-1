@@ -152,11 +152,6 @@ export const navItems: NavGroup[] = [
   {
     title: "Apps",
     items: [
-      {
-        title: "Kanban",
-        href: "/dashboard/apps/kanban",
-        icon: SquareKanbanIcon
-      },
       { title: "Notes", href: "/dashboard/apps/notes", icon: StickyNoteIcon, isDataBadge: "8" },
       { title: "Chats", href: "/dashboard/apps/chat", icon: MessageSquareIcon, isDataBadge: "5" },
       {
@@ -171,19 +166,7 @@ export const navItems: NavGroup[] = [
         href: "/dashboard/apps/todo-list-app",
         icon: SquareCheckIcon
       },
-      {
-        title: "Tasks",
-        href: "/dashboard/apps/tasks",
-        icon: ClipboardCheckIcon
-      },
       { title: "Calendar", href: "/dashboard/apps/calendar", icon: CalendarIcon },
-      {
-        title: "File Manager",
-        href: "/dashboard/apps/file-manager",
-        icon: ArchiveRestoreIcon,
-        isNew: true
-      },
-      { title: "Api Keys", href: "/dashboard/apps/api-keys", icon: KeyIcon },
       { title: "POS App", href: "/dashboard/apps/pos-system", icon: CookieIcon },
       { title: "Courses", href: "/dashboard/apps/courses", icon: BookAIcon, isNew: true }
     ]
