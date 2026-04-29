@@ -55,7 +55,8 @@ import {
   MessageSquareHeartIcon,
   BookAIcon,
   PuzzleIcon,
-  BellIcon
+  BellIcon,
+  LockIcon
 } from "lucide-react";
 import Link from "next/link";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
@@ -122,7 +123,11 @@ export const navItems: NavGroup[] = [
     title: "Apps",
     items: [
       // Notes app removed
-      { title: "Chats", href: "/dashboard/apps/chat", icon: MessageSquareIcon, isDataBadge: "5" },
+      {
+        title: "Chats",
+        icon: MessageSquareIcon,
+        lock: true // Custom property to indicate lock icon usage
+      },
       {
         title: "Social Media",
         href: "/dashboard/apps/social-media",
@@ -203,7 +208,16 @@ export function NavMain() {
             <SidebarMenu>
               {nav.items.map((item) => (
                 <SidebarMenuItem key={item.title}>
-                  {Array.isArray(item.items) && item.items.length > 0 ? (
+                  {/* If lock property is set, show lock icon instead of link or badge */}
+                  {item.lock ? (
+                    <SidebarMenuButton className="opacity-60 cursor-not-allowed" tooltip="Locked" asChild>
+                      <div className="flex items-center gap-2">
+                        {item.icon && <item.icon />}
+                        <span>{item.title}</span>
+                        <LockIcon className="ml-2 text-gray-400 w-4 h-4" />
+                      </div>
+                    </SidebarMenuButton>
+                  ) : Array.isArray(item.items) && item.items.length > 0 ? (
                     <>
                       <div className="hidden group-data-[collapsible=icon]:block">
                         <DropdownMenu>
