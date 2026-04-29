@@ -210,13 +210,18 @@ export function NavMain() {
                 <SidebarMenuItem key={item.title}>
                   {/* If lock property is set, show lock icon instead of link or badge */}
                   {item.lock ? (
-                    <SidebarMenuButton className="opacity-60 cursor-not-allowed flex items-center w-full px-3 py-2 rounded-md text-sm font-medium" tooltip="Locked" asChild>
-                      <span className="flex items-center w-full justify-between">
-                        <span className="flex items-center gap-2">
-                          {item.icon && <item.icon className="w-4 h-4" />}
-                          <span>{item.title}</span>
-                        </span>
-                        <LockIcon className="text-gray-400 w-4 h-4 ml-auto" />
+                    <SidebarMenuButton
+                      className="opacity-60 cursor-not-allowed flex items-center w-full px-3 py-2 rounded-md text-sm font-normal"
+                      style={{ minHeight: 40 }}
+                      tooltip="Locked"
+                      asChild
+                    >
+                      <span className="flex items-center w-full">
+                        {item.icon && (
+                          <item.icon className="w-4 h-4 mr-3 text-muted-foreground shrink-0" />
+                        )}
+                        <span className="flex-1 text-left truncate" style={{lineHeight: '20px'}}>{item.title}</span>
+                        <LockIcon className="w-4 h-4 ml-2 text-gray-400 shrink-0" />
                       </span>
                     </SidebarMenuButton>
                   ) : Array.isArray(item.items) && item.items.length > 0 ? (
