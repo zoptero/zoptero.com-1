@@ -58,7 +58,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <SidebarMenuButton className="hover:text-foreground h-10 group-data-[collapsible=icon]:px-0!">
-                  <Logo />
+                  <img src="https://media.zoptero.com/img/zoptero-logo-32x32.svg" alt="Zoptero Logo" width={32} height={32} className="mr-2" />
                   <span className="text-foreground font-semibold">Zaptero</span>
                   <ChevronsUpDown className="ml-auto group-data-[collapsible=icon]:hidden" />
                 </SidebarMenuButton>
