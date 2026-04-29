@@ -130,11 +130,6 @@ export const navItems: NavGroup[] = [
         href: "/dashboard/website-analytics",
         icon: GaugeIcon
       },
-      {
-        title: "File Manager",
-        href: "/dashboard/file-manager",
-        icon: FolderIcon
-      },
       { title: "Crypto", href: "/dashboard/crypto", icon: WalletMinimalIcon },
       { title: "Academy/School", href: "/dashboard/academy", icon: GraduationCapIcon },
       { title: "Hospital Management", href: "/dashboard/hospital-management", icon: ActivityIcon },
