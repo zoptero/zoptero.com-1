@@ -123,7 +123,7 @@ export const navItems: NavGroup[] = [
           { title: "Filter", href: "/dashboard/real-estate/filter" }
         ]
       },
-      { title: "Sales", href: "/dashboard/sales", icon: BadgeDollarSignIcon },
+      // Sales removed
       { title: "CRM", href: "/dashboard/crm", icon: ChartBarDecreasingIcon },
       {
         title: "Website Analytics",
@@ -131,7 +131,7 @@ export const navItems: NavGroup[] = [
         icon: GaugeIcon
       },
       // Crypto removed
-      { title: "Academy/School", href: "/dashboard/academy", icon: GraduationCapIcon },
+      // Academy/School removed
       // Hospital Management removed
       {
         title: "Finance Dashboard",
