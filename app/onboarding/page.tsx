@@ -23,7 +23,7 @@ export default function OnboardingPage() {
       avatarUrl: user.imageUrl || undefined,
     });
     // Optionally, you may want to also set onboardingComplete in a separate mutation if needed
-    router.replace("/dashboard/default");
+    router.replace("/dashboard");
   };
 
   return (

@@ -14,10 +14,14 @@ import {
   SidebarFooter,
   SidebarHeader,
   SidebarMenu,
-  SidebarMenuButton,
   SidebarMenuItem,
   useSidebar
 } from "@/components/ui/sidebar";
+import dynamic from "next/dynamic";
+const SidebarMenuButton = dynamic(
+  () => import("@/components/ui/sidebar").then(mod => mod.SidebarMenuButton),
+  { ssr: false }
+);
 import { NavMain } from "@/components/layout/sidebar/nav-main";
 import { NavUser } from "@/components/layout/sidebar/nav-user";
 import { ScrollArea } from "@/components/ui/scroll-area";

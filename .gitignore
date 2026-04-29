@@ -47,3 +47,5 @@ next-env.d.ts
 
 # Local desktop backup, do not push to GitHub
 /bizzigo.lv-NEW/
+# clerk configuration (can include secrets)
+/.clerk/
