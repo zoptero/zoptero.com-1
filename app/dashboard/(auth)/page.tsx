@@ -11,7 +11,7 @@ import {
   SubscriptionsCard,
   TeamMembersCard,
   TotalRevenueCard
-} from "./components";
+} from "./default/components";
 import { Download } from "lucide-react";
 
 export async function generateMetadata() {
@@ -19,7 +19,7 @@ export async function generateMetadata() {
     title: "Admin Dashboard Template",
     description:
       "Track revenue, subscriptions, and team activity with a modern interface. A professional admin page built with React, Next.js, TypeScript, Tailwind CSS, and shadcn/ui.",
-    canonical: "/default"
+    canonical: "/dashboard"
   });
 }
 
