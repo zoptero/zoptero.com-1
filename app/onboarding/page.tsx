@@ -1,12 +1,29 @@
 // app/onboarding/page.tsx
 "use client";
 
+
 import OnboardingCards from "@/components/OnboardingCards";
+import { useMutation } from "convex/react";
+import { api } from "@/convex/_generated/api";
+import { useUser } from "@clerk/nextjs";
+import { useRouter } from "next/navigation";
+
 
 export default function OnboardingPage() {
-  const handleContinue = (selected: string) => {
-    // TODO: Replace with Convex mutation and redirect logic
-    console.log("Selected account type:", selected);
+  const { user } = useUser();
+  const router = useRouter();
+  const setAccountType = useMutation(api.onboarding.setAccountTypeForUserAndProfile);
+
+  const handleContinue = async (selected: string) => {
+    if (!user) return;
+    await setAccountType({
+      accountType: selected,
+      email: user.emailAddresses[0]?.emailAddress || "",
+      name: user.fullName || undefined,
+      avatarUrl: user.imageUrl || undefined,
+    });
+    // Optionally, you may want to also set onboardingComplete in a separate mutation if needed
+    router.replace("/dashboard/default");
   };
 
   return (
