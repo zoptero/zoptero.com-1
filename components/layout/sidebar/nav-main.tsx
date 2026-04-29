@@ -216,7 +216,7 @@ export function NavMain() {
                       tooltip="Locked"
                       asChild
                     >
-                      <>
+                      <span className="flex items-center w-full">
                         {item.icon && (
                           <item.icon className="w-4 h-4 mr-3 text-muted-foreground shrink-0" />
                         )}
@@ -224,7 +224,7 @@ export function NavMain() {
                         <span className="flex items-center ml-auto">
                           <LockIcon className="w-4 h-4 text-gray-400" />
                         </span>
-                      </>
+                      </span>
                     </SidebarMenuButton>
                   ) : Array.isArray(item.items) && item.items.length > 0 ? (
                     <>
