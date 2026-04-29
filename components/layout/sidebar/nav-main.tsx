@@ -130,7 +130,7 @@ export const navItems: NavGroup[] = [
         href: "/dashboard/website-analytics",
         icon: GaugeIcon
       },
-      { title: "Crypto", href: "/dashboard/crypto", icon: WalletMinimalIcon },
+      // Crypto removed
       { title: "Academy/School", href: "/dashboard/academy", icon: GraduationCapIcon },
       // Hospital Management removed
       {
