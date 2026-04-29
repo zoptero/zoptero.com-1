@@ -108,7 +108,7 @@ export const navItems: NavGroup[] = [
       // Sales removed
       // CRM removed
       {
-        title: "Website Analytics",
+        title: "Statistika",
         href: "/dashboard/website-analytics",
         icon: GaugeIcon
       },
