@@ -17,7 +17,7 @@ export default function OnboardingPage() {
   const handleContinue = async (selected: string) => {
     if (!user) return;
     await setAccountType({
-      accountType: selected,
+      accountType: selected as "b2b" | "b2c",
       email: user.emailAddresses[0]?.emailAddress || "",
       name: user.fullName || undefined,
       avatarUrl: user.imageUrl || undefined,
