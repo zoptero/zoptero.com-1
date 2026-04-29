@@ -129,7 +129,7 @@ export const navItems: NavGroup[] = [
   {
     title: "Apps",
     items: [
-      { title: "Notes", href: "/dashboard/apps/notes", icon: StickyNoteIcon, isDataBadge: "8" },
+      // Notes app removed
       { title: "Chats", href: "/dashboard/apps/chat", icon: MessageSquareIcon, isDataBadge: "5" },
       {
         title: "Social Media",
