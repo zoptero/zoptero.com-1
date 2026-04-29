@@ -94,15 +94,7 @@ export const navItems: NavGroup[] = [
         icon: ChartPieIcon
       },
       // E-commerce removed
-      {
-        title: "Payment Dashboard",
-        href: "/dashboard/payment",
-        icon: CreditCardIcon,
-        items: [
-          { title: "Dashboard", href: "/dashboard/payment" },
-          { title: "Transactions", href: "/dashboard/payment/transactions" }
-        ]
-      },
+      // Payment Dashboard removed
       {
         title: "Project Management",
         href: "/dashboard/project-management",
