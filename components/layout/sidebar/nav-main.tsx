@@ -115,15 +115,7 @@ export const navItems: NavGroup[] = [
       // Crypto removed
       // Academy/School removed
       // Hospital Management removed
-      {
-        title: "Finance Dashboard",
-        href: "/dashboard/finance",
-        icon: WalletMinimalIcon,
-        items: [
-          { title: "Dashboard", href: "/dashboard/finance" },
-          { title: "Test", href: "/dashboard/finance/test" }
-        ]
-      }
+      // Finance Dashboard removed
     ]
   },
   {
