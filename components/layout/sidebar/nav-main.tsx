@@ -104,17 +104,7 @@ export const navItems: NavGroup[] = [
           { title: "Project List", href: "/dashboard/project-list" }
         ]
       },
-      {
-        title: "Real Estate",
-        href: "/dashboard/real-estate",
-        icon: Building2Icon,
-        items: [
-          { title: "Dashboard", href: "/dashboard/real-estate" },
-          { title: "Listings", href: "/dashboard/real-estate/list" },
-          { title: "Detail Page", href: "/dashboard/real-estate/detail" },
-          { title: "Filter", href: "/dashboard/real-estate/filter" }
-        ]
-      },
+      // Real Estate removed
       // Sales removed
       { title: "CRM", href: "/dashboard/crm", icon: ChartBarDecreasingIcon },
       {
