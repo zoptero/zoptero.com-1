@@ -1,5 +1,28 @@
 import { v } from "convex/values";
 import { mutation } from "./_generated/server";
+import { createClerkClient } from "@clerk/backend";
+
+// Initialize Clerk client for backend operations
+const clerkClientInstance = createClerkClient({
+  secretKey: process.env.CLERK_SECRET_KEY,
+});
+
+/**
+ * Sync onboarding status to Clerk's publicMetadata
+ * Runs non-blocking to avoid blocking database transactions
+ */
+async function syncClerkMetadata(clerkId: string, onboardingComplete: boolean) {
+  try {
+    // Non-blocking: don't await to prevent blocking database transactions
+    clerkClientInstance.users.updateUserMetadata(clerkId, {
+      publicMetadata: { onboardingComplete },
+    });
+    console.log(`[Clerk] Successfully updated metadata for user ${clerkId}: onboardingComplete=${onboardingComplete}`);
+  } catch (error) {
+    console.error(`[Clerk] Failed to update metadata for user ${clerkId}:`, error);
+    // Don't throw - we want to maintain database consistency even if Clerk API fails
+  }
+}
 
 /**
  * Atomically updates both the users and profiles tables with the selected accountType.
@@ -43,6 +66,9 @@ export const setAccountTypeForUserAndProfile = mutation({
         accountType: args.accountType,
       });
     }
+
+    // Sync to Clerk metadata (non-blocking)
+    syncClerkMetadata(clerkId, true);
 
     return null;
   },
