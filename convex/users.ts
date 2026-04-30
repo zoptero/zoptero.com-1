@@ -8,9 +8,35 @@ export const deleteUserCascadePublic = action({
     return null;
   },
 });
+
+// Import Clerk backend client
+import { createClerkClient } from "@clerk/backend";
 import { ConvexError, v } from "convex/values";
 import { internal } from "./_generated/api";
 import { action, internalAction, internalMutation, mutation, query, type MutationCtx } from "./_generated/server";
+
+// Initialize Clerk client for backend operations
+const clerkClientInstance = createClerkClient({
+  secretKey: process.env.CLERK_SECRET_KEY,
+});
+
+/**
+ * Sync onboarding status to Clerk's publicMetadata
+ * This ensures the middleware can check the status without network calls
+ * Runs non-blocking to avoid blocking database transactions
+ */
+async function syncClerkMetadata(clerkId: string, onboardingComplete: boolean) {
+  try {
+    // Non-blocking: don't await to prevent blocking database transactions
+    clerkClientInstance.users.updateUserMetadata(clerkId, {
+      publicMetadata: { onboardingComplete },
+    });
+    console.log(`[Clerk] Successfully updated metadata for user ${clerkId}: onboardingComplete=${onboardingComplete}`);
+  } catch (error) {
+    console.error(`[Clerk] Failed to update metadata for user ${clerkId}:`, error);
+    // Don't throw - we want to maintain database consistency even if Clerk API fails
+  }
+}
 
 // Utility to strip fields not in the profiles schema
 function omitProfileSchemaExtras(obj: Record<string, any>) {
@@ -420,6 +446,8 @@ export const setAccountType = mutation({
       for (const row of duplicates) {
         await ctx.db.delete(row._id);
       }
+      // Sync to Clerk metadata (non-blocking)
+      syncClerkMetadata(clerkId, true);
       return null;
     }
 
@@ -433,7 +461,11 @@ export const setAccountType = mutation({
         onboardingComplete: true,
         accountType: args.accountType,
       });
-      if (synced) return null;
+      if (synced) {
+        // Sync to Clerk metadata (non-blocking)
+        syncClerkMetadata(clerkId, true);
+        return null;
+      }
     }
 
     // 3. Create — only reached when no record exists at all.
@@ -447,6 +479,9 @@ export const setAccountType = mutation({
       onboardingComplete: true,
       createdAt: Date.now(),
     });
+
+    // Sync to Clerk metadata (non-blocking)
+    syncClerkMetadata(clerkId, true);
 
     return null;
   },
@@ -662,7 +697,10 @@ export const syncUser = internalMutation({
     } else {
       await ctx.db.insert("profiles", profileData);
     }
+    // Sync to Clerk metadata if onboardingComplete is provided (non-blocking)
+    if (args.onboardingComplete !== undefined) {
+      syncClerkMetadata(args.clerkId, args.onboardingComplete);
+    }
     return { success: true };
   },
 });
-
