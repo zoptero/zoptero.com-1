@@ -232,6 +232,45 @@ export const getMe = query({
   },
 });
 
+export type OnboardingStatus = 
+  | { status: "not_logged_in" }
+  | { status: "syncing" }
+  | { status: "incomplete" }
+  | { status: "complete" };
+
+export const getOnboardingStatus = query({
+  args: {},
+  returns: v.union(
+    v.object({ status: v.literal("not_logged_in") }),
+    v.object({ status: v.literal("syncing") }),
+    v.object({ status: v.literal("incomplete") }),
+    v.object({ status: v.literal("complete") })
+  ),
+  handler: async (ctx) => {
+    const identity = await ctx.auth.getUserIdentity();
+    
+    if (!identity) {
+      return { status: "not_logged_in" } as const;
+    }
+
+    const user = await ctx.db
+      .query("users")
+      .withIndex("by_clerk_id", (q) => q.eq("clerkId", identity.subject))
+      .first();
+
+    if (!user) {
+      // The "Cold Start" race condition: Clerk identity exists, but Convex record hasn't arrived yet.
+      return { status: "syncing" } as const;
+    }
+
+    if (user.onboardingComplete) {
+      return { status: "complete" } as const;
+    }
+
+    return { status: "incomplete" } as const;
+  },
+});
+
 export const getDashboardGreeting = query({
   args: {},
   returns: v.union(
