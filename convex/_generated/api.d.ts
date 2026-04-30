@@ -20,6 +20,7 @@ import type * as patchProfilesRequiredFields from "../patchProfilesRequiredField
 import type * as patchUsersAccountType from "../patchUsersAccountType.js";
 import type * as payments from "../payments.js";
 import type * as profiles from "../profiles.js";
+import type * as publicActions from "../publicActions.js";
 import type * as users from "../users.js";
 
 import type {
@@ -41,6 +42,7 @@ declare const fullApi: ApiFromModules<{
   patchUsersAccountType: typeof patchUsersAccountType;
   payments: typeof payments;
   profiles: typeof profiles;
+  publicActions: typeof publicActions;
   users: typeof users;
 }>;
 

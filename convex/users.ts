@@ -1,19 +1,9 @@
-// Public action to allow API routes to trigger cascade deletion
-export const deleteUserCascadePublic = action({
-  args: { clerkId: v.string() },
-  returns: v.null(),
-  handler: async (ctx, args) => {
-    // Optionally, add a secret check here for extra security
-    await ctx.runAction(internal.users.deleteUserCascadeInternal, { clerkId: args.clerkId });
-    return null;
-  },
-});
-
 // Import Clerk backend client
 import { createClerkClient } from "@clerk/backend";
 import { ConvexError, v } from "convex/values";
 import { internal } from "./_generated/api";
 import { action, internalAction, internalMutation, mutation, query, type MutationCtx } from "./_generated/server";
+import { deleteUserCascadePublic, syncUserPublic } from "./publicActions";
 
 // Initialize Clerk client for backend operations
 const clerkClientInstance = createClerkClient({
