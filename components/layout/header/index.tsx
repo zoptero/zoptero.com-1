@@ -1,7 +1,6 @@
 "use client";
 
 import { PanelLeftClose, PanelLeftOpen } from "lucide-react";
-
 import { Separator } from "@/components/ui/separator";
 import Notifications from "@/components/layout/header/notifications";
 import Search from "@/components/layout/header/search";
