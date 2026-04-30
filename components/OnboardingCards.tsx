@@ -10,7 +10,7 @@ const options = [
   { value: "b2b", title: "B2B Uzņēmums", description: "Uzņēmums, aģentūra vai komanda" },
 ];
 
-export default function OnboardingCards({ onContinue }: { onContinue?: (selected: string) => void }) {
+export default function OnboardingCards({ onContinue, error, isSubmitting }: { onContinue?: (selected: string) => void, error?: string | null, isSubmitting?: boolean }) {
   const [selected, setSelected] = useState<string | null>(null);
 
   return (
@@ -24,6 +24,14 @@ export default function OnboardingCards({ onContinue }: { onContinue?: (selected
         <h1 className="text-3xl leading-tight font-bold lg:text-5xl xl:text-6xl text-center mb-2">Es darbošos kā</h1>
         <p className="text-muted-foreground text-sm text-center mb-4">Izvēlies piemērotāko veidu</p>
       </div>
+      
+      {/* Error Display */}
+      {error && (
+        <div className="bg-destructive/10 text-destructive px-4 py-3 rounded-md text-sm">
+          {error}
+        </div>
+      )}
+      
       {/* Cards Section */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
         {options.map(option => (
@@ -46,11 +54,11 @@ export default function OnboardingCards({ onContinue }: { onContinue?: (selected
       </div>
       <Button
         size="lg"
-        disabled={!selected}
+        disabled={!selected || isSubmitting}
         className="mt-4"
         onClick={() => selected && onContinue?.(selected)}
       >
-        Turpināt
+        {isSubmitting ? "Notiek..." : "Turpināt"}
       </Button>
     </div>
   );
