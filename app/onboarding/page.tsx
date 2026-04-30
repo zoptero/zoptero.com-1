@@ -51,7 +51,7 @@ export default function OnboardingPage() {
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-white px-4">
-      <OnboardingCards onContinue={handleContinue} />
+      <OnboardingCards onContinue={handleContinue} error={error} isSubmitting={isSubmitting} />
     </div>
   );
 }
