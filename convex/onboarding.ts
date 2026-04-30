@@ -16,7 +16,7 @@ async function syncClerkMetadata(clerkId: string, onboardingComplete: boolean) {
     // Check if secret key is available
     if (!process.env.CLERK_SECRET_KEY) {
       console.error(`[Clerk] CLERK_SECRET_KEY is not set in environment`);
-      return;
+      throw new Error("CLERK_SECRET_KEY is not set in environment");
     }
     
     // Non-blocking: don't await to prevent blocking database transactions
@@ -26,7 +26,8 @@ async function syncClerkMetadata(clerkId: string, onboardingComplete: boolean) {
     console.log(`[Clerk] Successfully updated metadata for user ${clerkId}: onboardingComplete=${onboardingComplete}`);
   } catch (error) {
     console.error(`[Clerk] Failed to update metadata for user ${clerkId}:`, error);
-    // Don't throw - we want to maintain database consistency even if Clerk API fails
+    // Re-throw so the error is visible in the mutation
+    throw error;
   }
 }
 
