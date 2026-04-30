@@ -21,6 +21,7 @@ function getClerkClient() {
 /**
  * Sync onboarding status to Clerk's publicMetadata
  * Runs non-blocking to avoid blocking database transactions
+ * This is optional - if it fails, the onboarding can still complete
  */
 async function syncClerkMetadata(clerkId: string, onboardingComplete: boolean) {
   try {
@@ -32,10 +33,15 @@ async function syncClerkMetadata(clerkId: string, onboardingComplete: boolean) {
       publicMetadata: { onboardingComplete },
     });
     console.log(`[Clerk] Successfully updated metadata for user ${clerkId}: onboardingComplete=${onboardingComplete}`);
-  } catch (error) {
-    console.error(`[Clerk] Failed to update metadata for user ${clerkId}:`, error);
-    // Re-throw so the error is visible in the mutation
-    throw error;
+  } catch (error: any) {
+    console.error(`[Clerk] Failed to update metadata for user ${clerkId}:`, {
+      message: error.message,
+      status: error.status,
+      errors: error.errors,
+      name: error.name
+    });
+    // Don't throw - this is optional and the onboarding should still succeed
+    // The user data is already saved to Convex, so they can still use the app
   }
 }
 
