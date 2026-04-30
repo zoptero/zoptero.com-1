@@ -13,6 +13,12 @@ const clerkClientInstance = createClerkClient({
  */
 async function syncClerkMetadata(clerkId: string, onboardingComplete: boolean) {
   try {
+    // Check if secret key is available
+    if (!process.env.CLERK_SECRET_KEY) {
+      console.error(`[Clerk] CLERK_SECRET_KEY is not set in environment`);
+      return;
+    }
+    
     // Non-blocking: don't await to prevent blocking database transactions
     clerkClientInstance.users.updateUserMetadata(clerkId, {
       publicMetadata: { onboardingComplete },

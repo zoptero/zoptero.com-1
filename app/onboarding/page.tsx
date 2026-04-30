@@ -18,7 +18,11 @@ export default function OnboardingPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleContinue = async (selected: string) => {
+    console.log("[Onboarding] handleContinue called with selected:", selected);
+    console.log("[Onboarding] User:", user);
+    
     if (!user) {
+      console.error("[Onboarding] User not found");
       setError("User not found");
       return;
     }
@@ -27,16 +31,18 @@ export default function OnboardingPage() {
     setError(null);
 
     try {
+      console.log("[Onboarding] Calling setAccountType mutation...");
       await setAccountType({
         accountType: selected as "b2b" | "b2c",
         email: user.emailAddresses[0]?.emailAddress || "",
         name: user.fullName || undefined,
         avatarUrl: user.imageUrl || undefined,
       });
+      console.log("[Onboarding] Mutation successful, redirecting to dashboard...");
       // Redirect to dashboard
       router.replace("/dashboard");
     } catch (err) {
-      console.error("Onboarding error:", err);
+      console.error("[Onboarding] Error during onboarding:", err);
       setError(err instanceof Error ? err.message : "Failed to complete onboarding");
     } finally {
       setIsSubmitting(false);
