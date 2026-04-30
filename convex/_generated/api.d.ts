@@ -9,6 +9,7 @@
  */
 
 import type * as ai from "../ai.js";
+import type * as clerkActions from "../clerkActions.js";
 import type * as http from "../http.js";
 import type * as lib_profileslug from "../lib/profileslug.js";
 import type * as media from "../media.js";
@@ -29,6 +30,7 @@ import type {
 
 declare const fullApi: ApiFromModules<{
   ai: typeof ai;
+  clerkActions: typeof clerkActions;
   http: typeof http;
   "lib/profileslug": typeof lib_profileslug;
   media: typeof media;

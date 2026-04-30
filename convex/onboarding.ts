@@ -1,5 +1,6 @@
 import { v } from "convex/values";
 import { mutation } from "./_generated/server";
+import { internal } from "./_generated/api";
 import { createClerkClient } from "@clerk/backend";
 
 // Initialize Clerk client for backend operations
@@ -91,7 +92,11 @@ export const setAccountTypeForUserAndProfile = mutation({
     }
 
     // Sync to Clerk metadata (non-blocking)
-    syncClerkMetadata(clerkId, true);
+    // Use scheduler to run after mutation completes to avoid blocking
+    ctx.scheduler.runAfter(0, internal.clerkActions.syncClerkMetadata, {
+      clerkId,
+      onboardingComplete: true,
+    });
 
     return null;
   },
