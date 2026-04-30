@@ -7,7 +7,7 @@ export default defineSchema({
     email: v.string(),
     name: v.optional(v.string()),
     avatarUrl: v.optional(v.string()),
-    accountType: v.optional(v.union(v.literal("b2c"), v.literal("b2b"), v.literal("individual"))),
+  accountType: v.optional(v.union(v.literal("b2c"), v.literal("b2b"))),
     onboardingComplete: v.optional(v.boolean()),
     isPro: v.optional(v.boolean()),
     createdAt: v.number(),
@@ -16,7 +16,7 @@ export default defineSchema({
     .index("by_email", ["email"]),
   profiles: defineTable({
     clerkId: v.string(),
-    accountType: v.optional(v.union(v.literal("b2c"), v.literal("b2b"), v.literal("individual"))),
+    accountType: v.optional(v.union(v.literal("b2c"), v.literal("b2b"))),
     avatarKey: v.optional(v.string()),
     avatarUrl: v.optional(v.string()),
     displayName: v.optional(v.string()),

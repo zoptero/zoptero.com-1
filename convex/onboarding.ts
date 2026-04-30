@@ -91,12 +91,9 @@ export const setAccountTypeForUserAndProfile = mutation({
       });
     }
 
-    // Sync to Clerk metadata (non-blocking)
-    // Use scheduler to run after mutation completes to avoid blocking
-    ctx.scheduler.runAfter(0, internal.clerkActions.syncClerkMetadata, {
-      clerkId,
-      onboardingComplete: true,
-    });
+    // Clerk metadata sync is now handled separately via webhook
+    // This mutation only updates the Convex database
+    // The onboardingComplete flag is set above
 
     return null;
   },

@@ -171,7 +171,7 @@ export const getMe = query({
 export const update = mutation({
   args: {
     clerkId: v.string(),
-    accountType: v.optional(v.union(v.literal("b2c"), v.literal("b2b"))),
+      accountType: v.optional(v.union(v.literal("b2c"), v.literal("b2b"))),
     avatarKey: v.optional(v.string()),
     displayName: v.optional(v.string()),
     aboutMe: v.optional(v.string()),
