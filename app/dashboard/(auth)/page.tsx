@@ -24,10 +24,10 @@ import {
 
 export async function generateMetadata() {
   return generateMeta({
-    title: "Project Management Admin Dashboard",
+    title: "Dashboard",
     description:
       "Track tasks, deadlines, and team efficiency with interactive charts. A professional dashboard page built with React, TypeScript, Tailwind CSS, and shadcn/ui.",
-    canonical: "/project-management"
+    canonical: "/dashboard"
   });
 }
 

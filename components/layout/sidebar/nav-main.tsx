@@ -87,26 +87,21 @@ type NavItem = {
 }[];
 
 export const navItems: NavGroup[] = [
-  {
-    title: "Dashboards",
-    items: [
       {
-        title: "Classic Dashboard",
-        href: "/dashboard",
-        icon: ChartPieIcon
-      },
-      // E-commerce removed
-      // Payment Dashboard removed
-      {
-        title: "Project Management",
-        href: "/dashboard/project-management",
-        icon: FolderDotIcon,
+        title: "Dashboards",
         items: [
-          { title: "Dashboard", href: "/dashboard/project-management" },
-          { title: "Project List", href: "/dashboard/project-list" }
-        ]
-      },
-      // Real Estate removed
+          // E-commerce removed
+          // Payment Dashboard removed
+          {
+            title: "Dashboard",
+            href: "/dashboard",
+            icon: FolderDotIcon,
+            items: [
+              { title: "Dashboard", href: "/dashboard" },
+              { title: "Project List", href: "/dashboard/project-list" }
+            ]
+          },
+          // Real Estate removed
       // Sales removed
       // CRM removed
       {
@@ -124,26 +119,21 @@ export const navItems: NavGroup[] = [
     title: "Apps",
     items: [
       // Notes app removed
+      { title: "POS App", href: "/dashboard/apps/pos-system", icon: CookieIcon },
       {
         title: "Chats",
         icon: MessageSquareIcon,
         lock: true // Custom property to indicate lock icon usage
       },
       {
-        title: "Social Media",
+        title: "Social",
         href: "/dashboard/apps/social-media",
         icon: MessageSquareHeartIcon,
-        isNew: true
+        lock: true
       },
-      { title: "Mail", href: "/dashboard/apps/mail", icon: MailIcon },
-      {
-        title: "Todo List App",
-        href: "/dashboard/apps/todo-list-app",
-        icon: SquareCheckIcon
-      },
-      { title: "Calendar", href: "/dashboard/apps/calendar", icon: CalendarIcon },
-      { title: "POS App", href: "/dashboard/apps/pos-system", icon: CookieIcon },
-      { title: "Courses", href: "/dashboard/apps/courses", icon: BookAIcon, isNew: true }
+       { title: "Mail", href: "/dashboard/apps/mail", icon: MailIcon, lock: true },
+       { title: "Calendar", href: "/dashboard/apps/calendar", icon: CalendarIcon, lock: true },
+       { title: "Kursi", href: "/dashboard/apps/courses", icon: BookAIcon, lock: true }
     ]
   },
   {
@@ -212,20 +202,12 @@ export function NavMain() {
                   {/* If lock property is set, show lock icon instead of link or badge */}
                   {item.lock ? (
                     <SidebarMenuButton
-                      className="opacity-60 cursor-not-allowed flex items-center w-full px-3 py-2 rounded-md text-sm font-normal"
-                      style={{ minHeight: 40 }}
+                      className="opacity-60 cursor-not-allowed hover:text-foreground active:text-foreground hover:bg-[var(--primary)]/10 active:bg-[var(--primary)]/10"
                       tooltip="Locked"
-                      asChild
                     >
-                      <span className="flex items-center w-full">
-                        {item.icon && (
-                          <item.icon className="w-4 h-4 mr-3 text-muted-foreground shrink-0" />
-                        )}
-                        <span className="truncate">{item.title}</span>
-                        <span className="flex items-center ml-auto">
-                          <LockIcon className="w-4 h-4 text-gray-400" />
-                        </span>
-                      </span>
+                      {item.icon && <item.icon />}
+                      <span className="truncate">{item.title}</span>
+                      <LockIcon className="ml-auto w-4 h-4 text-muted-foreground" />
                     </SidebarMenuButton>
                   ) : Array.isArray(item.items) && item.items.length > 0 ? (
                     <>
