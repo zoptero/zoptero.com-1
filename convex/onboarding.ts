@@ -3,9 +3,20 @@ import { mutation } from "./_generated/server";
 import { createClerkClient } from "@clerk/backend";
 
 // Initialize Clerk client for backend operations
-const clerkClientInstance = createClerkClient({
-  secretKey: process.env.CLERK_SECRET_KEY,
-});
+let clerkClientInstance: ReturnType<typeof createClerkClient> | null = null;
+
+function getClerkClient() {
+  if (!clerkClientInstance) {
+    if (!process.env.CLERK_SECRET_KEY) {
+      console.error(`[Clerk] CLERK_SECRET_KEY is not set in environment`);
+      throw new Error("CLERK_SECRET_KEY is not set in environment");
+    }
+    clerkClientInstance = createClerkClient({
+      secretKey: process.env.CLERK_SECRET_KEY,
+    });
+  }
+  return clerkClientInstance;
+}
 
 /**
  * Sync onboarding status to Clerk's publicMetadata
@@ -13,14 +24,11 @@ const clerkClientInstance = createClerkClient({
  */
 async function syncClerkMetadata(clerkId: string, onboardingComplete: boolean) {
   try {
-    // Check if secret key is available
-    if (!process.env.CLERK_SECRET_KEY) {
-      console.error(`[Clerk] CLERK_SECRET_KEY is not set in environment`);
-      throw new Error("CLERK_SECRET_KEY is not set in environment");
-    }
+    // Get Clerk client instance
+    const clerkClient = getClerkClient();
     
     // Non-blocking: don't await to prevent blocking database transactions
-    clerkClientInstance.users.updateUserMetadata(clerkId, {
+    clerkClient.users.updateUserMetadata(clerkId, {
       publicMetadata: { onboardingComplete },
     });
     console.log(`[Clerk] Successfully updated metadata for user ${clerkId}: onboardingComplete=${onboardingComplete}`);
