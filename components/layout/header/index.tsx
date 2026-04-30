@@ -2,11 +2,8 @@
 
 import { PanelLeftClose, PanelLeftOpen } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
-import Notifications from "@/components/layout/header/notifications";
 import Search from "@/components/layout/header/search";
 import ThemeSwitch from "@/components/layout/header/theme-switch";
-import UserMenu from "@/components/layout/header/user-menu";
-import { ThemeCustomizerPanel } from "@/components/theme-customizer";
 import { Button } from "@/components/ui/button";
 import { useSidebar } from "@/components/ui/sidebar";
 
@@ -23,11 +20,7 @@ export function SiteHeader() {
         <Search />
 
         <div className="ml-auto flex items-center gap-2">
-          <Notifications />
           <ThemeSwitch />
-          <ThemeCustomizerPanel />
-          <Separator orientation="vertical" className="mx-2 data-[orientation=vertical]:h-4" />
-          <UserMenu />
         </div>
       </div>
     </header>
