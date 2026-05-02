@@ -8,14 +8,12 @@ import { api } from "@/convex/_generated/api";
 import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { useOnboarding } from "./OnboardingContext";
 
 
 export default function OnboardingPage() {
   const { user } = useUser();
   const router = useRouter();
   const setAccountType = useMutation(api.onboarding.setAccountTypeForUserAndProfile);
-  const { setOnboardingComplete } = useOnboarding();
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -40,9 +38,9 @@ export default function OnboardingPage() {
         name: user.fullName || undefined,
         avatarUrl: user.imageUrl || undefined,
       });
-      console.log("[Onboarding] Mutation successful, setting onboarding complete state...");
-      // Set state to trigger layout redirect
-      setOnboardingComplete(true);
+      console.log("[Onboarding] Mutation successful, redirecting to dashboard...");
+      // Imperative redirect - happens immediately after successful mutation
+      router.push('/dashboard');
     } catch (err) {
       console.error("[Onboarding] Error during onboarding:", err);
       setError(err instanceof Error ? err.message : "Failed to complete onboarding");
