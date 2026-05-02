@@ -49,9 +49,10 @@ export default function OnboardingPage() {
       await session?.reload();
       console.log("[Onboarding] Session reloaded successfully");
       
-      // Full navigation to ensure server sees updated metadata
+      // Client-side navigation to dashboard
+      // This works better with Next.js routing than window.location.assign
       console.log("[Onboarding] About to navigate to dashboard");
-      window.location.assign("/dashboard");
+      router.push("/dashboard");
     } catch (err) {
       console.error("[Onboarding] Error during onboarding:", err);
       console.error("[Onboarding] Error details:", {
