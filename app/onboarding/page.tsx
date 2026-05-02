@@ -20,6 +20,9 @@ export default function OnboardingPage() {
   const handleContinue = async (selected: string) => {
     console.log("[Onboarding] handleContinue called with selected:", selected);
     console.log("[Onboarding] User:", user);
+    console.log("[Onboarding] User email:", user?.emailAddresses[0]?.emailAddress);
+    console.log("[Onboarding] User name:", user?.fullName);
+    console.log("[Onboarding] User avatar:", user?.imageUrl);
     
     if (!user) {
       console.error("[Onboarding] User not found");
@@ -32,15 +35,18 @@ export default function OnboardingPage() {
 
     try {
       console.log("[Onboarding] Calling setAccountType mutation...");
-      await setAccountType({
+      const result = await setAccountType({
         accountType: selected as "b2b" | "b2c",
         email: user.emailAddresses[0]?.emailAddress || "",
         name: user.fullName || undefined,
         avatarUrl: user.imageUrl || undefined,
       });
+      console.log("[Onboarding] Mutation result:", result);
       console.log("[Onboarding] Mutation successful, redirecting to dashboard...");
       // Imperative redirect - happens immediately after successful mutation
+      console.log("[Onboarding] About to call router.push('/dashboard')");
       router.push('/dashboard');
+      console.log("[Onboarding] router.push called successfully");
     } catch (err) {
       console.error("[Onboarding] Error during onboarding:", err);
       setError(err instanceof Error ? err.message : "Failed to complete onboarding");
