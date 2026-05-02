@@ -101,5 +101,5 @@ export default function OnboardingLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return <OnboardingLayoutContent isOptimisticRedirecting={false}>{children}</OnboardingLayoutContent>;
+  return <OnboardingLayoutContent isOptimisticRedirecting={false} setIsOptimisticRedirecting={() => {}}>{children}</OnboardingLayoutContent>;
 }
