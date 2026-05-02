@@ -1,5 +1,5 @@
 import { v } from "convex/values";
-import { mutation } from "./_generated/server";
+import { mutation, action } from "./_generated/server";
 import { internal } from "./_generated/api";
 import { createClerkClient } from "@clerk/backend";
 
@@ -20,37 +20,44 @@ function getClerkClient() {
 }
 
 /**
- * Sync onboarding status to Clerk's publicMetadata
+ * Action to update Clerk user metadata
+ * This is a separate action to allow fetch() usage
  * Runs non-blocking to avoid blocking database transactions
- * This is optional - if it fails, the onboarding can still complete
  */
-async function syncClerkMetadata(clerkId: string, onboardingComplete: boolean) {
-  try {
-    // Get Clerk client instance
-    const clerkClient = getClerkClient();
-    
-    // Non-blocking: don't await to prevent blocking database transactions
-    const result = await clerkClient.users.updateUserMetadata(clerkId, {
-      publicMetadata: { onboardingComplete },
-    });
-    console.log(`[Clerk] Successfully updated metadata for user ${clerkId}: onboardingComplete=${onboardingComplete}`, result);
-  } catch (error: any) {
-    console.error(`[Clerk] Failed to update metadata for user ${clerkId}:`, {
-      message: error.message,
-      status: error.status,
-      errors: error.errors,
-      name: error.name,
-      clerkId: clerkId,
-      onboardingComplete: onboardingComplete
-    });
-    // Don't throw - this is optional and the onboarding should still succeed
-    // The user data is already saved to Convex, so they can still use the app
-  }
-}
+export const updateClerkMetadata = action({
+  args: {
+    clerkId: v.string(),
+    onboardingComplete: v.boolean(),
+  },
+  handler: async (ctx, args) => {
+    try {
+      // Get Clerk client instance
+      const clerkClient = getClerkClient();
+      
+      // Non-blocking: don't await to prevent blocking database transactions
+      const result = await clerkClient.users.updateUserMetadata(args.clerkId, {
+        publicMetadata: { onboardingComplete: args.onboardingComplete },
+      });
+      console.log(`[Clerk] Successfully updated metadata for user ${args.clerkId}: onboardingComplete=${args.onboardingComplete}`, result);
+    } catch (error: any) {
+      console.error(`[Clerk] Failed to update metadata for user ${args.clerkId}:`, {
+        message: error.message,
+        status: error.status,
+        errors: error.errors,
+        name: error.name,
+        clerkId: args.clerkId,
+        onboardingComplete: args.onboardingComplete
+      });
+      // Don't throw - this is optional and the onboarding can still complete
+      // The user data is already saved to Convex, so they can still use the app
+    }
+  },
+});
 
 /**
  * Atomically updates both the users and profiles tables with the selected accountType.
  * Call this from onboarding to keep both tables in sync.
+ * Offloads Clerk metadata update to a separate action using scheduler.
  */
 export const setAccountTypeForUserAndProfile = mutation({
   args: {
@@ -106,14 +113,18 @@ export const setAccountTypeForUserAndProfile = mutation({
 
     // Sync to Clerk metadata to ensure middleware can check status
     // This is non-blocking and won't fail the onboarding if it fails
+    // Use scheduler.runAfter to offload the network request to a separate action
     try {
-      const clerkClient = getClerkClient();
-      await clerkClient.users.updateUserMetadata(clerkId, {
-        publicMetadata: { onboardingComplete: true },
+      console.log(`[Onboarding] Scheduling Clerk metadata update for user ${clerkId}`);
+      // Call the action directly (it's in the same file, so we can reference it by name)
+      // The action will be picked up by the scheduler
+      await ctx.scheduler.runAfter(0, updateClerkMetadata, {
+        clerkId,
+        onboardingComplete: true,
       });
-      console.log(`[Clerk] Successfully updated metadata for user ${clerkId}: onboardingComplete=true`);
+      console.log(`[Onboarding] Clerk metadata update scheduled successfully`);
     } catch (error: any) {
-      console.error(`[Clerk] Failed to update metadata for user ${clerkId}:`, {
+      console.error(`[Onboarding] Failed to schedule Clerk metadata update for user ${clerkId}:`, {
         message: error.message,
         status: error.status,
         errors: error.errors,
