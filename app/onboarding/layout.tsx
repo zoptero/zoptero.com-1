@@ -5,10 +5,10 @@ import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { useRef, useState } from "react";
 
-function OnboardingLayoutContent({
+function OnboardingGuard({
   children,
-  isOptimisticRedirecting: isOptimisticRedirectingProp,
-  setIsOptimisticRedirecting: setIsOptimisticRedirectingProp,
+  isOptimisticRedirecting,
+  setIsOptimisticRedirecting,
 }: {
   children: React.ReactNode;
   isOptimisticRedirecting: boolean;
@@ -17,10 +17,9 @@ function OnboardingLayoutContent({
   const router = useRouter();
   const onboardingStatus = useQuery(api.users.getOnboardingStatus);
   const hasRedirected = useRef(false);
-  const [isOptimisticRedirecting, setIsOptimisticRedirecting] = useState(false);
 
   // DIAGNOSTIC LOGGING
-  console.log("[Onboarding Layout] Guard check:", {
+  console.log("[Onboarding Guard] Guard check:", {
     status: onboardingStatus?.status,
     isLoading: onboardingStatus === undefined,
     isComplete: onboardingStatus?.status === "complete",
@@ -31,7 +30,7 @@ function OnboardingLayoutContent({
 
   // Layout Guard: Wait for query to resolve before checking status
   if (onboardingStatus === undefined) {
-    console.log("[Onboarding Layout] Query still loading, showing spinner");
+    console.log("[Onboarding Guard] Query still loading, showing spinner");
     return (
       <div className="flex h-screen w-full items-center justify-center">
         <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
@@ -41,39 +40,39 @@ function OnboardingLayoutContent({
 
   // Layout Guard: If user is redirecting (optimistic redirect), redirect immediately
   if (isOptimisticRedirecting) {
-    console.log("[Onboarding Layout] Optimistic redirect triggered, redirecting to dashboard");
+    console.log("[Onboarding Guard] Optimistic redirect triggered, redirecting to dashboard");
     // Prevent multiple redirects by checking if we've already redirected
     if (!hasRedirected.current) {
       hasRedirected.current = true;
-      console.log("[Onboarding Layout] First redirect triggered, preventing duplicate redirects");
+      console.log("[Onboarding Guard] First redirect triggered, preventing duplicate redirects");
       // Use replace to avoid adding to history stack
       // This helps maintain the Clerk session during redirect
       router.replace("/dashboard");
     } else {
-      console.log("[Onboarding Layout] Redirect already triggered, skipping duplicate");
+      console.log("[Onboarding Guard] Redirect already triggered, skipping duplicate");
     }
     return null;
   }
 
   // Layout Guard: If user has completed onboarding, redirect to dashboard
   if (onboardingStatus?.status === "complete") {
-    console.log("[Onboarding Layout] Onboarding complete, redirecting to dashboard");
+    console.log("[Onboarding Guard] Onboarding complete, redirecting to dashboard");
     // Prevent multiple redirects by checking if we've already redirected
     if (!hasRedirected.current) {
       hasRedirected.current = true;
-      console.log("[Onboarding Layout] First redirect triggered, preventing duplicate redirects");
+      console.log("[Onboarding Guard] First redirect triggered, preventing duplicate redirects");
       // Use replace to avoid adding to history stack
       // This helps maintain the Clerk session during redirect
       router.replace("/dashboard");
     } else {
-      console.log("[Onboarding Layout] Redirect already triggered, skipping duplicate");
+      console.log("[Onboarding Guard] Redirect already triggered, skipping duplicate");
     }
     return null;
   }
 
   // Layout Guard: If user is not logged in, show loading spinner (prevents UI flicker)
   if (onboardingStatus?.status === "not_logged_in") {
-    console.log("[Onboarding Layout] User not logged in, showing spinner during session reload");
+    console.log("[Onboarding Guard] User not logged in, showing spinner during session reload");
     return (
       <div className="flex h-screen w-full items-center justify-center">
         <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
@@ -83,7 +82,7 @@ function OnboardingLayoutContent({
 
   // Layout Guard: If user is syncing (race condition), show loading
   if (onboardingStatus?.status === "syncing") {
-    console.log("[Onboarding Layout] User syncing, showing spinner");
+    console.log("[Onboarding Guard] User syncing, showing spinner");
     return (
       <div className="flex h-screen w-full items-center justify-center">
         <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
@@ -92,8 +91,8 @@ function OnboardingLayoutContent({
   }
 
   // Otherwise, show the onboarding page
-  console.log("[Onboarding Layout] Onboarding incomplete, showing onboarding page");
-  return <OnboardingLayoutContent isOptimisticRedirecting={isOptimisticRedirecting} setIsOptimisticRedirecting={setIsOptimisticRedirecting}>{children}</OnboardingLayoutContent>;
+  console.log("[Onboarding Guard] Onboarding incomplete, showing onboarding page");
+  return <>{children}</>;
 }
 
 export default function OnboardingLayout({
@@ -101,5 +100,14 @@ export default function OnboardingLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return <OnboardingLayoutContent isOptimisticRedirecting={false} setIsOptimisticRedirecting={() => {}}>{children}</OnboardingLayoutContent>;
+  const [isOptimisticRedirecting, setIsOptimisticRedirecting] = useState(false);
+
+  return (
+    <OnboardingGuard
+      isOptimisticRedirecting={isOptimisticRedirecting}
+      setIsOptimisticRedirecting={setIsOptimisticRedirecting}
+    >
+      {children}
+    </OnboardingGuard>
+  );
 }
