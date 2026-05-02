@@ -7,12 +7,14 @@ import { api } from "@/convex/_generated/api";
 import { useUser, useSession } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { useOnboarding } from "@/components/onboarding-context";
 
-export default function OnboardingPage({ setIsOptimisticRedirecting }: { setIsOptimisticRedirecting: (value: boolean) => void }) {
+export default function OnboardingPage() {
   const { user } = useUser();
   const { session } = useSession();
   const router = useRouter();
   const setAccountType = useMutation(api.onboarding.setAccountTypeForUserAndProfile);
+  const { setIsOptimisticRedirecting } = useOnboarding();
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   

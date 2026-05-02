@@ -3,19 +3,13 @@
 import { useRouter } from "next/navigation";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
-import { useRef, useState } from "react";
+import { useRef } from "react";
+import { OnboardingProvider, useOnboarding } from "@/components/onboarding-context";
 
-function OnboardingGuard({
-  children,
-  isOptimisticRedirecting,
-  setIsOptimisticRedirecting,
-}: {
-  children: React.ReactNode;
-  isOptimisticRedirecting: boolean;
-  setIsOptimisticRedirecting: (value: boolean) => void;
-}) {
+function OnboardingGuard({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const onboardingStatus = useQuery(api.users.getOnboardingStatus);
+  const { isOptimisticRedirecting, setIsOptimisticRedirecting } = useOnboarding();
   const hasRedirected = useRef(false);
 
   // DIAGNOSTIC LOGGING
@@ -26,6 +20,7 @@ function OnboardingGuard({
     isIncomplete: onboardingStatus?.status === "incomplete",
     isNotLoggedIn: onboardingStatus?.status === "not_logged_in",
     isSyncing: onboardingStatus?.status === "syncing",
+    isOptimisticRedirecting,
   });
 
   // Layout Guard: Wait for query to resolve before checking status
@@ -100,14 +95,9 @@ export default function OnboardingLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const [isOptimisticRedirecting, setIsOptimisticRedirecting] = useState(false);
-
   return (
-    <OnboardingGuard
-      isOptimisticRedirecting={isOptimisticRedirecting}
-      setIsOptimisticRedirecting={setIsOptimisticRedirecting}
-    >
-      {children}
-    </OnboardingGuard>
+    <OnboardingProvider>
+      <OnboardingGuard>{children}</OnboardingGuard>
+    </OnboardingProvider>
   );
 }
