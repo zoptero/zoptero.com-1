@@ -3,16 +3,21 @@
 import { useRouter } from "next/navigation";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 
 function OnboardingLayoutContent({
   children,
+  isOptimisticRedirecting: isOptimisticRedirectingProp,
+  setIsOptimisticRedirecting: setIsOptimisticRedirectingProp,
 }: {
   children: React.ReactNode;
+  isOptimisticRedirecting: boolean;
+  setIsOptimisticRedirecting: (value: boolean) => void;
 }) {
   const router = useRouter();
   const onboardingStatus = useQuery(api.users.getOnboardingStatus);
   const hasRedirected = useRef(false);
+  const [isOptimisticRedirecting, setIsOptimisticRedirecting] = useState(false);
 
   // DIAGNOSTIC LOGGING
   console.log("[Onboarding Layout] Guard check:", {
@@ -32,6 +37,22 @@ function OnboardingLayoutContent({
         <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
       </div>
     );
+  }
+
+  // Layout Guard: If user is redirecting (optimistic redirect), redirect immediately
+  if (isOptimisticRedirecting) {
+    console.log("[Onboarding Layout] Optimistic redirect triggered, redirecting to dashboard");
+    // Prevent multiple redirects by checking if we've already redirected
+    if (!hasRedirected.current) {
+      hasRedirected.current = true;
+      console.log("[Onboarding Layout] First redirect triggered, preventing duplicate redirects");
+      // Use replace to avoid adding to history stack
+      // This helps maintain the Clerk session during redirect
+      router.replace("/dashboard");
+    } else {
+      console.log("[Onboarding Layout] Redirect already triggered, skipping duplicate");
+    }
+    return null;
   }
 
   // Layout Guard: If user has completed onboarding, redirect to dashboard
@@ -72,7 +93,7 @@ function OnboardingLayoutContent({
 
   // Otherwise, show the onboarding page
   console.log("[Onboarding Layout] Onboarding incomplete, showing onboarding page");
-  return <>{children}</>;
+  return <OnboardingLayoutContent isOptimisticRedirecting={isOptimisticRedirecting} setIsOptimisticRedirecting={setIsOptimisticRedirecting}>{children}</OnboardingLayoutContent>;
 }
 
 export default function OnboardingLayout({
@@ -80,5 +101,5 @@ export default function OnboardingLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return <OnboardingLayoutContent>{children}</OnboardingLayoutContent>;
+  return <OnboardingLayoutContent isOptimisticRedirecting={false}>{children}</OnboardingLayoutContent>;
 }

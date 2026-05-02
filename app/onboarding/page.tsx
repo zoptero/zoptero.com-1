@@ -8,7 +8,7 @@ import { useUser, useSession } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
-export default function OnboardingPage() {
+export default function OnboardingPage({ setIsOptimisticRedirecting }: { setIsOptimisticRedirecting: (value: boolean) => void }) {
   const { user } = useUser();
   const { session } = useSession();
   const router = useRouter();
@@ -33,6 +33,9 @@ export default function OnboardingPage() {
       return;
     }
 
+    // OPTIMISTIC REDIRECT: Set redirect state immediately to prevent long spinner
+    console.log("[Onboarding] Setting optimistic redirect state");
+    setIsOptimisticRedirecting(true);
     setIsSubmitting(true);
     setError(null);
 
