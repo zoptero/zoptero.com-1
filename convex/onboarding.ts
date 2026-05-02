@@ -1,6 +1,6 @@
 import { v } from "convex/values";
 import { mutation, action } from "./_generated/server";
-import { internal } from "./_generated/api";
+import { api } from "./_generated/api";
 import { createClerkClient } from "@clerk/backend";
 
 // Initialize Clerk client for backend operations
@@ -116,9 +116,8 @@ export const setAccountTypeForUserAndProfile = mutation({
     // Use scheduler.runAfter to offload the network request to a separate action
     try {
       console.log(`[Onboarding] Scheduling Clerk metadata update for user ${clerkId}`);
-      // Call the action directly (it's in the same file, so we can reference it by name)
-      // The action will be picked up by the scheduler
-      await ctx.scheduler.runAfter(0, updateClerkMetadata, {
+      // Use the generated API reference to call the action
+      await ctx.scheduler.runAfter(0, api.onboarding.updateClerkMetadata, {
         clerkId,
         onboardingComplete: true,
       });
