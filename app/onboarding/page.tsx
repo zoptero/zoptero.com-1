@@ -2,7 +2,7 @@
 "use client";
 
 import OnboardingCards from "@/components/OnboardingCards";
-import { useMutation } from "convex/react";
+import { useMutation, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { useUser, useSession } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
@@ -15,6 +15,9 @@ export default function OnboardingPage() {
   const setAccountType = useMutation(api.onboarding.setAccountTypeForUserAndProfile);
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  
+  // Query to check onboarding status (used for refresh mechanism)
+  const onboardingStatus = useQuery(api.users.getOnboardingStatus);
 
   const handleContinue = async (selected: string) => {
     console.log("[Onboarding] handleContinue called with selected:", selected);
@@ -52,7 +55,9 @@ export default function OnboardingPage() {
       // Client-side navigation to dashboard
       // This works better with Next.js routing than window.location.assign
       console.log("[Onboarding] About to navigate to dashboard");
+      console.log("[Onboarding] Current URL:", window.location.href);
       router.push("/dashboard");
+      console.log("[Onboarding] router.push() called");
     } catch (err) {
       console.error("[Onboarding] Error during onboarding:", err);
       console.error("[Onboarding] Error details:", {
