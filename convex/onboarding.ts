@@ -65,18 +65,31 @@ export const setAccountTypeForUserAndProfile = mutation({
     if (!identity) throw new Error("Not authenticated");
     const clerkId = identity.subject;
 
-    // Update users table
+    // Update users table - create if doesn't exist
     const user = await ctx.db
       .query("users")
       .withIndex("by_clerk_id", (q) => q.eq("clerkId", clerkId))
       .first();
+    
     if (user) {
+      // User exists - update it
       await ctx.db.patch(user._id, {
         accountType: args.accountType,
         email: args.email,
         name: args.name,
         avatarUrl: args.avatarUrl,
         onboardingComplete: true,
+      });
+    } else {
+      // User doesn't exist - create it
+      await ctx.db.insert("users", {
+        clerkId,
+        email: args.email,
+        name: args.name,
+        avatarUrl: args.avatarUrl,
+        accountType: args.accountType,
+        onboardingComplete: true,
+        createdAt: Date.now(),
       });
     }
 
