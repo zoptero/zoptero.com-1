@@ -23,6 +23,7 @@ export default function OnboardingPage() {
     console.log("[Onboarding] User email:", user?.emailAddresses[0]?.emailAddress);
     console.log("[Onboarding] User name:", user?.fullName);
     console.log("[Onboarding] User avatar:", user?.imageUrl);
+    console.log("[Onboarding] User ID:", user?.id);
     
     if (!user) {
       console.error("[Onboarding] User not found");
@@ -51,6 +52,10 @@ export default function OnboardingPage() {
       console.log("[Onboarding] Waiting for layout to detect onboardingComplete status...");
     } catch (err) {
       console.error("[Onboarding] Error during onboarding:", err);
+      console.error("[Onboarding] Error details:", {
+        message: err instanceof Error ? err.message : String(err),
+        stack: err instanceof Error ? err.stack : undefined,
+      });
       setError(err instanceof Error ? err.message : "Failed to complete onboarding");
     } finally {
       setIsSubmitting(false);
