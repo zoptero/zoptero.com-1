@@ -43,10 +43,12 @@ export default function OnboardingPage() {
       });
       console.log("[Onboarding] Mutation result:", result);
       console.log("[Onboarding] Mutation successful, redirecting to dashboard...");
-      // Imperative redirect - happens immediately after successful mutation
-      console.log("[Onboarding] About to call router.push('/dashboard')");
-      router.push('/dashboard');
-      console.log("[Onboarding] router.push called successfully");
+      // Use replace instead of push to avoid adding to history stack
+      // This helps maintain the Clerk session during redirect
+      console.log("[Onboarding] About to call router.replace('/dashboard')");
+      router.replace('/dashboard');
+      console.log("[Onboarding] router.replace called successfully");
+      console.log("[Onboarding] Waiting for layout to detect onboardingComplete status...");
     } catch (err) {
       console.error("[Onboarding] Error during onboarding:", err);
       setError(err instanceof Error ? err.message : "Failed to complete onboarding");

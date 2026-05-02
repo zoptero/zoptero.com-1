@@ -104,9 +104,23 @@ export const setAccountTypeForUserAndProfile = mutation({
       });
     }
 
-    // Clerk metadata sync is now handled separately via webhook
-    // This mutation only updates the Convex database
-    // The onboardingComplete flag is set above
+    // Sync to Clerk metadata to ensure middleware can check status
+    // This is non-blocking and won't fail the onboarding if it fails
+    try {
+      const clerkClient = getClerkClient();
+      await clerkClient.users.updateUserMetadata(clerkId, {
+        publicMetadata: { onboardingComplete: true },
+      });
+      console.log(`[Clerk] Successfully updated metadata for user ${clerkId}: onboardingComplete=true`);
+    } catch (error: any) {
+      console.error(`[Clerk] Failed to update metadata for user ${clerkId}:`, {
+        message: error.message,
+        status: error.status,
+        errors: error.errors,
+      });
+      // Don't throw - this is critical for the redirect to work
+      // The onboarding should still succeed, but the user might see a redirect loop
+    }
 
     return null;
   },
