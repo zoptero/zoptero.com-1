@@ -1,11 +1,12 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
+import { OnboardingProvider, useOnboarding } from "./OnboardingContext";
 
-export default function OnboardingLayout({
+function OnboardingLayoutContent({
   children,
 }: {
   children: React.ReactNode;
@@ -13,6 +14,7 @@ export default function OnboardingLayout({
   const router = useRouter();
   const pathname = usePathname();
   const onboardingStatus = useQuery(api.users.getOnboardingStatus);
+  const { onboardingComplete } = useOnboarding();
 
   useEffect(() => {
     // If user is not logged in, let Clerk handle the redirect
@@ -24,7 +26,12 @@ export default function OnboardingLayout({
     if (onboardingStatus?.status === "complete" && pathname === "/onboarding") {
       router.replace("/dashboard");
     }
-  }, [onboardingStatus, pathname, router]);
+    
+    // Also redirect if the page component has set onboardingComplete state
+    if (onboardingComplete && pathname === "/onboarding") {
+      router.replace("/dashboard");
+    }
+  }, [onboardingStatus, pathname, router, onboardingComplete]);
 
   // Show loading state while query is undefined (during initial load)
   if (onboardingStatus === undefined) {
@@ -62,4 +69,16 @@ export default function OnboardingLayout({
 
   // Fallback: show children
   return <>{children}</>;
+}
+
+export default function OnboardingLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return (
+    <OnboardingProvider>
+      <OnboardingLayoutContent>{children}</OnboardingLayoutContent>
+    </OnboardingProvider>
+  );
 }
