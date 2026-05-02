@@ -1,45 +1,33 @@
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 
-// Type for Clerk session claims with onboarding metadata
-type ClerkSessionClaims = {
-  publicMetadata?: {
-    onboardingComplete?: boolean;
-  };
-};
-
+// Public routes that don't require authentication
 const isPublicRoute = createRouteMatcher([
-  "/", 
-  "/sign-in(.*)", 
-  "/sign-up(.*)", 
-  "/onboarding(.*)"
+  "/",
+  "/sign-in(.*)",
+  "/sign-up(.*)",
+  "/onboarding(.*)",
 ]);
 
-const isDashboardRoute = createRouteMatcher(["/dashboard(.*)"]);
+// Protected routes that require authentication
+const isProtectedRoute = createRouteMatcher([
+  "/dashboard(.*)",
+  "/(api|trpc)(.*)",
+]);
 
 export default clerkMiddleware(async (auth, req) => {
-  if (!isPublicRoute(req)) {
+  // Public routes are accessible without authentication
+  if (isPublicRoute(req)) {
+    return NextResponse.next();
+  }
+
+  // Protected routes require authentication
+  if (isProtectedRoute(req)) {
     await auth.protect();
   }
 
-  // Get session claims to check onboarding status
-  const session = await auth() as { sessionClaims: ClerkSessionClaims };
-  const sessionClaims = session.sessionClaims;
-  
-  // Bi-directional onboarding guard using Clerk publicMetadata
-  // O(1) performance - no network calls needed
-  if (isDashboardRoute(req)) {
-    // If user has completed onboarding, they should be on dashboard
-    // If not, redirect to onboarding
-    if (sessionClaims?.publicMetadata?.onboardingComplete !== true) {
-      return NextResponse.redirect(new URL('/onboarding', req.url));
-    }
-  }
-
-  // If user is on onboarding route and has completed onboarding, redirect to dashboard
-  if (sessionClaims?.publicMetadata?.onboardingComplete === true) {
-    return NextResponse.redirect(new URL('/dashboard', req.url));
-  }
+  // All other routes are handled by Next.js default behavior
+  return NextResponse.next();
 });
 
 export const config = {
