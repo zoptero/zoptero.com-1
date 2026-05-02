@@ -1,17 +1,16 @@
 // app/onboarding/page.tsx
 "use client";
 
-
 import OnboardingCards from "@/components/OnboardingCards";
 import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
-import { useUser } from "@clerk/nextjs";
+import { useUser, useSession } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
-
 export default function OnboardingPage() {
   const { user } = useUser();
+  const { session } = useSession();
   const router = useRouter();
   const setAccountType = useMutation(api.onboarding.setAccountTypeForUserAndProfile);
   const [error, setError] = useState<string | null>(null);
@@ -44,12 +43,15 @@ export default function OnboardingPage() {
       });
       console.log("[Onboarding] Mutation result:", result);
       console.log("[Onboarding] Mutation successful, redirecting to dashboard...");
-      // Use replace instead of push to avoid adding to history stack
-      // This helps maintain the Clerk session during redirect
-      console.log("[Onboarding] About to call router.replace('/dashboard')");
-      router.replace('/dashboard');
-      console.log("[Onboarding] router.replace called successfully");
-      console.log("[Onboarding] Waiting for layout to detect onboardingComplete status...");
+      
+      // Reload session to get updated Clerk metadata
+      console.log("[Onboarding] Reloading session to get updated metadata...");
+      await session?.reload();
+      console.log("[Onboarding] Session reloaded successfully");
+      
+      // Full navigation to ensure server sees updated metadata
+      console.log("[Onboarding] About to navigate to dashboard");
+      window.location.assign("/dashboard");
     } catch (err) {
       console.error("[Onboarding] Error during onboarding:", err);
       console.error("[Onboarding] Error details:", {
