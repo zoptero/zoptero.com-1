@@ -1,14 +1,15 @@
 "use client";
 
 import { useState } from "react";
-import { Card } from "@/components/ui/card";
+import { Card, CardHeader, CardTitle, CardDescription, CardAction } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import FadeInSlide from "@/components/FadeInSlide";
+import { User, Building2 } from "lucide-react";
 
 const options = [
-  { value: "b2c", title: "Individuāls speciālists", description: "Neatkarīgs eksperts vai meistars." },
-  { value: "b2b", title: "B2B Uzņēmums", description: "Uzņēmums, aģentūra vai komanda" },
+  { value: "b2c", title: "Individuāls speciālists", description: "Neatkarīgs eksperts vai meistars.", icon: User },
+  { value: "b2b", title: "B2B Uzņēmums", description: "Uzņēmums, aģentūra vai komanda", icon: Building2 },
 ];
 
 export default function OnboardingCards({ onContinue, error, isSubmitting }: { onContinue?: (selected: string) => void, error?: string | null, isSubmitting?: boolean }) {
@@ -35,24 +36,34 @@ export default function OnboardingCards({ onContinue, error, isSubmitting }: { o
         )}
         
         {/* Cards Section - Staggered Animation */}
-        <FadeInSlide delay={0.2} className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
-          {options.map(option => (
-            <button
-              key={option.value}
-              type="button"
-              onClick={() => setSelected(option.value)}
-              className="text-left"
-            >
-              <Card
-                className={["transition-all",selected === option.value? "border-primary ring-2 ring-primary": "border-muted"].join(" ")}
+        <FadeInSlide delay={0.2} className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
+          {options.map(option => {
+            const Icon = option.icon;
+            return (
+              <button
+                key={option.value}
+                type="button"
+                onClick={() => setSelected(option.value)}
+                className="text-left"
               >
-                <div className="p-6">
-                  <h2 className="text-xl font-bold">{option.title}</h2>
-                  <p className="text-muted-foreground mt-2">{option.description}</p>
-                </div>
-              </Card>
-            </button>
-          ))}
+                <Card
+                  className={["transition-all", selected === option.value ? "border-primary ring-2 ring-primary" : "border-muted"].join(" ")}
+                >
+                  <CardHeader>
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1">
+                        <CardTitle className="text-lg">{option.title}</CardTitle>
+                        <CardDescription className="mt-1">{option.description}</CardDescription>
+                      </div>
+                      <CardAction>
+                        <Icon className="text-muted-foreground/50 size-4 lg:size-6" />
+                      </CardAction>
+                    </div>
+                  </CardHeader>
+                </Card>
+              </button>
+            );
+          })}
         </FadeInSlide>
         
         {/* Action Button - Staggered Animation */}
