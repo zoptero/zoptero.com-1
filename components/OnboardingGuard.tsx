@@ -45,7 +45,7 @@ function GuardContent({ children, preloadedStatus }: { children: React.ReactNode
   }, [onboardingStatus?.status, onboardingStatus?.accountType, router]);
 
   // UI RENDERING:
-  // Ja lādējas - skelets
+  // Ja lādējas - skelets (immediate, no Suspense wrapper needed)
   if (onboardingStatus === undefined) {
     return (
       <div className="absolute inset-0 flex items-center justify-center w-full h-full">
