@@ -18,8 +18,8 @@ export function NavUser() {
           appearance={{
             elements: {
               avatarBox: "h-8 w-8 rounded-lg",
-              userButton: "flex items-center gap-2 px-2",
-              userButtonTrigger: "flex items-center gap-2 px-2",
+              userButton: "flex items-center gap-2 px-2 h-10",
+              userButtonTrigger: "flex items-center gap-2 px-2 h-10",
               userButtonPopover: "w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg",
               userMenuActions: "flex flex-col gap-1",
               userMenuItem: "flex items-center gap-2 px-2 py-1.5 text-sm",
