@@ -1,6 +1,6 @@
 "use client";
 
-import { UserProfile } from "@clerk/nextjs";
+import { UserAvatar, UserProfile } from "@clerk/nextjs";
 import {
   SidebarMenu,
   SidebarMenuButton,
@@ -24,7 +24,9 @@ export function NavUser() {
               userMenuItemIcon: "h-4 w-4"
             }
           }}
-        />
+        >
+          <UserAvatar />
+        </UserProfile>
       </SidebarMenuItem>
     </SidebarMenu>
   );
