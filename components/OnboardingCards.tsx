@@ -25,7 +25,6 @@ export default function OnboardingCards({ onContinue, error, isSubmitting }: { o
           </Badge>
           <h1 className="text-2xl font-bold tracking-tight text-center mb-2">Es darbošos kā</h1>
           <p className="text-muted-foreground text-sm text-center mb-4">Izvēlies piemērotāko veidu</p>
-  +++++++ REPLACE
         </FadeInSlide>
         
         {/* Error Display - Staggered Animation */}
