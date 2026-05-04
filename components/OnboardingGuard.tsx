@@ -40,6 +40,10 @@ interface OnboardingGuardProps {
     }
   }, [onboardingStatus?.status, isOptimisticRedirecting, router]);
 
+  // Helper to check if status is complete
+  const isComplete = onboardingStatus?.status === "complete";
+  const isNotLoggedIn = onboardingStatus?.status === "not_logged_in";
+
   // DIAGNOSTIC LOGGING
   console.log("[Onboarding Guard] Guard check:", {
     status: onboardingStatus?.status,
@@ -47,16 +51,18 @@ interface OnboardingGuardProps {
     isComplete: onboardingStatus?.status === "complete",
     isIncomplete: onboardingStatus?.status === "incomplete",
     isNotLoggedIn: onboardingStatus?.status === "not_logged_in",
-    isSyncing: onboardingStatus?.status === "syncing",
     isOptimisticRedirecting,
   });
 
   // Layout Guard: Wait for query to resolve before checking status
   if (onboardingStatus === undefined) {
-    console.log("[Onboarding Guard] Query still loading, showing spinner");
+    console.log("[Onboarding Guard] Query still loading, showing brief initialization message");
     return (
       <div className="flex h-screen w-full items-center justify-center">
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
+        <div className="text-center">
+          <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent mx-auto mb-4" />
+          <p className="text-sm text-muted-foreground">Initializing profile...</p>
+        </div>
       </div>
     );
   }
@@ -96,16 +102,6 @@ interface OnboardingGuardProps {
   // Layout Guard: If user is not logged in, show loading spinner (prevents UI flicker)
   if (onboardingStatus?.status === "not_logged_in") {
     console.log("[Onboarding Guard] User not logged in, showing spinner during session reload");
-    return (
-      <div className="flex h-screen w-full items-center justify-center">
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
-      </div>
-    );
-  }
-
-  // Layout Guard: If user is syncing (race condition), show loading
-  if (onboardingStatus?.status === "syncing") {
-    console.log("[Onboarding Guard] User syncing, showing spinner");
     return (
       <div className="flex h-screen w-full items-center justify-center">
         <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />

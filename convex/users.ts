@@ -275,8 +275,11 @@ export const getOnboardingStatus = query({
       .first();
 
     if (!user) {
-      // The "Cold Start" race condition: Clerk identity exists, but Convex record hasn't arrived yet.
-      return { status: "syncing" } as const;
+      // With post-login hook, user should be created immediately.
+      // If user doesn't exist, it's likely a race condition or error.
+      // Return "incomplete" to show onboarding page instead of "syncing" spinner.
+      console.warn("[getOnboardingStatus] User not found, showing onboarding page");
+      return { status: "incomplete" } as const;
     }
 
     if (user.onboardingComplete) {
@@ -345,6 +348,7 @@ export const ensureCurrentUser = mutation({
   },
   returns: v.object({ onboardingComplete: v.boolean() }),
   handler: async (ctx, args) => {
+    const startTime = Date.now();
     const identity = await requireIdentity(ctx);
     const clerkId = identity.subject;
     // Prefer client-supplied email (from Clerk user object); JWT may omit it.
@@ -352,9 +356,18 @@ export const ensureCurrentUser = mutation({
     const name = args.name ?? identity.name;
     const avatarUrl = args.avatarUrl ?? identity.pictureUrl;
 
+    console.log(`[ensureCurrentUser] Starting sync for user ${clerkId}`, {
+      email,
+      name,
+      avatarUrl,
+    });
+
     // 1. clerkId-first lookup — no email required to update an existing record.
     const { duplicates, primary: existing } = await getPrimaryUserByClerkId(ctx, clerkId);
     if (existing) {
+      const lookupTime = Date.now() - startTime;
+      console.log(`[ensureCurrentUser] User found in ${lookupTime}ms for ${clerkId}`);
+      
       const mergedOnboardingComplete =
         existing.onboardingComplete === true ||
         duplicates.some((row) => row.onboardingComplete === true);
@@ -370,6 +383,8 @@ export const ensureCurrentUser = mutation({
         existing.onboardingComplete !== mergedOnboardingComplete ||
         existing.accountType !== mergedAccountType
       ) {
+        const patchTime = Date.now() - startTime;
+        console.log(`[ensureCurrentUser] Patching user ${clerkId} in ${patchTime}ms`);
         await ctx.db.patch(existing._id, {
           email: resolvedEmail,
           name,
@@ -383,16 +398,26 @@ export const ensureCurrentUser = mutation({
         await ctx.db.delete(row._id);
       }
 
+      const totalTime = Date.now() - startTime;
+      console.log(`[ensureCurrentUser] User sync completed in ${totalTime}ms for ${clerkId}`);
       return { onboardingComplete: mergedOnboardingComplete };
     }
 
     // 2. Email-based merge (handles pre-existing records created via webhook).
     if (email) {
+      const mergeTime = Date.now() - startTime;
+      console.log(`[ensureCurrentUser] No clerkId match, trying email merge in ${mergeTime}ms for ${clerkId}`);
       const syncedByEmail = await syncByEmail(ctx, { clerkId, email, name, avatarUrl });
-      if (syncedByEmail) return syncedByEmail;
+      if (syncedByEmail) {
+        const totalTime = Date.now() - startTime;
+        console.log(`[ensureCurrentUser] Email merge completed in ${totalTime}ms for ${clerkId}`);
+        return syncedByEmail;
+      }
     }
 
     // 3. Create — only reached when no record exists at all.
+    const createTime = Date.now() - startTime;
+    console.log(`[ensureCurrentUser] No match found, creating user in ${createTime}ms for ${clerkId}`);
     const requiredEmail = requireEmail(email, "ensureCurrentUser");
     await ctx.db.insert("users", {
       clerkId,
@@ -403,6 +428,8 @@ export const ensureCurrentUser = mutation({
       createdAt: Date.now(),
     });
 
+    const totalTime = Date.now() - startTime;
+    console.log(`[ensureCurrentUser] User created in ${totalTime}ms for ${clerkId}`);
     return { onboardingComplete: false };
   },
 });
