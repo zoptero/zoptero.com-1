@@ -25,23 +25,39 @@ function GuardContent({ children, preloadedStatus }: { children: React.ReactNode
     preloadedStatusRef.current = preloadedStatus;
   }
 
-  // Reactive redirect when onboarding status changes
+  // Diagnostic logging for status and redirecting state
+  useEffect(() => {
+    console.log("[OnboardingGuard] Status check:", {
+      status: onboardingStatus?.status,
+      isOptimisticRedirecting,
+      hasRedirected: hasRedirected.current,
+      isLoading: onboardingStatus === undefined
+    });
+  }, [onboardingStatus?.status, isOptimisticRedirecting, hasRedirected.current]);
+
+  // Consolidated redirect logic in a single useEffect
   useEffect(() => {
     // Only redirect if not already redirecting and haven't redirected yet
     if (!isOptimisticRedirecting && !hasRedirected.current) {
-      if (onboardingStatus?.status === "complete") {
+      const status = onboardingStatus?.status;
+      
+      console.log("[OnboardingGuard] Redirect decision:", {
+        status,
+        isOptimisticRedirecting,
+        willRedirect: status === "complete" || status === "not_logged_in"
+      });
+
+      if (status === "complete") {
         hasRedirected.current = true;
+        console.log("[OnboardingGuard] Redirecting to /dashboard (status: complete)");
         router.replace("/dashboard");
-      } else if (onboardingStatus?.status === "not_logged_in") {
+      } else if (status === "not_logged_in") {
         hasRedirected.current = true;
+        console.log("[OnboardingGuard] Redirecting to /sign-in (status: not_logged_in)");
         router.replace("/sign-in");
       }
     }
   }, [onboardingStatus?.status, isOptimisticRedirecting, router]);
-
-  // Helper to check if status is complete
-  const isComplete = onboardingStatus?.status === "complete";
-  const isNotLoggedIn = onboardingStatus?.status === "not_logged_in";
 
   // Layout Guard: Wait for query to resolve before checking status
   if (onboardingStatus === undefined) {
@@ -59,6 +75,7 @@ function GuardContent({ children, preloadedStatus }: { children: React.ReactNode
       hasRedirected.current = true;
       // Use replace to avoid adding to history stack
       // This helps maintain the Clerk session during redirect
+      console.log("[OnboardingGuard] Optimistic redirect to /dashboard");
       router.replace("/dashboard");
     }
     return null;
@@ -71,6 +88,7 @@ function GuardContent({ children, preloadedStatus }: { children: React.ReactNode
       hasRedirected.current = true;
       // Use replace to avoid adding to history stack
       // This helps maintain the Clerk session during redirect
+      console.log("[OnboardingGuard] Redirecting to /dashboard (status: complete)");
       router.replace("/dashboard");
     }
     return null;

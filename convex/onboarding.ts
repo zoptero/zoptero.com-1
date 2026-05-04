@@ -68,6 +68,7 @@ export const setAccountTypeForUserAndProfile = mutation({
   },
   returns: v.null(),
   handler: async (ctx, args) => {
+    console.log("[onboarding.setAccountTypeForUserAndProfile] Mutation called with:", args);
     const identity = await ctx.auth.getUserIdentity();
     if (!identity) throw new Error("Not authenticated");
     const clerkId = identity.subject;
@@ -79,6 +80,7 @@ export const setAccountTypeForUserAndProfile = mutation({
       .first();
     
     if (user) {
+      console.log("[onboarding.setAccountTypeForUserAndProfile] Updating existing user:", user._id);
       // User exists - update it
       await ctx.db.patch(user._id, {
         accountType: args.accountType,
@@ -88,6 +90,7 @@ export const setAccountTypeForUserAndProfile = mutation({
         onboardingComplete: true,
       });
     } else {
+      console.log("[onboarding.setAccountTypeForUserAndProfile] Creating new user");
       // User doesn't exist - create it
       await ctx.db.insert("users", {
         clerkId,
@@ -105,6 +108,7 @@ export const setAccountTypeForUserAndProfile = mutation({
       .query("profiles")
       .withIndex("by_clerk_id", (q) => q.eq("clerkId", clerkId))
       .collect();
+    console.log("[onboarding.setAccountTypeForUserAndProfile] Updating", profiles.length, "profiles");
     for (const profile of profiles) {
       await ctx.db.patch(profile._id, {
         accountType: args.accountType,
@@ -115,15 +119,18 @@ export const setAccountTypeForUserAndProfile = mutation({
     // This is non-blocking and won't fail the onboarding if it fails
     // Use scheduler.runAfter to offload the network request to a separate action
     try {
+      console.log("[onboarding.setAccountTypeForUserAndProfile] Scheduling Clerk metadata update");
       await ctx.scheduler.runAfter(0, api.onboarding.updateClerkMetadata, {
         clerkId,
         onboardingComplete: true,
       });
     } catch (error: any) {
+      console.error("[onboarding.setAccountTypeForUserAndProfile] Failed to schedule Clerk metadata update:", error);
       // Don't throw - this is critical for the redirect to work
       // The onboarding should still succeed, but the user might see a redirect loop
     }
 
+    console.log("[onboarding.setAccountTypeForUserAndProfile] Mutation completed successfully");
     return null;
   },
 });
