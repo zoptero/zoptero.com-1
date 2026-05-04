@@ -35,6 +35,13 @@ function GuardContent({ children, preloadedStatus }: { children: React.ReactNode
     });
   }, [onboardingStatus?.status, isOptimisticRedirecting, hasRedirected.current]);
 
+  // Log when status changes from undefined to a value
+  useEffect(() => {
+    if (onboardingStatus !== undefined) {
+      console.log("[OnboardingGuard] Status resolved:", onboardingStatus);
+    }
+  }, [onboardingStatus]);
+
   // Consolidated redirect logic in a single useEffect
   useEffect(() => {
     // Only redirect if not already redirecting and haven't redirected yet

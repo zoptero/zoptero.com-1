@@ -281,7 +281,7 @@ export const getOnboardingStatus = query({
       return { status: "incomplete" } as const;
     }
 
-    if (user.onboardingComplete) {
+    if (user.onboardingComplete && (user.accountType === "b2b" || user.accountType === "b2c")) {
       return { status: "complete" } as const;
     }
 
