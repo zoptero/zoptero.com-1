@@ -33,15 +33,16 @@ function GuardContent({ children, preloadedStatus }: { children: React.ReactNode
       return;
     }
 
-    // 4. Servera statusa redirekts
-    if (onboardingStatus.status === "complete") {
+    // 4. Servera statusa redirekts - tikai ja status ir "complete" un ir accountType
+    if (onboardingStatus.status === "complete" && onboardingStatus.accountType) {
       hasRedirected.current = true;
       router.replace("/dashboard");
     } else if (onboardingStatus.status === "not_logged_in") {
       hasRedirected.current = true;
       router.replace("/sign-in");
     }
-  }, [onboardingStatus?.status, router]);
+    // Ja status ir "incomplete" vai "syncing", mēs NEKAD nepārvirzām prom no onboarding
+  }, [onboardingStatus?.status, onboardingStatus?.accountType, router]);
 
   // UI RENDERING:
   // Ja lādējas - skelets

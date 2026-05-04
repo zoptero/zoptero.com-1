@@ -15,7 +15,7 @@ const clerkClientInstance = createClerkClient({
  * This ensures the middleware can check the status without network calls
  * Runs non-blocking to avoid blocking database transactions
  */
-async function syncClerkMetadata(clerkId: string, onboardingComplete: boolean, accountType?: "b2b" | "b2c") {
+async function syncClerkMetadata(clerkId: string, onboardingComplete: boolean, accountType?: "b2c" | "b2b") {
   try {
     // Non-blocking: don't await to prevent blocking database transactions
     const metadata: any = { onboardingComplete };
@@ -256,7 +256,7 @@ export type OnboardingStatus =
   | { status: "not_logged_in" }
   | { status: "syncing" }
   | { status: "incomplete" }
-  | { status: "complete" };
+  | { status: "complete"; accountType?: "b2c" | "b2b" };
 
 export const getOnboardingStatus = query({
   args: {},
@@ -264,7 +264,7 @@ export const getOnboardingStatus = query({
     v.object({ status: v.literal("not_logged_in") }),
     v.object({ status: v.literal("syncing") }),
     v.object({ status: v.literal("incomplete") }),
-    v.object({ status: v.literal("complete") })
+    v.object({ status: v.literal("complete"), accountType: v.optional(v.union(v.literal("b2c"), v.literal("b2b"))) })
   ),
   handler: async (ctx) => {
     const identity = await ctx.auth.getUserIdentity();
@@ -285,7 +285,7 @@ export const getOnboardingStatus = query({
     }
 
     if (user.onboardingComplete && (user.accountType === "b2b" || user.accountType === "b2c")) {
-      return { status: "complete" } as const;
+      return { status: "complete", accountType: user.accountType } as const;
     }
 
     return { status: "incomplete" } as const;
