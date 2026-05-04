@@ -57,7 +57,15 @@ export default function OnboardingCards({ onContinue, error, isSubmitting }: { o
           size="lg"
           disabled={!selected || isSubmitting}
           className="mt-4"
-          onClick={() => selected && onContinue?.(selected)}
+          onClick={() => {
+            console.log("[OnboardingCards] Button clicked, selected:", selected);
+            if (selected) {
+              console.log("[OnboardingCards] Calling onContinue with:", selected);
+              onContinue?.(selected);
+            } else {
+              console.log("[OnboardingCards] No selection, button is disabled");
+            }
+          }}
         >
           {isSubmitting ? "Notiek..." : "Turpināt"}
         </Button>

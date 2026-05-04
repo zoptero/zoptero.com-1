@@ -21,6 +21,12 @@ export default function OnboardingPage() {
   // Query to check onboarding status (used for refresh mechanism)
   const onboardingStatus = useQuery(api.users.getOnboardingStatus);
 
+  // Debug logging
+  console.log("[OnboardingPage] Component mounted");
+  console.log("[OnboardingPage] User:", user);
+  console.log("[OnboardingPage] Session:", session);
+  console.log("[OnboardingPage] onboardingStatus:", onboardingStatus);
+
   const handleContinue = async (selected: string) => {
     console.log("[Onboarding] handleContinue called with selected:", selected);
     console.log("[Onboarding] User:", user);
