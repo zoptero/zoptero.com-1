@@ -3,12 +3,14 @@
 
 
 import { SignIn } from '@clerk/nextjs';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 
 export default function UnifiedAuthPage() {
+  const observerRef = useRef<MutationObserver | null>(null);
+
   useEffect(() => {
-    // Wait for DOM to be fully rendered
-    setTimeout(() => {
+    // Function to update social button text
+    const updateSocialButtonText = () => {
       const socialButtons = document.querySelectorAll('.cl-socialButtonsBlockButtonText');
       socialButtons.forEach((textElement) => {
         if (textElement && textElement.textContent) {
@@ -20,7 +22,33 @@ export default function UnifiedAuthPage() {
           }
         }
       });
-    }, 200);
+    };
+
+    // Initial update
+    setTimeout(updateSocialButtonText, 200);
+
+    // Set up MutationObserver to watch for changes
+    observerRef.current = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        if (mutation.type === 'childList' || mutation.type === 'characterData') {
+          updateSocialButtonText();
+        }
+      });
+    });
+
+    // Start observing the document body for changes
+    observerRef.current.observe(document.body, {
+      childList: true,
+      subtree: true,
+      characterData: true,
+    });
+
+    // Cleanup on unmount
+    return () => {
+      if (observerRef.current) {
+        observerRef.current.disconnect();
+      }
+    };
   }, []);
 
   return (
