@@ -6,10 +6,10 @@ import { useMutation, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { useUser, useSession } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useOnboarding } from "@/components/onboarding-context";
 
-export default function OnboardingPage() {
+  export default function OnboardingPage() {
   const { user } = useUser();
   const { session } = useSession();
   const router = useRouter();
@@ -20,6 +20,18 @@ export default function OnboardingPage() {
   
   // Query to check onboarding status (used for refresh mechanism)
   const onboardingStatus = useQuery(api.users.getOnboardingStatus);
+  
+  // Redirect to dashboard if onboarding is already complete
+  useEffect(() => {
+    if (onboardingStatus?.status === "complete") {
+      router.replace("/dashboard");
+    }
+  }, [onboardingStatus, router]);
+  
+  // Prevent re-submission if already complete
+  if (onboardingStatus?.status === "complete") {
+    return null;
+  }
 
   const handleContinue = async (selected: string) => {
     if (!user) {
