@@ -6,6 +6,7 @@ import { useQuery, Preloaded } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { OnboardingProvider, useOnboarding } from "@/components/onboarding-context";
 import { OnboardingSkeleton } from "@/components/OnboardingSkeleton";
+import OnboardingCards from "@/components/OnboardingCards";
 
 interface OnboardingGuardProps {
   children: React.ReactNode;
@@ -56,15 +57,8 @@ interface OnboardingGuardProps {
 
   // Layout Guard: Wait for query to resolve before checking status
   if (onboardingStatus === undefined) {
-    console.log("[Onboarding Guard] Query still loading, showing brief initialization message");
-    return (
-      <div className="flex h-screen w-full items-center justify-center">
-        <div className="text-center">
-          <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent mx-auto mb-4" />
-          <p className="text-sm text-muted-foreground">Initializing profile...</p>
-        </div>
-      </div>
-    );
+    console.log("[Onboarding Guard] Query still loading, showing skeleton");
+    return <OnboardingSkeleton />;
   }
 
   // Layout Guard: If user is redirecting (optimistic redirect), redirect immediately
@@ -111,7 +105,10 @@ interface OnboardingGuardProps {
 
   // Otherwise, show the onboarding page
   console.log("[Onboarding Guard] Onboarding incomplete, showing onboarding page");
-  return <>{children}</>;
+  return <OnboardingCards onContinue={(selected: string) => {
+    console.log("[Onboarding Guard] User selected:", selected);
+    // The actual onboarding flow is handled by the parent component
+  }} />;
 }
 
 export function OnboardingGuard({ children, preloadedStatus }: OnboardingGuardProps) {

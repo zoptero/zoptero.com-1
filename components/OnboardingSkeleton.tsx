@@ -1,4 +1,5 @@
 import { cn } from "@/lib/utils";
+import { Card } from "@/components/ui/card";
 
 export function OnboardingSkeleton() {
   return (
@@ -13,7 +14,7 @@ export function OnboardingSkeleton() {
       {/* Cards Section */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
         {[1, 2].map((i) => (
-          <div key={i} className="h-48 bg-muted animate-pulse rounded-lg" />
+          <Card key={i} className="h-48 bg-muted animate-pulse rounded-lg" />
         ))}
       </div>
       
