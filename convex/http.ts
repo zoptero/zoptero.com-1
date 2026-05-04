@@ -104,7 +104,6 @@ http.route({
         email: primaryEmail,
         name,
         avatarUrl: userData.image_url,
-        onboardingComplete: userData.public_metadata?.onboardingComplete,
         accountType: userData.public_metadata?.accountType,
       });
       

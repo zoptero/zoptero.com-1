@@ -80,7 +80,7 @@ async function syncByEmail(
     onboardingComplete?: boolean;
     accountType?: "b2c" | "b2b";
   }
-) {
+): Promise<{ onboardingComplete: boolean } | null> {
   const emailMatches = await ctx.db
     .query("users")
     .withIndex("by_email", (q) => q.eq("email", input.email))
@@ -95,9 +95,11 @@ async function syncByEmail(
     sorted.find((row) => row.clerkId === input.clerkId) ??
     sorted[0];
 
+  // Preserve existing onboardingComplete status unless explicitly set to true
+  // This prevents webhooks from overwriting the onboarding status
+  const existingOnboardingComplete = primary.onboardingComplete ?? false;
   const mergedOnboardingComplete =
-    input.onboardingComplete ??
-    sorted.some((row) => row.onboardingComplete === true);
+    input.onboardingComplete === true ? true : existingOnboardingComplete;
   const mergedAccountType =
     input.accountType ??
     primary.accountType ??
@@ -664,7 +666,6 @@ export const syncUser = internalMutation({
     email: v.string(),
     name: v.optional(v.string()),
     avatarUrl: v.optional(v.string()),
-    onboardingComplete: v.optional(v.boolean()),
     accountType: v.optional(v.union(v.literal("b2c"), v.literal("b2b"))),
   },
   handler: async (ctx, args) => {
@@ -677,7 +678,7 @@ export const syncUser = internalMutation({
       email,
       name: resolvedName,
       avatarUrl: args.avatarUrl,
-      onboardingComplete: args.onboardingComplete,
+      onboardingComplete: undefined, // Don't set onboardingComplete from webhook
       accountType: args.accountType,
     });
 
@@ -691,19 +692,28 @@ export const syncUser = internalMutation({
       .withIndex("by_clerk_id", (q) => q.eq("clerkId", args.clerkId))
       .first();
     if (user) {
-      await ctx.db.patch(user._id, args);
+      // Don't patch onboardingComplete - preserve existing value
+      await ctx.db.patch(user._id, {
+        email,
+        name: resolvedName,
+        avatarUrl: args.avatarUrl,
+        accountType: args.accountType,
+      });
     } else {
       await ctx.db.insert("users", {
-        ...args,
+        clerkId: args.clerkId,
+        email,
+        name: resolvedName,
+        avatarUrl: args.avatarUrl,
+        onboardingComplete: false, // Default to false for new users
+        accountType: args.accountType,
         createdAt: Date.now(),
       });
     }
     // Upsert profile in profiles table
     // Remove 'name' field and map to 'displayName' for profiles
     const { name, ...profileArgs } = args;
-    // Remove onboardingComplete from profileArgs before upserting profile
-    const { onboardingComplete, ...profileArgsNoOnboarding } = profileArgs;
-    const profileData: any = { ...profileArgsNoOnboarding };
+    const profileData: any = { ...profileArgs };
     if (name) profileData.displayName = name;
     let profile = await ctx.db
       .query("profiles")
@@ -713,10 +723,6 @@ export const syncUser = internalMutation({
       await ctx.db.patch(profile._id, profileData);
     } else {
       await ctx.db.insert("profiles", profileData);
-    }
-    // Sync to Clerk metadata if onboardingComplete is provided (non-blocking)
-    if (args.onboardingComplete !== undefined) {
-      syncClerkMetadata(args.clerkId, args.onboardingComplete);
     }
     return { success: true };
   },
