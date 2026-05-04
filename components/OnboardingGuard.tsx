@@ -58,7 +58,11 @@ interface OnboardingGuardProps {
   // Layout Guard: Wait for query to resolve before checking status
   if (onboardingStatus === undefined) {
     console.log("[Onboarding Guard] Query still loading, showing skeleton");
-    return <OnboardingSkeleton />;
+    return (
+      <div className="absolute inset-0 flex items-center justify-center w-full h-full">
+        <OnboardingSkeleton />
+      </div>
+    );
   }
 
   // Layout Guard: If user is redirecting (optimistic redirect), redirect immediately
@@ -97,7 +101,7 @@ interface OnboardingGuardProps {
   if (onboardingStatus?.status === "not_logged_in") {
     console.log("[Onboarding Guard] User not logged in, showing spinner during session reload");
     return (
-      <div className="flex h-screen w-full items-center justify-center">
+      <div className="absolute inset-0 flex items-center justify-center w-full h-full">
         <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
       </div>
     );
@@ -105,10 +109,14 @@ interface OnboardingGuardProps {
 
   // Otherwise, show the onboarding page
   console.log("[Onboarding Guard] Onboarding incomplete, showing onboarding page");
-  return <OnboardingCards onContinue={(selected: string) => {
-    console.log("[Onboarding Guard] User selected:", selected);
-    // The actual onboarding flow is handled by the parent component
-  }} />;
+  return (
+    <div className="absolute inset-0 flex items-center justify-center w-full h-full">
+      <OnboardingCards onContinue={(selected: string) => {
+        console.log("[Onboarding Guard] User selected:", selected);
+        // The actual onboarding flow is handled by the parent component
+      }} />
+    </div>
+  );
 }
 
 export function OnboardingGuard({ children, preloadedStatus }: OnboardingGuardProps) {
