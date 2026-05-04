@@ -52,13 +52,9 @@ export default function OnboardingPage() {
       console.log("[Onboarding] Mutation result:", result);
       console.log("[Onboarding] Mutation successful, redirecting to dashboard...");
       
-      // Reload session to get updated Clerk metadata
-      console.log("[Onboarding] Reloading session to get updated metadata...");
-      await session?.reload();
-      console.log("[Onboarding] Session reloaded successfully");
-      
       // Client-side navigation to dashboard
-      // This works better with Next.js routing than window.location.assign
+      // Convex's reactivity will trigger OnboardingGuard redirect automatically
+      // No need to manually reload session or navigate
       console.log("[Onboarding] About to navigate to dashboard");
       console.log("[Onboarding] Current URL:", window.location.href);
       router.push("/dashboard");
