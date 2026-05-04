@@ -22,47 +22,30 @@ export default function OnboardingPage() {
   const onboardingStatus = useQuery(api.users.getOnboardingStatus);
 
   const handleContinue = async (selected: string) => {
-    console.log("[OnboardingPage] handleContinue called with selected:", selected);
-    console.log("[OnboardingPage] User:", user);
-    
     if (!user) {
-      console.error("[OnboardingPage] User not found");
       setError("User not found");
       return;
     }
 
     // OPTIMISTIC REDIRECT: Set redirect state immediately to prevent long spinner
-    console.log("[OnboardingPage] Setting optimistic redirect and submitting state");
     setIsOptimisticRedirecting(true);
     setIsSubmitting(true);
     setError(null);
 
     try {
-      console.log("[OnboardingPage] Calling setAccountType mutation with:", {
+      await setAccountType({
         accountType: selected as "b2b" | "b2c",
         email: user.emailAddresses[0]?.emailAddress || "",
         name: user.fullName || undefined,
         avatarUrl: user.imageUrl || undefined,
       });
-      
-      const result = await setAccountType({
-        accountType: selected as "b2b" | "b2c",
-        email: user.emailAddresses[0]?.emailAddress || "",
-        name: user.fullName || undefined,
-        avatarUrl: user.imageUrl || undefined,
-      });
-      
-      console.log("[OnboardingPage] Mutation result:", result);
-      console.log("[OnboardingPage] Mutation successful - OnboardingGuard will handle redirect");
       
       // NOTE: We do NOT call router.push here. The OnboardingGuard will handle
       // the redirect reactively based on the updated onboardingStatus.
       // This prevents navigation conflicts between the page and the guard.
     } catch (err) {
-      console.error("[OnboardingPage] Error during onboarding:", err);
       setError(err instanceof Error ? err.message : "Failed to complete onboarding");
     } finally {
-      console.log("[OnboardingPage] Resetting submitting state");
       setIsSubmitting(false);
     }
   };

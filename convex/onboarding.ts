@@ -35,19 +35,10 @@ export const updateClerkMetadata = action({
       const clerkClient = getClerkClient();
       
       // Non-blocking: don't await to prevent blocking database transactions
-      const result = await clerkClient.users.updateUserMetadata(args.clerkId, {
+      await clerkClient.users.updateUserMetadata(args.clerkId, {
         publicMetadata: { onboardingComplete: args.onboardingComplete },
       });
-      console.log(`[Clerk] Successfully updated metadata for user ${args.clerkId}: onboardingComplete=${args.onboardingComplete}`, result);
     } catch (error: any) {
-      console.error(`[Clerk] Failed to update metadata for user ${args.clerkId}:`, {
-        message: error.message,
-        status: error.status,
-        errors: error.errors,
-        name: error.name,
-        clerkId: args.clerkId,
-        onboardingComplete: args.onboardingComplete
-      });
       // Don't throw - this is optional and the onboarding can still complete
       // The user data is already saved to Convex, so they can still use the app
     }
