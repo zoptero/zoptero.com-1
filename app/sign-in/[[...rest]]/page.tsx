@@ -11,15 +11,10 @@ export default function UnifiedAuthPage() {
   useEffect(() => {
     // Function to update social button text
     const updateSocialButtonText = () => {
-      const socialButtons = document.querySelectorAll('.cl-socialButtonsBlockButtonText');
-      socialButtons.forEach((textElement) => {
-        if (textElement && textElement.textContent) {
-          const text = textElement.textContent.toLowerCase();
-          if (text.includes('google')) {
-            textElement.textContent = 'Google';
-          } else if (text.includes('linkedin')) {
-            textElement.textContent = 'Linkedin';
-          }
+      const elements = document.querySelectorAll('.cl-socialButtonsBlockButtonText');
+      elements.forEach((el) => {
+        if (el.textContent?.includes("Continue with")) {
+          el.textContent = el.textContent.replace("Continue with ", "");
         }
       });
     };
