@@ -67,7 +67,7 @@ export default function OnboardingCards({ onContinue, error, isSubmitting }: { o
               }
             }}
           >
-            {isSubmitting ? "Notiek..." : "Turpināt"}
+            {isSubmitting ? "Veidojam lietotāju" : "Turpināt"}
           </Button>
         </FadeInSlide>
       </div>
