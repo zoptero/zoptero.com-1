@@ -1,0 +1,5 @@
+{
+  "name": "zoptero-com-1",
+  "buildCommand": "pnpm build",
+  "outputDirectory": ".next"
+}
