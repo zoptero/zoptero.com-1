@@ -41,7 +41,7 @@ function GuardContent({ children, preloadedStatus }: { children: React.ReactNode
       hasRedirected.current = true;
       router.replace("/sign-in");
     }
-  }, [onboardingStatus, isOptimisticRedirecting, router]);
+  }, [onboardingStatus?.status, router]);
 
   // UI RENDERING:
   // Ja lādējas - skelets
@@ -49,6 +49,18 @@ function GuardContent({ children, preloadedStatus }: { children: React.ReactNode
     return (
       <div className="absolute inset-0 flex items-center justify-center w-full h-full">
         <OnboardingSkeleton />
+      </div>
+    );
+  }
+
+  // Ja lietotājs ielādēts, bet status ir 'syncing', rādām sinhronizācijas indikatoru
+  if (onboardingStatus.status === "syncing") {
+    return (
+      <div className="absolute inset-0 flex items-center justify-center w-full h-full">
+        <div className="text-center">
+          <div className="text-lg font-medium mb-2">Sinhronizējam profilu...</div>
+          <div className="text-sm text-gray-500">Lūdzu, uzgaidiet</div>
+        </div>
       </div>
     );
   }

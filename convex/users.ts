@@ -279,10 +279,9 @@ export const getOnboardingStatus = query({
       .first();
 
     if (!user) {
-      // With post-login hook, user should be created immediately.
-      // If user doesn't exist, it's likely a race condition or error.
-      // Return "incomplete" to show onboarding page instead of "syncing" spinner.
-      return { status: "incomplete" } as const;
+      // User exists (identity found) but not in database yet - syncing in progress
+      // Return "syncing" to show loading state during database sync handshake
+      return { status: "syncing" } as const;
     }
 
     if (user.onboardingComplete && (user.accountType === "b2b" || user.accountType === "b2c")) {
