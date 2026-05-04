@@ -21,18 +21,8 @@ export default function OnboardingPage() {
   // Query to check onboarding status (used for refresh mechanism)
   const onboardingStatus = useQuery(api.users.getOnboardingStatus);
 
-  // Debug logging
-  console.log("[OnboardingPage] Component mounted");
-  console.log("[OnboardingPage] User:", user);
-  console.log("[OnboardingPage] Session:", session);
-  console.log("[OnboardingPage] onboardingStatus:", onboardingStatus);
-
   const handleContinue = async (selected: string) => {
-    console.log("[Onboarding] handleContinue called with selected:", selected);
-    console.log("[Onboarding] User:", user);
-    
     if (!user) {
-      console.error("[Onboarding] User not found");
       setError("User not found");
       return;
     }
@@ -43,28 +33,18 @@ export default function OnboardingPage() {
     setError(null);
 
     try {
-      console.log("[Onboarding] Calling setAccountType mutation...");
-      const result = await setAccountType({
+      await setAccountType({
         accountType: selected as "b2b" | "b2c",
         email: user.emailAddresses[0]?.emailAddress || "",
         name: user.fullName || undefined,
         avatarUrl: user.imageUrl || undefined,
       });
-      console.log("[Onboarding] Mutation result:", result);
-      console.log("[Onboarding] Mutation successful, redirecting to dashboard...");
       
       // Client-side navigation to dashboard
       // Convex's reactivity will trigger OnboardingGuard redirect automatically
       // No need to manually reload session or navigate
-      console.log("[Onboarding] About to navigate to dashboard");
       router.push("/dashboard");
-      console.log("[Onboarding] router.push() called");
     } catch (err) {
-      console.error("[Onboarding] Error during onboarding:", err);
-      console.error("[Onboarding] Error details:", {
-        message: err instanceof Error ? err.message : String(err),
-        stack: err instanceof Error ? err.stack : undefined,
-      });
       setError(err instanceof Error ? err.message : "Failed to complete onboarding");
     } finally {
       setIsSubmitting(false);
