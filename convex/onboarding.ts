@@ -115,19 +115,11 @@ export const setAccountTypeForUserAndProfile = mutation({
     // This is non-blocking and won't fail the onboarding if it fails
     // Use scheduler.runAfter to offload the network request to a separate action
     try {
-      console.log(`[Onboarding] Scheduling Clerk metadata update for user ${clerkId}`);
-      // Use the generated API reference to call the action
       await ctx.scheduler.runAfter(0, api.onboarding.updateClerkMetadata, {
         clerkId,
         onboardingComplete: true,
       });
-      console.log(`[Onboarding] Clerk metadata update scheduled successfully`);
     } catch (error: any) {
-      console.error(`[Onboarding] Failed to schedule Clerk metadata update for user ${clerkId}:`, {
-        message: error.message,
-        status: error.status,
-        errors: error.errors,
-      });
       // Don't throw - this is critical for the redirect to work
       // The onboarding should still succeed, but the user might see a redirect loop
     }

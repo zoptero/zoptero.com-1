@@ -24,10 +24,6 @@ export default function OnboardingPage() {
   const handleContinue = async (selected: string) => {
     console.log("[Onboarding] handleContinue called with selected:", selected);
     console.log("[Onboarding] User:", user);
-    console.log("[Onboarding] User email:", user?.emailAddresses[0]?.emailAddress);
-    console.log("[Onboarding] User name:", user?.fullName);
-    console.log("[Onboarding] User avatar:", user?.imageUrl);
-    console.log("[Onboarding] User ID:", user?.id);
     
     if (!user) {
       console.error("[Onboarding] User not found");
@@ -36,7 +32,6 @@ export default function OnboardingPage() {
     }
 
     // OPTIMISTIC REDIRECT: Set redirect state immediately to prevent long spinner
-    console.log("[Onboarding] Setting optimistic redirect state");
     setIsOptimisticRedirecting(true);
     setIsSubmitting(true);
     setError(null);
@@ -56,7 +51,6 @@ export default function OnboardingPage() {
       // Convex's reactivity will trigger OnboardingGuard redirect automatically
       // No need to manually reload session or navigate
       console.log("[Onboarding] About to navigate to dashboard");
-      console.log("[Onboarding] Current URL:", window.location.href);
       router.push("/dashboard");
       console.log("[Onboarding] router.push() called");
     } catch (err) {
