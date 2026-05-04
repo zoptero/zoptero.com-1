@@ -85,12 +85,10 @@ function GuardContent({ children, preloadedStatus }: { children: React.ReactNode
     );
   }
 
-  // Otherwise, show the onboarding page
+  // Otherwise, show the onboarding page with the onContinue prop
   return (
     <div className="absolute inset-0 flex items-center justify-center w-full h-full">
-      <OnboardingCards onContinue={(selected: string) => {
-        // The actual onboarding flow is handled by the parent component
-      }} />
+      {children}
     </div>
   );
 }
