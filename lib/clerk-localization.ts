@@ -6,13 +6,21 @@
  */
 export const clerkLocalization = {
   signIn: {
-    title: 'Ienākt Zoptero',
-    subtitle: 'Lai turpinātu, lūdzu, pierakstieties',
+    title: 'Ienāgt Zoptero',
+    subtitle: 'Pierakstīties ar',
     start: {
       title: 'Ienākt Zoptero',
-      subtitle: 'Lai turpinātu, lūdzu, pierakstieties',
+      subtitle: 'Pierakstīties ar',
       titleCombined: 'Ienākt Zoptero',
-      subtitleCombined: 'Lai turpinātu, lūdzu, pierakstieties',
+      subtitleCombined: 'Pierakstīties ar',
+    },
+    socialButtons: {
+      google: 'Google',
+      facebook: 'Facebook',
+      apple: 'Apple',
+      microsoft: 'Microsoft',
+      github: 'GitHub',
+      linkedin: 'LinkedIn',
     },
   },
   dividerText: 'vai',
