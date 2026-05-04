@@ -20,20 +20,21 @@ function GuardContent({ children, preloadedStatus }: { children: React.ReactNode
   const hasRedirected = useRef(false);
 
   useEffect(() => {
-    // 1. Ja vēl lādējas, neko nedarām
+    // 1. STRICT STATE MACHINE: Only process when status is fully loaded
     if (onboardingStatus === undefined) return;
     
-    // 2. Ja jau esam redirektējuši, neko nedarām
+    // 2. Prevent redundant redirects
     if (hasRedirected.current) return;
 
-    // 3. Optimistiskais redirekts (pēc pogas nospiešanas)
+    // 3. Optimistic redirect (after button click) - happens BEFORE database update
     if (isOptimisticRedirecting) {
       hasRedirected.current = true;
       router.replace("/dashboard");
       return;
     }
 
-    // 4. Servera statusa redirekts - tikai ja status ir "complete" un ir accountType
+    // 4. SERVER-SIDE REDIRECT: Only redirect if status is "complete" AND accountType is set
+    // This is the authoritative check - if accountType is missing, we MUST stay on onboarding
     if (onboardingStatus.status === "complete" && onboardingStatus.accountType) {
       hasRedirected.current = true;
       router.replace("/dashboard");
@@ -41,11 +42,10 @@ function GuardContent({ children, preloadedStatus }: { children: React.ReactNode
       hasRedirected.current = true;
       router.replace("/sign-in");
     }
-    // Ja status ir "incomplete" vai "syncing", mēs NEKAD nepārvirzām prom no onboarding
-  }, [onboardingStatus?.status, onboardingStatus?.accountType, router]);
+    // If status is "incomplete" or "syncing", we NEVER redirect - stay on onboarding
+  }, [onboardingStatus, isOptimisticRedirecting, router]);
 
-  // UI RENDERING:
-  // Ja lādējas - skelets (immediate, no Suspense wrapper needed)
+  // UI RENDERING: Show skeleton IMMEDIATELY (no Suspense delay)
   if (onboardingStatus === undefined) {
     return (
       <div className="absolute inset-0 flex items-center justify-center w-full h-full">
@@ -54,7 +54,7 @@ function GuardContent({ children, preloadedStatus }: { children: React.ReactNode
     );
   }
 
-  // Ja lietotājs ielādēts, bet status ir 'syncing', rādām sinhronizācijas indikatoru
+  // Show syncing state
   if (onboardingStatus.status === "syncing") {
     return (
       <div className="absolute inset-0 flex items-center justify-center w-full h-full">
@@ -66,9 +66,7 @@ function GuardContent({ children, preloadedStatus }: { children: React.ReactNode
     );
   }
 
-  // Ja lietotājs ielādēts, bet status ir 'incomplete', rādām onbordingu.
-  // Pārējos gadījumos (ja būs redirekts) renderējam null, 
-  // jo useEffect jau izpildīs router.replace.
+  // Show onboarding UI only if incomplete
   if (onboardingStatus.status === "incomplete") {
     return (
       <div className="absolute inset-0 flex items-center justify-center w-full h-full">
@@ -77,15 +75,16 @@ function GuardContent({ children, preloadedStatus }: { children: React.ReactNode
     );
   }
 
+  // For all other states (complete with accountType, not_logged_in), return null
+  // The useEffect will handle the redirect
   return null;
 }
 
 export function OnboardingGuard({ children, preloadedStatus }: OnboardingGuardProps) {
   return (
     <OnboardingProvider>
-      <Suspense fallback={<OnboardingSkeleton />}>
-        <GuardContent>{children}</GuardContent>
-      </Suspense>
+      {/* Remove Suspense wrapper to show skeleton immediately */}
+      <GuardContent>{children}</GuardContent>
     </OnboardingProvider>
   );
 }

@@ -256,7 +256,7 @@ export type OnboardingStatus =
   | { status: "not_logged_in" }
   | { status: "syncing" }
   | { status: "incomplete" }
-  | { status: "complete"; accountType?: "b2c" | "b2b" };
+  | { status: "complete"; accountType: "b2c" | "b2b" };
 
 export const getOnboardingStatus = query({
   args: {},
@@ -264,7 +264,7 @@ export const getOnboardingStatus = query({
     v.object({ status: v.literal("not_logged_in") }),
     v.object({ status: v.literal("syncing") }),
     v.object({ status: v.literal("incomplete") }),
-    v.object({ status: v.literal("complete"), accountType: v.optional(v.union(v.literal("b2c"), v.literal("b2b"))) })
+    v.object({ status: v.literal("complete"), accountType: v.union(v.literal("b2c"), v.literal("b2b")) })
   ),
   handler: async (ctx) => {
     const identity = await ctx.auth.getUserIdentity();
@@ -284,6 +284,8 @@ export const getOnboardingStatus = query({
       return { status: "syncing" } as const;
     }
 
+    // STRICT CHECK: Only return "complete" if onboardingComplete is true AND accountType is set
+    // This prevents redirecting to dashboard when user hasn't selected account type
     if (user.onboardingComplete && (user.accountType === "b2b" || user.accountType === "b2c")) {
       return { status: "complete", accountType: user.accountType } as const;
     }
