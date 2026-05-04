@@ -25,7 +25,9 @@ export function NavUser() {
               userMenuItem: "flex items-center gap-2 px-2 py-1.5 text-sm",
               userMenuItemIcon: "h-4 w-4",
               userButtonName: "text-sm font-medium",
-              userButtonEmail: "text-xs text-muted-foreground"
+              userButtonEmail: "text-xs text-muted-foreground",
+              userButtonLabel: "text-sm font-medium",
+              userButtonLabelWrapper: "flex items-center gap-2"
             }
           }}
         />
