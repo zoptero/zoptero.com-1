@@ -16,57 +16,35 @@ interface OnboardingGuardProps {
 function GuardContent({ children, preloadedStatus }: { children: React.ReactNode; preloadedStatus?: Preloaded<typeof api.users.getOnboardingStatus> }) {
   const router = useRouter();
   const onboardingStatus = useQuery(api.users.getOnboardingStatus);
-  const { isOptimisticRedirecting, setIsOptimisticRedirecting } = useOnboarding();
+  const { isOptimisticRedirecting } = useOnboarding();
   const hasRedirected = useRef(false);
-  const preloadedStatusRef = useRef(preloadedStatus);
-  
-  // Update ref when preloadedStatus changes
-  if (preloadedStatus !== preloadedStatusRef.current) {
-    preloadedStatusRef.current = preloadedStatus;
-  }
 
-  // Diagnostic logging for status and redirecting state
   useEffect(() => {
-    console.log("[OnboardingGuard] Status check:", {
-      status: onboardingStatus?.status,
-      isOptimisticRedirecting,
-      hasRedirected: hasRedirected.current,
-      isLoading: onboardingStatus === undefined
-    });
-  }, [onboardingStatus?.status, isOptimisticRedirecting, hasRedirected.current]);
+    // 1. Ja vēl lādējas, neko nedarām
+    if (onboardingStatus === undefined) return;
+    
+    // 2. Ja jau esam redirektējuši, neko nedarām
+    if (hasRedirected.current) return;
 
-  // Log when status changes from undefined to a value
-  useEffect(() => {
-    if (onboardingStatus !== undefined) {
-      console.log("[OnboardingGuard] Status resolved:", onboardingStatus);
+    // 3. Optimistiskais redirekts (pēc pogas nospiešanas)
+    if (isOptimisticRedirecting) {
+      hasRedirected.current = true;
+      router.replace("/dashboard");
+      return;
     }
-  }, [onboardingStatus]);
 
-  // Consolidated redirect logic in a single useEffect
-  useEffect(() => {
-    // Only redirect if not already redirecting and haven't redirected yet
-    if (!isOptimisticRedirecting && !hasRedirected.current) {
-      const status = onboardingStatus?.status;
-      
-      console.log("[OnboardingGuard] Redirect decision:", {
-        status,
-        isOptimisticRedirecting,
-        willRedirect: status === "complete" || status === "not_logged_in"
-      });
-
-      if (status === "complete") {
-        hasRedirected.current = true;
-        console.log("[OnboardingGuard] Redirecting to /dashboard (status: complete)");
-        router.replace("/dashboard");
-      } else if (status === "not_logged_in") {
-        hasRedirected.current = true;
-        console.log("[OnboardingGuard] Redirecting to /sign-in (status: not_logged_in)");
-        router.replace("/sign-in");
-      }
+    // 4. Servera statusa redirekts
+    if (onboardingStatus.status === "complete") {
+      hasRedirected.current = true;
+      router.replace("/dashboard");
+    } else if (onboardingStatus.status === "not_logged_in") {
+      hasRedirected.current = true;
+      router.replace("/sign-in");
     }
-  }, [onboardingStatus?.status, isOptimisticRedirecting, router]);
+  }, [onboardingStatus, isOptimisticRedirecting, router]);
 
-  // Layout Guard: Wait for query to resolve before checking status
+  // UI RENDERING:
+  // Ja lādējas - skelets
   if (onboardingStatus === undefined) {
     return (
       <div className="absolute inset-0 flex items-center justify-center w-full h-full">
@@ -75,47 +53,18 @@ function GuardContent({ children, preloadedStatus }: { children: React.ReactNode
     );
   }
 
-  // Layout Guard: If user is redirecting (optimistic redirect), redirect immediately
-  if (isOptimisticRedirecting) {
-    // Prevent multiple redirects by checking if we've already redirected
-    if (!hasRedirected.current) {
-      hasRedirected.current = true;
-      // Use replace to avoid adding to history stack
-      // This helps maintain the Clerk session during redirect
-      console.log("[OnboardingGuard] Optimistic redirect to /dashboard");
-      router.replace("/dashboard");
-    }
-    return null;
-  }
-
-  // Layout Guard: If user has completed onboarding, redirect to dashboard
-  if (onboardingStatus?.status === "complete") {
-    // Prevent multiple redirects by checking if we've already redirected
-    if (!hasRedirected.current) {
-      hasRedirected.current = true;
-      // Use replace to avoid adding to history stack
-      // This helps maintain the Clerk session during redirect
-      console.log("[OnboardingGuard] Redirecting to /dashboard (status: complete)");
-      router.replace("/dashboard");
-    }
-    return null;
-  }
-
-  // Layout Guard: If user is not logged in, show loading spinner (prevents UI flicker)
-  if (onboardingStatus?.status === "not_logged_in") {
+  // Ja lietotājs ielādēts, bet status ir 'incomplete', rādām onbordingu.
+  // Pārējos gadījumos (ja būs redirekts) renderējam null, 
+  // jo useEffect jau izpildīs router.replace.
+  if (onboardingStatus.status === "incomplete") {
     return (
       <div className="absolute inset-0 flex items-center justify-center w-full h-full">
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
+        {children}
       </div>
     );
   }
 
-  // Otherwise, show the onboarding page with the onContinue prop
-  return (
-    <div className="absolute inset-0 flex items-center justify-center w-full h-full">
-      {children}
-    </div>
-  );
+  return null;
 }
 
 export function OnboardingGuard({ children, preloadedStatus }: OnboardingGuardProps) {

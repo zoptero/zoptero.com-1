@@ -11,15 +11,19 @@ const clerkClientInstance = createClerkClient({
 });
 
 /**
- * Sync onboarding status to Clerk's publicMetadata
+ * Sync onboarding status and account type to Clerk's publicMetadata
  * This ensures the middleware can check the status without network calls
  * Runs non-blocking to avoid blocking database transactions
  */
-async function syncClerkMetadata(clerkId: string, onboardingComplete: boolean) {
+async function syncClerkMetadata(clerkId: string, onboardingComplete: boolean, accountType?: "b2b" | "b2c") {
   try {
     // Non-blocking: don't await to prevent blocking database transactions
+    const metadata: any = { onboardingComplete };
+    if (accountType) {
+      metadata.accountType = accountType;
+    }
     clerkClientInstance.users.updateUserMetadata(clerkId, {
-      publicMetadata: { onboardingComplete },
+      publicMetadata: metadata,
     });
   } catch (error) {
     // Don't throw - we want to maintain database consistency even if Clerk API fails
@@ -441,7 +445,7 @@ export const setAccountType = mutation({
         await ctx.db.delete(row._id);
       }
       // Sync to Clerk metadata (non-blocking)
-      syncClerkMetadata(clerkId, true);
+      syncClerkMetadata(clerkId, true, args.accountType);
       return null;
     }
 
@@ -457,7 +461,7 @@ export const setAccountType = mutation({
       });
       if (synced) {
         // Sync to Clerk metadata (non-blocking)
-        syncClerkMetadata(clerkId, true);
+        syncClerkMetadata(clerkId, true, args.accountType);
         return null;
       }
     }
@@ -475,7 +479,7 @@ export const setAccountType = mutation({
     });
 
     // Sync to Clerk metadata (non-blocking)
-    syncClerkMetadata(clerkId, true);
+    syncClerkMetadata(clerkId, true, args.accountType);
 
     return null;
   },
