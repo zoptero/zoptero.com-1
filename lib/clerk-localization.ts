@@ -6,7 +6,7 @@
 export const clerkLocalization = {
   locale: "lv-LV",
   dividerText: "vai",
-  formButtonPrimary: "Turpināt",
+  formButtonPrimary: "Ienākt platformā",
   socialButtonsBlockButton: "{{provider}}",
   signIn: {
     start: {
