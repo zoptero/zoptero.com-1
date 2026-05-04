@@ -13,9 +13,9 @@ interface OnboardingGuardProps {
   preloadedStatus?: Preloaded<typeof api.users.getOnboardingStatus>;
 }
 
-  function GuardContent({ children, preloadedStatus }: { children: React.ReactNode; preloadedStatus?: Preloaded<typeof api.users.getOnboardingStatus> }) {
-    const router = useRouter();
-    const onboardingStatus = useQuery(api.users.getOnboardingStatus);
+function GuardContent({ children, preloadedStatus }: { children: React.ReactNode; preloadedStatus?: Preloaded<typeof api.users.getOnboardingStatus> }) {
+  const router = useRouter();
+  const onboardingStatus = useQuery(api.users.getOnboardingStatus);
   const { isOptimisticRedirecting, setIsOptimisticRedirecting } = useOnboarding();
   const hasRedirected = useRef(false);
   const preloadedStatusRef = useRef(preloadedStatus);
