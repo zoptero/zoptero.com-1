@@ -63,7 +63,7 @@ import { useOnboarding } from "@/components/onboarding-context";
   };
 
   return (
-    <div className="absolute inset-0 flex items-center justify-center w-full h-full bg-white">
+    <div className="min-h-screen w-full bg-white flex items-center justify-center py-12 px-4">
       <OnboardingCards onContinue={handleContinue} error={error} isSubmitting={isSubmitting} />
     </div>
   );

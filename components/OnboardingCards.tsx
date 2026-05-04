@@ -15,7 +15,7 @@ export default function OnboardingCards({ onContinue, error, isSubmitting }: { o
   const [selected, setSelected] = useState<string | null>(null);
 
   return (
-    <div className="absolute inset-0 flex flex-col items-center justify-center w-full h-full">
+    <div className="flex flex-col items-center justify-center min-h-screen w-full px-4 py-12">
       <div className="flex flex-col items-center w-full max-w-2xl mx-auto gap-8">
         {/* Badge and Title Section - Staggered Animation */}
         <FadeInSlide delay={0} className="flex flex-col items-center w-full mb-2 mt-8">
