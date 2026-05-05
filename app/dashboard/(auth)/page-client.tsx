@@ -36,6 +36,7 @@ import {
 import { Input3 } from "@/components/input3";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { Skeleton } from "@/components/ui/skeleton";
 
 function isValidUrl(value: string): boolean {
   try {
@@ -128,6 +129,46 @@ const defaultValues: ProfileFormValues = {
   paymentBankTransfer: false,
   paymentCard: false,
 };
+
+function DashboardProfileSkeleton() {
+  return (
+    <div className="w-full max-w-3xl">
+      <Card>
+        <CardContent className="space-y-6 pt-6">
+          <div className="space-y-2">
+            <Skeleton className="h-4 w-28" />
+            <Skeleton className="h-10 w-full" />
+            <Skeleton className="h-3 w-72" />
+          </div>
+
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <Skeleton className="h-4 w-24" />
+              <Skeleton className="h-3 w-12" />
+            </div>
+            <Skeleton className="h-24 w-full" />
+            <Skeleton className="h-3 w-80" />
+          </div>
+
+          <div className="space-y-2">
+            <Skeleton className="h-4 w-24" />
+            <div className="flex items-center gap-4">
+              <Skeleton className="size-20 rounded-full" />
+              <div className="flex flex-col gap-2">
+                <Skeleton className="h-9 w-44" />
+                <Skeleton className="h-3 w-56" />
+              </div>
+            </div>
+          </div>
+
+          <div className="flex justify-end">
+            <Skeleton className="h-10 w-40" />
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
 
 export default function DashboardPageClient() {
   const { user } = useUser();
@@ -343,9 +384,7 @@ export default function DashboardPageClient() {
         </div>
 
         <div className="w-full max-w-3xl">
-          <Card>
-            <CardContent className="py-6">Loading your profile data...</CardContent>
-          </Card>
+          <DashboardProfileSkeleton />
         </div>
       </>
     );
