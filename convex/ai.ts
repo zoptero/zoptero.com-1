@@ -466,14 +466,23 @@ async function generateWithCloudflare(args: {
     throw new Error("Missing CLOUDFLARE_AI_API_KEY (or CLOUDFLARE_API_TOKEN) or CLOUDFLARE_ACCOUNT_ID");
   }
 
-  const model = process.env.CLOUDFLARE_MODEL ?? "@cf/meta/llama-3.1-8b-instruct";
+  const gatewayName = process.env.CLOUDFLARE_GATEWAY_NAME ?? "cline-gateway";
+  const gatewayProvider = process.env.CLOUDFLARE_GATEWAY_PROVIDER ?? "workers-ai";
+  const collectLogs = (process.env.CLOUDFLARE_GATEWAY_COLLECT_LOGS ?? "true").toLowerCase() !== "false";
+
+  const baseModel = process.env.CLOUDFLARE_MODEL ?? "@cf/meta/llama-3.1-8b-instruct";
+  const model = baseModel.includes("/") && !baseModel.startsWith("@")
+    ? baseModel
+    : `${gatewayProvider}/${baseModel}`;
+
   const response = await fetch(
-    `https://api.cloudflare.com/client/v4/accounts/${accountId}/ai/v1/chat/completions`,
+    `https://gateway.ai.cloudflare.com/v1/${accountId}/${gatewayName}/compat/chat/completions`,
     {
       method: "POST",
       headers: {
         Authorization: `Bearer ${apiKey}`,
         "Content-Type": "application/json",
+        "cf-aig-collect-log": collectLogs ? "true" : "false",
       },
       body: JSON.stringify({
         model,
@@ -493,7 +502,11 @@ async function generateWithCloudflare(args: {
 
   const data = await response.json();
   if (!response.ok) {
-    const errMsg = data?.errors?.[0]?.message ?? data?.error?.message ?? `Cloudflare AI failed with status ${response.status}`;
+    const errMsg =
+      data?.errors?.[0]?.message ??
+      data?.error?.message ??
+      data?.result?.error ??
+      `Cloudflare AI Gateway failed with status ${response.status}`;
     throw new Error(errMsg);
   }
 
