@@ -38,11 +38,9 @@ function GuardContent({ children, preloadedStatus }: { children: React.ReactNode
     if (onboardingStatus.status === "complete" && onboardingStatus.accountType) {
       hasRedirected.current = true;
       router.replace("/dashboard");
-    } else if (onboardingStatus.status === "not_logged_in") {
-      hasRedirected.current = true;
-      router.replace("/sign-in");
     }
     // If status is "incomplete" or "syncing", we NEVER redirect - stay on onboarding
+    // If status is "not_logged_in", we let the middleware handle the redirect to /sign-in
   }, [onboardingStatus, isOptimisticRedirecting, router]);
 
   // UI RENDERING: Show skeleton IMMEDIATELY (no Suspense delay)
