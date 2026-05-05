@@ -559,7 +559,7 @@ export default function DashboardPageClient() {
                               <div className="flex flex-col gap-2">
                                 <label className="flex cursor-pointer items-center gap-2 rounded-md border px-3 py-2 text-sm transition-colors hover:bg-accent">
                                   <Upload className="size-4" />
-                                  Augšupielādēt attēlu
+                                  Pievienot attēlu
                                   <input
                                     type="file"
                                     accept="image/jpeg,image/png,image/webp,image/avif"
@@ -594,7 +594,7 @@ export default function DashboardPageClient() {
                                     <X className="size-3" /> Dzēst attēlu
                                   </button>
                                 ) : null}
-                                <p className="text-xs text-muted-foreground">JPG, PNG, WebP vai AVIF. Maks. 5 MB.</p>
+                                <p className="text-xs text-muted-foreground">Izvēlies savu attēlu vai logo līdz 5MB.</p>
                               </div>
                             </div>
                           </FormControl>
