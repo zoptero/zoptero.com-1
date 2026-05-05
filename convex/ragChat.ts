@@ -1,5 +1,6 @@
 import { ConvexError, v } from "convex/values";
 import { internal } from "./_generated/api";
+import type { Id } from "./_generated/dataModel";
 import { action, internalMutation, internalQuery, mutation, query, type MutationCtx } from "./_generated/server";
 
 const DEFAULT_MAX_CONTEXT_CHARS = 8000;
@@ -209,7 +210,7 @@ export const upsertRagChatDocumentBySecret = action({
     isActive: v.optional(v.boolean()),
   },
   returns: v.id("ragChatDocuments"),
-  handler: async (ctx, args) => {
+  handler: async (ctx, args): Promise<Id<"ragChatDocuments">> => {
     requireRagAdminSecret(args.secret);
 
     return await ctx.runMutation(internal.ragChat.upsertRagChatDocumentInternal, {
@@ -228,7 +229,10 @@ export const seedProfileAssistantKnowledgeBySecret = action({
     guideId: v.id("ragChatDocuments"),
     fallbackId: v.id("ragChatDocuments"),
   }),
-  handler: async (ctx, args) => {
+  handler: async (ctx, args): Promise<{
+    guideId: Id<"ragChatDocuments">;
+    fallbackId: Id<"ragChatDocuments">;
+  }> => {
     requireRagAdminSecret(args.secret);
 
     const guideId = await ctx.runMutation(internal.ragChat.upsertRagChatDocumentInternal, {
