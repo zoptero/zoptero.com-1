@@ -509,7 +509,7 @@ export default function DashboardPageClient() {
                             <FormControl>
                               <Input3
                                 placeholder="Piem., Jānis Bērziņš"
-                                helperText="Pilnais vārds, kas tiks parādīts publiskajā profilā."
+                                helperText="Vārds būs redzams profilā."
                                 {...field}
                               />
                             </FormControl>
@@ -525,7 +525,7 @@ export default function DashboardPageClient() {
                       render={({ field }) => (
                         <FormItem>
                           <div className="flex items-center justify-between">
-                            <FormLabel>Ĭss apraksts</FormLabel>
+                            <FormLabel>Īss apraksts par mani</FormLabel>
                             <span className="text-muted-foreground text-xs">{(field.value ?? "").length}/140</span>
                           </div>
                           <FormControl>
@@ -536,7 +536,7 @@ export default function DashboardPageClient() {
                               {...field}
                             />
                           </FormControl>
-                          <FormDescription className="text-xs">Dažos vārdos pastāsti par sevi. Šo redzēs publiski meklēšanas rezultātos.</FormDescription>
+                          <FormDescription className="text-xs">Apraksts būs redzams profilā.</FormDescription>
                           <FormMessage />
                         </FormItem>
                       )}
