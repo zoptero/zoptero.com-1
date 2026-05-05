@@ -329,8 +329,8 @@ export default function DashboardPageClient() {
           >
             <div ref={tabsListRef} className="relative w-max">
               <TabsList className="z-10">
-                <TabsTrigger value="profile">Profile</TabsTrigger>
-                <TabsTrigger value="contact">Contact</TabsTrigger>
+                <TabsTrigger value="profile">Profils</TabsTrigger>
+                <TabsTrigger value="contact">Kontakti</TabsTrigger>
                 <TabsTrigger value="social">Social</TabsTrigger>
                 <TabsTrigger value="business">Business</TabsTrigger>
                 <TabsTrigger value="seo">SEO</TabsTrigger>
