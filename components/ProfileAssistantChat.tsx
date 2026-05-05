@@ -149,7 +149,7 @@ export default function ProfileAssistantChat({
             ))}
             {loading && (
               <div className="mr-4 self-start rounded-xl bg-muted px-3 py-2 text-xs text-muted-foreground">
-                <span className="animate-pulse">Raksta…</span>
+                <span className="animate-pulse">Domāju..</span>
               </div>
             )}
             <div ref={scrollRef} />
