@@ -1,12 +1,11 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState, type KeyboardEvent } from "react";
 import { useAction } from "convex/react";
 import { Send, Bot } from "lucide-react";
 import { api } from "@/convex/_generated/api";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { Textarea } from "@/components/ui/textarea";
 
 type Message = {
@@ -30,6 +29,10 @@ export default function ProfileAssistantChat({
   const [loading, setLoading] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const chat = useAction(api.ai.profileAssistantChat);
+
+  useEffect(() => {
+    scrollRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
+  }, [messages, loading]);
 
   async function send() {
     const text = input.trim();
@@ -65,13 +68,10 @@ export default function ProfileAssistantChat({
       ]);
     } finally {
       setLoading(false);
-      setTimeout(() => {
-        scrollRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
-      }, 50);
     }
   }
 
-  function handleKeyDown(e: React.KeyboardEvent<HTMLTextAreaElement>) {
+  function handleKeyDown(e: KeyboardEvent<HTMLTextAreaElement>) {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       void send();
@@ -79,7 +79,7 @@ export default function ProfileAssistantChat({
   }
 
   return (
-    <Card className="flex h-[600px] flex-col">
+    <Card className="flex h-[clamp(420px,calc(100vh-12rem),760px)] flex-col">
       <CardHeader className="shrink-0 pb-3">
         <CardTitle className="flex items-center gap-2 text-sm font-semibold">
           <Bot className="size-4 text-primary" />
@@ -88,7 +88,7 @@ export default function ProfileAssistantChat({
       </CardHeader>
 
       <CardContent className="flex min-h-0 flex-1 flex-col gap-3 p-4 pt-0">
-        <ScrollArea className="flex-1 pr-1">
+        <div className="min-h-0 flex-1 overflow-y-auto pr-1">
           <div className="flex flex-col gap-3">
             {messages.map((msg, i) => (
               <div
@@ -109,7 +109,7 @@ export default function ProfileAssistantChat({
             )}
             <div ref={scrollRef} />
           </div>
-        </ScrollArea>
+        </div>
 
         <div className="flex shrink-0 items-end gap-2">
           <Textarea
