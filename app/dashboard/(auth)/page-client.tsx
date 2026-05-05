@@ -183,8 +183,10 @@ export default function DashboardPageClient() {
   const [underlinePosition, setUnderlinePosition] = useState({ left: 0, width: 0 });
   const [showLeftShadow, setShowLeftShadow] = useState(false);
   const [showRightShadow, setShowRightShadow] = useState(false);
+  const [profileCardHeight, setProfileCardHeight] = useState<number | null>(null);
   const tabsListRef = useRef<HTMLDivElement>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const profileCardWrapRef = useRef<HTMLDivElement>(null);
   const [{ files }, { addFiles, removeFile }] = useFileUpload({
     accept: "image/jpeg,image/png,image/webp,image/avif",
     maxFiles: 1,
@@ -318,6 +320,27 @@ export default function DashboardPageClient() {
       window.removeEventListener("resize", updateUnderlineAndScroll);
     };
   }, [activeTab]);
+
+  useEffect(() => {
+    const element = profileCardWrapRef.current;
+    if (!element) {
+      return;
+    }
+
+    const updateHeight = () => {
+      const nextHeight = Math.ceil(element.getBoundingClientRect().height);
+      setProfileCardHeight((prev) => (prev === nextHeight ? prev : nextHeight));
+    };
+
+    updateHeight();
+
+    const observer = new ResizeObserver(() => {
+      updateHeight();
+    });
+
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, [activeTab, profile, uploadingAvatar, removeAvatar, files.length]);
 
   useEffect(() => {
     const el = scrollContainerRef.current;
@@ -496,7 +519,7 @@ export default function DashboardPageClient() {
         </div>
 
         <div className="flex w-full items-stretch gap-4">
-          <div className="min-w-0 flex-1">
+          <div ref={profileCardWrapRef} className="min-w-0 flex-1">
           <Card>
             <CardContent className="pt-6">
               <Form {...form}>
@@ -1029,7 +1052,10 @@ export default function DashboardPageClient() {
             </CardContent>
           </Card>
           </div>
-          <div className="hidden shrink-0 xl:flex xl:w-80">
+          <div
+            className="hidden shrink-0 xl:flex xl:w-80"
+            style={profileCardHeight ? { height: `${profileCardHeight}px` } : undefined}
+          >
             <ProfileAssistantChat focusedField={focusedField} />
           </div>
         </div>
