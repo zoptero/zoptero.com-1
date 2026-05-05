@@ -468,41 +468,60 @@ async function generateWithOpenRouter(args: {
     throw new ConvexError("Missing OPENROUTER_API_KEY environment variable");
   }
 
-  const model = process.env.OPENROUTER_MODEL ?? "deepseek/deepseek-r1-0528:free";
-  const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${apiKey}`,
-      "Content-Type": "application/json",
-      "HTTP-Referer": "https://zoptero.com",
-      "X-Title": "Zoptero Profile Assistant",
-    },
-    body: JSON.stringify({
-      model,
-      messages: [
-        { role: "system", content: args.systemInstruction },
-        ...args.history.map((msg) => ({
-          role: msg.role === "model" ? "assistant" : "user",
-          content: msg.content,
-        })),
-        { role: "user", content: args.message },
-      ],
-      temperature: 0.4,
-    }),
-  });
+  const configuredModel = process.env.OPENROUTER_MODEL;
+  const candidateModels = [
+    configuredModel,
+    "google/gemma-4-31b-it:free",
+    "meta-llama/llama-3.1-8b-instruct:free",
+    "google/gemma-2-9b-it:free",
+    "mistralai/mistral-7b-instruct:free",
+  ].filter((model): model is string => Boolean(model));
 
-  const data = await response.json();
-  if (!response.ok) {
-    const errorMessage = data?.error?.message ?? `OpenRouter request failed with status ${response.status}`;
-    throw new Error(errorMessage);
+  let lastError: Error | null = null;
+
+  for (const model of candidateModels) {
+    const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        "Content-Type": "application/json",
+        "HTTP-Referer": "https://zoptero.com",
+        "X-Title": "Zoptero Profile Assistant",
+      },
+      body: JSON.stringify({
+        model,
+        messages: [
+          { role: "system", content: args.systemInstruction },
+          ...args.history.map((msg) => ({
+            role: msg.role === "model" ? "assistant" : "user",
+            content: msg.content,
+          })),
+          { role: "user", content: args.message },
+        ],
+        temperature: 0.4,
+      }),
+    });
+
+    const data = await response.json();
+    if (!response.ok) {
+      const errorMessage = data?.error?.message ?? `OpenRouter request failed with status ${response.status}`;
+      lastError = new Error(errorMessage);
+      const isNoEndpoint = errorMessage.toLowerCase().includes("no endpoints found");
+      if (isNoEndpoint) {
+        continue;
+      }
+      throw lastError;
+    }
+
+    const content = data?.choices?.[0]?.message?.content;
+    if (typeof content === "string" && content.trim()) {
+      return content.trim();
+    }
+
+    lastError = new Error("OpenRouter returned an empty response");
   }
 
-  const content = data?.choices?.[0]?.message?.content;
-  if (typeof content === "string" && content.trim()) {
-    return content.trim();
-  }
-
-  throw new Error("OpenRouter returned an empty response");
+  throw lastError ?? new Error("OpenRouter has no available endpoints for configured models");
 }
 
 export const profileAssistantChat = action({
@@ -533,11 +552,8 @@ export const profileAssistantChat = action({
           systemInstruction,
           history,
         });
-      } catch (error) {
-        const message = error instanceof Error ? error.message : String(error);
-        if (!isQuotaExceededError(message)) {
-          throw new ConvexError(`Profile assistant failed: ${message}`);
-        }
+      } catch {
+        // Gracefully fall back to Gemini/local helper if OpenRouter model endpoints are unavailable.
       }
     }
 
