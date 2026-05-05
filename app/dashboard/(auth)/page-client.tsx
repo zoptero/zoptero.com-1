@@ -177,6 +177,7 @@ export default function DashboardPageClient() {
   const generateUploadUrl = useAction(api.media.generateUploadUrl);
   const generateViewUrl = useAction(api.media.generateViewUrl);
   const [uploadingAvatar, setUploadingAvatar] = useState(false);
+  const lastResolvedAvatarKeyRef = useRef<string | null>(null);
   const [activeTab, setActiveTab] = useState("profile");
   const [underlinePosition, setUnderlinePosition] = useState({ left: 0, width: 0 });
   const [showLeftShadow, setShowLeftShadow] = useState(false);
@@ -186,7 +187,7 @@ export default function DashboardPageClient() {
   const [{ files }, { addFiles, removeFile }] = useFileUpload({
     accept: "image/jpeg,image/png,image/webp,image/avif",
     maxFiles: 1,
-    maxSize: 500 * 1024,
+    maxSize: 5 * 1024 * 1024,
   });
   const [removeAvatar, setRemoveAvatar] = useState(false);
   const [resolvedAvatarUrl, setResolvedAvatarUrl] = useState<string | undefined>(undefined);
@@ -239,16 +240,24 @@ export default function DashboardPageClient() {
     const resolveAvatarUrl = async () => {
       if (previewFile || removeAvatar) {
         setResolvedAvatarUrl(undefined);
+        lastResolvedAvatarKeyRef.current = null;
         return;
       }
 
       if (profile?.avatarUrl) {
         setResolvedAvatarUrl(profile.avatarUrl);
+        lastResolvedAvatarKeyRef.current = profile.avatarKey ?? null;
         return;
       }
 
       if (!profile?.avatarKey || !user?.id) {
         setResolvedAvatarUrl(undefined);
+        lastResolvedAvatarKeyRef.current = null;
+        return;
+      }
+
+      // Avoid re-requesting signed URLs for the same key on every re-render.
+      if (lastResolvedAvatarKeyRef.current === profile.avatarKey && resolvedAvatarUrl) {
         return;
       }
 
@@ -259,10 +268,12 @@ export default function DashboardPageClient() {
         });
         if (!cancelled) {
           setResolvedAvatarUrl(viewUrl);
+          lastResolvedAvatarKeyRef.current = profile.avatarKey;
         }
       } catch (error) {
         if (!cancelled) {
           setResolvedAvatarUrl(undefined);
+          lastResolvedAvatarKeyRef.current = null;
         }
         console.error("Failed to resolve avatar view URL", error);
       }
@@ -272,7 +283,7 @@ export default function DashboardPageClient() {
     return () => {
       cancelled = true;
     };
-  }, [previewFile, removeAvatar, profile?.avatarUrl, profile?.avatarKey, user?.id, generateViewUrl]);
+  }, [previewFile, removeAvatar, profile?.avatarUrl, profile?.avatarKey, user?.id, resolvedAvatarUrl]);
 
   useEffect(() => {
     const updateUnderlineAndScroll = () => {
@@ -340,8 +351,8 @@ export default function DashboardPageClient() {
         toast.error("Neatbalstīts attēla formāts. Izmantojiet JPG, PNG, WebP vai AVIF.");
         return;
       }
-      if (file.size > 500 * 1024) {
-        toast.error("Attēls ir pārāk liels. Maksimālais izmērs ir 500 KB.");
+      if (file.size > 5 * 1024 * 1024) {
+        toast.error("Attēls ir pārāk liels. Maksimālais izmērs ir 5 MB.");
         return;
       }
       try {
@@ -582,7 +593,7 @@ export default function DashboardPageClient() {
                                     <X className="size-3" /> Dzēst attēlu
                                   </button>
                                 ) : null}
-                                <p className="text-xs text-muted-foreground">JPG, PNG, WebP vai AVIF. Maks. 500 KB.</p>
+                                <p className="text-xs text-muted-foreground">JPG, PNG, WebP vai AVIF. Maks. 5 MB.</p>
                               </div>
                             </div>
                           </FormControl>

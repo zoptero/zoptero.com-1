@@ -39,8 +39,8 @@ export const generateUploadUrl = action({
     if (!["image/jpeg", "image/png", "image/webp", "image/avif"].includes(args.fileType)) {
       throw new ConvexError("Unsupported image type");
     }
-    if (args.fileSize <= 0 || args.fileSize > 500 * 1024) {
-      throw new ConvexError("Image must be 500 KB or smaller");
+    if (args.fileSize <= 0 || args.fileSize > 5 * 1024 * 1024) {
+      throw new ConvexError("Image must be 5 MB or smaller");
     }
     const bucket = process.env.R2_BUCKET_NAME!;
     const extension = (() => {
