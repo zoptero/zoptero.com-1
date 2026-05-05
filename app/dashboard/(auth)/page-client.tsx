@@ -244,14 +244,8 @@ export default function DashboardPageClient() {
         return;
       }
 
-      if (profile?.avatarUrl) {
-        setResolvedAvatarUrl(profile.avatarUrl);
-        lastResolvedAvatarKeyRef.current = profile.avatarKey ?? null;
-        return;
-      }
-
       if (!profile?.avatarKey || !user?.id) {
-        setResolvedAvatarUrl(undefined);
+        setResolvedAvatarUrl(profile?.avatarUrl || undefined);
         lastResolvedAvatarKeyRef.current = null;
         return;
       }
@@ -259,6 +253,11 @@ export default function DashboardPageClient() {
       // Avoid re-requesting signed URLs for the same key on every re-render.
       if (lastResolvedAvatarKeyRef.current === profile.avatarKey && resolvedAvatarUrl) {
         return;
+      }
+
+      // Show any stored URL immediately while we resolve a guaranteed signed URL.
+      if (!resolvedAvatarUrl && profile.avatarUrl) {
+        setResolvedAvatarUrl(profile.avatarUrl);
       }
 
       try {
@@ -272,7 +271,9 @@ export default function DashboardPageClient() {
         }
       } catch (error) {
         if (!cancelled) {
-          setResolvedAvatarUrl(undefined);
+          if (!profile.avatarUrl) {
+            setResolvedAvatarUrl(undefined);
+          }
           lastResolvedAvatarKeyRef.current = null;
         }
         console.error("Failed to resolve avatar view URL", error);
@@ -283,7 +284,7 @@ export default function DashboardPageClient() {
     return () => {
       cancelled = true;
     };
-  }, [previewFile, removeAvatar, profile?.avatarUrl, profile?.avatarKey, user?.id, resolvedAvatarUrl]);
+  }, [previewFile, removeAvatar, profile?.avatarUrl, profile?.avatarKey, user?.id, resolvedAvatarUrl, generateViewUrl]);
 
   useEffect(() => {
     const updateUnderlineAndScroll = () => {
