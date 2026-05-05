@@ -476,10 +476,10 @@ async function generateWithCloudflare(args: {
   systemInstruction: string;
   history: AssistantTurn[];
 }): Promise<string> {
-  const apiKey = process.env.CLOUDFLARE_AI_API_KEY;
+  const apiKey = process.env.CLOUDFLARE_AI_API_KEY ?? process.env.CLOUDFLARE_API_TOKEN;
   const accountId = process.env.CLOUDFLARE_ACCOUNT_ID;
   if (!apiKey || !accountId) {
-    throw new Error("Missing CLOUDFLARE_AI_API_KEY or CLOUDFLARE_ACCOUNT_ID");
+    throw new Error("Missing CLOUDFLARE_AI_API_KEY (or CLOUDFLARE_API_TOKEN) or CLOUDFLARE_ACCOUNT_ID");
   }
 
   const model = process.env.CLOUDFLARE_MODEL ?? "@cf/meta/llama-3.1-8b-instruct";
@@ -653,7 +653,7 @@ export const profileAssistantChat = action({
         content: msg.content,
       }));
 
-    if (process.env.CLOUDFLARE_AI_API_KEY) {
+    if (process.env.CLOUDFLARE_AI_API_KEY || process.env.CLOUDFLARE_API_TOKEN) {
       try {
         return await generateWithCloudflare({ message: args.message, systemInstruction, history });
       } catch (error) {
