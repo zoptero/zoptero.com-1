@@ -97,8 +97,7 @@ export const navItems: NavGroup[] = [
         href: "/dashboard",
         icon: FolderDotIcon,
         items: [
-          { title: "Dashboard", href: "/dashboard" },
-          { title: "Project List", href: "/dashboard/project-list" }
+          { title: "Dashboard", href: "/dashboard" }
         ]
       },
       // Real Estate removed

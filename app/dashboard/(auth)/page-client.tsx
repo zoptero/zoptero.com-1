@@ -273,11 +273,12 @@ export default function DashboardPageClient() {
       <>
         <div className="mb-4 flex flex-row items-center justify-between space-y-2 lg:pl-2.5">
           <div className="space-y-1">
-            <h1 className="text-2xl font-bold tracking-tight">Project Dashboard</h1>
+            <h1 className="text-2xl font-bold tracking-tight">Mans profils</h1>
+            <p className="text-muted-foreground text-sm">Pārvaldi savu publisko profilu un iestatījumus</p>
           </div>
         </div>
 
-        <div className="mx-auto w-full max-w-3xl">
+        <div className="w-full max-w-3xl">
           <Card>
             <CardContent className="py-6">Loading your profile data...</CardContent>
           </Card>
@@ -290,7 +291,8 @@ export default function DashboardPageClient() {
     <>
       <div className="mb-4 flex flex-row items-center justify-between space-y-2 lg:pl-2.5">
         <div className="space-y-1">
-          <h1 className="text-2xl font-bold tracking-tight">Project Dashboard</h1>
+          <h1 className="text-2xl font-bold tracking-tight">Mans profils</h1>
+          <p className="text-muted-foreground text-sm">Pārvaldi savu publisko profilu un iestatījumus</p>
         </div>
       </div>
 
@@ -331,7 +333,7 @@ export default function DashboardPageClient() {
           </div>
         </div>
 
-        <div className="mx-auto w-full max-w-4xl">
+        <div className="w-full max-w-3xl">
           <Card>
             <CardContent className="pt-6">
               <Form {...form}>
