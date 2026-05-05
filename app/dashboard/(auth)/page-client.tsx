@@ -61,7 +61,6 @@ const urlOrEmptySchema = z
 
 const profileFormSchema = z.object({
   displayName: z.string().trim().min(3, "Vārdam nepieciešams vismaz 3 simboli.").max(80),
-  surname: z.string().trim().max(80),
   email: z.string().trim().email("Enter a valid email.").or(z.literal("")),
   phone: z.string().trim().max(30),
   city: z.string().trim().max(80),
@@ -100,7 +99,6 @@ type ProfileFormValues = z.infer<typeof profileFormSchema>;
 
 const defaultValues: ProfileFormValues = {
   displayName: "",
-  surname: "",
   email: "",
   phone: "",
   city: "",
@@ -158,7 +156,6 @@ export default function DashboardPageClient() {
   useEffect(() => {
     form.reset({
       displayName: profile?.displayName ?? user?.fullName ?? "",
-      surname: "",
       email: profile?.email ?? user?.primaryEmailAddress?.emailAddress ?? "",
       phone: profile?.phone ?? "",
       city: profile?.city ?? "",
@@ -359,28 +356,11 @@ export default function DashboardPageClient() {
                         name="displayName"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Vārds</FormLabel>
+                            <FormLabel>Vārds Uzvārds</FormLabel>
                             <FormControl>
                               <Input3
-                                placeholder="Your full name"
-                                helperText="Tavs vārds tiks parādīts publiskajā profilā."
-                                {...field}
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={form.control}
-                        name="surname"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Uzvārds</FormLabel>
-                            <FormControl>
-                              <Input3
-                                placeholder="Your surname"
-                                helperText="Uzvārds tiks rādīts profilā kopā ar vārdu."
+                                placeholder="Piem., Jānis Bērziņš"
+                                helperText="Pilnais vārds, kas tiks parādīts publiskajā profilā."
                                 {...field}
                               />
                             </FormControl>
