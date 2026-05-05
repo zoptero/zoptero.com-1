@@ -175,6 +175,7 @@ export default function DashboardPageClient() {
   const profile = useQuery(api.profiles.getMe);
   const updateProfile = useMutation(api.profiles.update);
   const generateUploadUrl = useAction(api.media.generateUploadUrl);
+  const generateViewUrl = useAction(api.media.generateViewUrl);
   const [uploadingAvatar, setUploadingAvatar] = useState(false);
   const [activeTab, setActiveTab] = useState("profile");
   const [underlinePosition, setUnderlinePosition] = useState({ left: 0, width: 0 });
@@ -188,8 +189,9 @@ export default function DashboardPageClient() {
     maxSize: 500 * 1024,
   });
   const [removeAvatar, setRemoveAvatar] = useState(false);
+  const [resolvedAvatarUrl, setResolvedAvatarUrl] = useState<string | undefined>(undefined);
   const previewFile = files[0];
-  const previewUrl = previewFile?.preview ?? (removeAvatar ? undefined : (profile?.avatarUrl || undefined));
+  const previewUrl = previewFile?.preview ?? (removeAvatar ? undefined : resolvedAvatarUrl);
 
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(profileFormSchema),
@@ -230,6 +232,47 @@ export default function DashboardPageClient() {
       paymentCard: profile?.paymentCard ?? false,
     });
   }, [profile, user, form]);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    const resolveAvatarUrl = async () => {
+      if (previewFile || removeAvatar) {
+        setResolvedAvatarUrl(undefined);
+        return;
+      }
+
+      if (profile?.avatarUrl) {
+        setResolvedAvatarUrl(profile.avatarUrl);
+        return;
+      }
+
+      if (!profile?.avatarKey || !user?.id) {
+        setResolvedAvatarUrl(undefined);
+        return;
+      }
+
+      try {
+        const { viewUrl } = await generateViewUrl({
+          clerkId: user.id,
+          key: profile.avatarKey,
+        });
+        if (!cancelled) {
+          setResolvedAvatarUrl(viewUrl);
+        }
+      } catch (error) {
+        if (!cancelled) {
+          setResolvedAvatarUrl(undefined);
+        }
+        console.error("Failed to resolve avatar view URL", error);
+      }
+    };
+
+    void resolveAvatarUrl();
+    return () => {
+      cancelled = true;
+    };
+  }, [previewFile, removeAvatar, profile?.avatarUrl, profile?.avatarKey, user?.id, generateViewUrl]);
 
   useEffect(() => {
     const updateUnderlineAndScroll = () => {
@@ -303,21 +346,23 @@ export default function DashboardPageClient() {
       }
       try {
         setUploadingAvatar(true);
-        const { fileKey, uploadUrl } = await generateUploadUrl({
+        const { fileKey, uploadUrl, publicUrl } = await generateUploadUrl({
           clerkId: user.id,
           fileType: file.type,
           fileSize: file.size,
           displayName: values.displayName,
           usage: "avatar",
         });
-        await fetch(uploadUrl, {
+        const uploadResponse = await fetch(uploadUrl, {
           method: "PUT",
           body: file,
           headers: { "Content-Type": file.type },
         });
+        if (!uploadResponse.ok) {
+          throw new Error(`Upload failed with status ${uploadResponse.status}`);
+        }
         avatarKey = fileKey;
-        // Derive permanent public URL by stripping presigned query params
-        avatarUrl = uploadUrl.split("?")[0];
+        avatarUrl = publicUrl;
       } catch (err) {
         console.error("Avatar upload failed", err);
         toast.error("Neizdevās augšupielādēt attēlu. Lūdzu, mēģiniet vēlreiz.");

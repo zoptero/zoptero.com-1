@@ -3,6 +3,7 @@
 import {
   DeleteObjectCommand,
   DeleteObjectsCommand,
+  GetObjectCommand,
   ListObjectsV2Command,
   S3Client,
   PutObjectCommand,
@@ -25,6 +26,7 @@ export const generateUploadUrl = action({
   returns: v.object({
     fileKey: v.string(),
     uploadUrl: v.string(),
+    publicUrl: v.optional(v.string()),
   }),
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
@@ -73,7 +75,47 @@ export const generateUploadUrl = action({
       ContentType: args.fileType,
     });
     const uploadUrl = await getSignedUrl(s3, command, { expiresIn: 300 });
-    return { fileKey, uploadUrl };
+    const basePublicUrl = process.env.R2_PUBLIC_URL?.replace(/\/+$/, "");
+    const publicUrl = basePublicUrl ? `${basePublicUrl}/${fileKey}` : undefined;
+    return { fileKey, uploadUrl, publicUrl };
+  },
+});
+
+export const generateViewUrl = action({
+  args: {
+    clerkId: v.string(),
+    key: v.string(),
+  },
+  returns: v.object({ viewUrl: v.string() }),
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      throw new ConvexError("Not authenticated");
+    }
+    if (identity.subject !== args.clerkId) {
+      throw new ConvexError("Not authorized");
+    }
+    if (!args.key.includes(args.clerkId)) {
+      throw new ConvexError("Invalid media key");
+    }
+
+    const bucket = process.env.R2_BUCKET_NAME!;
+    const s3 = new S3Client({
+      region: "auto",
+      endpoint: process.env.R2_ENDPOINT!,
+      forcePathStyle: true,
+      credentials: {
+        accessKeyId: process.env.R2_ACCESS_KEY_ID!,
+        secretAccessKey: process.env.R2_SECRET_ACCESS_KEY!,
+      },
+    });
+
+    const command = new GetObjectCommand({
+      Bucket: bucket,
+      Key: args.key,
+    });
+    const viewUrl = await getSignedUrl(s3, command, { expiresIn: 3600 });
+    return { viewUrl };
   },
 });
 
