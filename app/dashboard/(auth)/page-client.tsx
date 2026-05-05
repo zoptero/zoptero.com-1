@@ -146,8 +146,9 @@ export default function DashboardPageClient() {
     maxFiles: 1,
     maxSize: 500 * 1024,
   });
+  const [removeAvatar, setRemoveAvatar] = useState(false);
   const previewFile = files[0];
-  const previewUrl = previewFile?.preview ?? (profile?.avatarUrl || undefined);
+  const previewUrl = previewFile?.preview ?? (removeAvatar ? undefined : (profile?.avatarUrl || undefined));
 
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(profileFormSchema),
@@ -285,9 +286,17 @@ export default function DashboardPageClient() {
       }
     }
 
+    // If user explicitly removed existing avatar, pass empty string to trigger R2 cleanup
+    const avatarDeletePayload =
+      avatarKey !== undefined
+        ? { avatarKey, avatarUrl }
+        : removeAvatar
+          ? { avatarKey: "", avatarUrl: "" }
+          : {};
+
     await updateProfile({
       clerkId: user.id,
-      ...(avatarKey !== undefined ? { avatarKey, avatarUrl } : {}),
+      ...avatarDeletePayload,
       displayName: values.displayName,
       email: values.email || undefined,
       phone: values.phone || undefined,
@@ -319,6 +328,7 @@ export default function DashboardPageClient() {
       paymentCard: values.paymentCard,
     });
 
+    setRemoveAvatar(false);
     toast.success("Profils saglabāts");
   };
 
@@ -463,15 +473,31 @@ export default function DashboardPageClient() {
                                     }}
                                   />
                                 </label>
-                                {previewFile && (
+                                {previewFile ? (
                                   <button
                                     type="button"
                                     onClick={() => removeFile(previewFile.id)}
                                     className="flex items-center gap-1 text-xs text-muted-foreground hover:text-destructive"
                                   >
-                                    <X className="size-3" /> Noņemt attēlu
+                                    <X className="size-3" /> Noņemt jauno attēlu
                                   </button>
-                                )}
+                                ) : removeAvatar ? (
+                                  <button
+                                    type="button"
+                                    onClick={() => setRemoveAvatar(false)}
+                                    className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground"
+                                  >
+                                    <X className="size-3" /> Atcelt dzēšanu
+                                  </button>
+                                ) : profile?.avatarKey ? (
+                                  <button
+                                    type="button"
+                                    onClick={() => setRemoveAvatar(true)}
+                                    className="flex items-center gap-1 text-xs text-muted-foreground hover:text-destructive"
+                                  >
+                                    <X className="size-3" /> Dzēst attēlu
+                                  </button>
+                                ) : null}
                                 <p className="text-xs text-muted-foreground">JPG, PNG, WebP vai AVIF. Maks. 500 KB.</p>
                               </div>
                             </div>
