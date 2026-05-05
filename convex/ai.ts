@@ -388,82 +388,12 @@ export const searchProfiles = action({
   },
 });
 
-const PROFILE_FIELD_GUIDE = `
-Tu esi palīgs zoptero.com platformā — Latvijas profesionāļu un uzņēmumu direktoriā.
-Tava loma: palīdzēt lietotājam aizpildīt sava profila laukus pēc iespējas labāk.
-Atbildi latviski, kodolīgi un draudzīgi.
-
-Profila lauki un to nozīme:
-- **Vārds Uzvārds** (displayName): Pilnais vārds vai uzņēmuma nosaukums. Redzams publiski. Min 3, max 80 rakstzīmes.
-- **Īss apraksts** (bio): 1–2 teikumi par to, ko tu dari. Redzams profilā un meklēšanā.
-- **Par mani** (aboutMe): Garāks apraksts — pieredze, vērtības, ko piedāvā klientiem.
-- **Pilsēta** (city): Kur tu strādā vai atrodas.
-- **Tālrunis** (phone): Kontaktinformācija klientiem.
-- **E-pasts** (email): Kontaktinformācija klientiem.
-- **Nozare** (sector): Tava profesionālā joma vai nozare.
-- **Darba vide** (workingEnvironment): Vai strādā attālināti, klātienē vai abējos.
-- **URL identifikators** (slug): Tavs publiski redzamais profila links, piemēram: zoptero.com/maris-kalns.
-- **Statuss tiešsaistē** (onlineStatus): Vai esi pieejams jauniem klientiem.
-- **Atslēgas vārdi** (strongKeywords): Vissvarīgākie vārdi, pēc kuriem tevi var atrast.
-- **Meklēšanas trigeris** (searchTriggers): Papildu frāzes, pēc kurām tevi var meklēt.
-- **WhatsApp**: Tava WhatsApp numura. Formāts: +371 2XXXXXXX.
-- **Instagram/TikTok/Telegram/Facebook/Threads**: Sociālo tīklu profilu saites vai lietotājvārdi.
-- **YouTube**: Saite uz tavu YouTube kanālu.
-- **Linktree/Etsy**: Saites uz citām platformām.
-- **Profila video** (profileVideoUrl): Saite uz video, kas tevi iepazīstina.
-- **Maksājumu veidi**: Cash (skaidra nauda), bankas pārskaitījums, karte.
-- **SEO virsraksts** (seoTitle): Virsraksts meklētājprogrammām (max 60 rakstzīmes).
-- **SEO apraksts** (seoDescription): Apraksts meklētājprogrammām (max 160 rakstzīmes).
-
-Sniedz konkrētus piemērus, ja tas palīdz. Ja jautājums nav saistīts ar profila aizpildīšanu, pieklājīgi novirzini uz tēmu.
-`.trim();
-
-function isQuotaExceededError(message: string): boolean {
-  const normalized = message.toLowerCase();
-  return (
-    normalized.includes("resource_exhausted") ||
-    normalized.includes("quota") ||
-    normalized.includes("429")
-  );
-}
-
-function isRetryableProviderError(message: string): boolean {
-  const normalized = message.toLowerCase();
-  return (
-    isQuotaExceededError(message) ||
-    normalized.includes("no endpoints found") ||
-    normalized.includes("temporarily unavailable") ||
-    normalized.includes("rate limit") ||
-    normalized.includes("provider returned error") ||
-    normalized.includes("service unavailable") ||
-    normalized.includes("model is not available")
-  );
-}
-
-function localProfileAssistantFallback(message: string, fieldContext?: string): string {
-  const lower = `${fieldContext ?? ""} ${message}`.toLowerCase();
-
-  if (lower.includes("vārds") || lower.includes("uzvārds") || lower.includes("displayname")) {
-    return "AI limits īslaicīgi sasniegti, bet varu palīdzēt uzreiz. Vārds Uzvārds laukā raksti pilnu vārdu vai uzņēmuma nosaukumu. Piemēri: 'Jānis Bērziņš', 'SIA Zoptero Studio'. Izvairies no emoji un liekām frāzēm.";
+function profileAssistantFallbackFromRag(fallbackMarkdown: string | null): string {
+  const text = fallbackMarkdown?.trim();
+  if (text) {
+    return text;
   }
-
-  if (lower.includes("bio") || lower.includes("īss apraksts")) {
-    return "AI limits īslaicīgi sasniegti, tāpēc dodu gatavu šablonu: 'Palīdzu [kam?] sasniegt [rezultāts], specializējos [niša].' Piemērs: 'Palīdzu mazajiem uzņēmumiem izveidot modernu mājaslapu, specializējos Next.js un SEO.'";
-  }
-
-  if (lower.includes("slug") || lower.includes("url")) {
-    return "URL identifikatoram lieto mazos burtus, ciparus un defises. Piemēri: 'janis-berzins', 'zoptero-studio'. Nelieto atstarpes un garumzīmes.";
-  }
-
-  if (lower.includes("whatsapp") || lower.includes("tālrun") || lower.includes("phone")) {
-    return "Kontaktam izmanto starptautisko formātu ar +371. Piemērs: '+371 2XXXXXXX'. Tas palīdz klientiem uzreiz saprast, kā sazināties.";
-  }
-
-  if (lower.includes("seo")) {
-    return "SEO virsraksts: līdz 60 rakstzīmēm, ar pakalpojumu + pilsētu. SEO apraksts: līdz 160 rakstzīmēm ar skaidru ieguvumu un aicinājumu sazināties.";
-  }
-
-  return "AI limits īslaicīgi sasniegti. Vari jautāt par konkrētu lauku, piemēram: Vārds Uzvārds, Īss apraksts, URL identifikators, Kontakti vai SEO, un es došu precīzu piemēru.";
+  return "AI pašlaik nav pieejams. Lūdzu, mēģini vēlreiz pēc brīža.";
 }
 
 type AssistantTurn = {
@@ -641,15 +571,24 @@ export const profileAssistantChat = action({
     ),
   },
   returns: v.string(),
-  handler: async (ctx, args) => {
-    const baseSystemInstruction = args.fieldContext
-      ? `${PROFILE_FIELD_GUIDE}\n\nLietotājs pašlaik aizpilda lauku: ${args.fieldContext}.`
-      : PROFILE_FIELD_GUIDE;
-
+  handler: async (ctx, args): Promise<string> => {
     const ragKnowledgeContext: string = await ctx.runQuery(
       internal.ragChat.getActiveRagChatContext,
-      { maxChars: 8000 }
+      { maxChars: 8000, slugPrefix: "profile-assistant-" }
     );
+
+    const ragFallbackMarkdown: string | null = await ctx.runQuery(
+      internal.ragChat.getRagChatDocumentMarkdownBySlug,
+      { slug: "profile-assistant-fallback" }
+    );
+
+    if (!ragKnowledgeContext.trim()) {
+      return "⚠️ RAG zināšanu bāze nav aizpildīta. Pievieno aktīvu markdown dokumentu ar slug 'profile-assistant-guide'.";
+    }
+
+    const baseSystemInstruction = args.fieldContext
+      ? `${ragKnowledgeContext}\n\nLietotājs pašlaik aizpilda lauku: ${args.fieldContext}.`
+      : ragKnowledgeContext;
 
     const systemInstruction = ragKnowledgeContext
       ? `${baseSystemInstruction}\n\nPapildu zināšanu bāze (Markdown):\n${ragKnowledgeContext}\n\nJa lietotāja jautājums sakrīt ar šo bāzi, atbildi balsti uz tās saturu.`
@@ -712,12 +651,11 @@ export const profileAssistantChat = action({
 
       const text = response.text?.trim();
       if (!text) {
-        return localProfileAssistantFallback(args.message, args.fieldContext);
+        return profileAssistantFallbackFromRag(ragFallbackMarkdown);
       }
       return text;
     } catch (error) {
-      const message = error instanceof Error ? error.message : String(error);
-      return localProfileAssistantFallback(args.message, args.fieldContext);
+      return profileAssistantFallbackFromRag(ragFallbackMarkdown);
     }
   },
 });
