@@ -641,10 +641,19 @@ export const profileAssistantChat = action({
     ),
   },
   returns: v.string(),
-  handler: async (_ctx, args) => {
-    const systemInstruction = args.fieldContext
+  handler: async (ctx, args) => {
+    const baseSystemInstruction = args.fieldContext
       ? `${PROFILE_FIELD_GUIDE}\n\nLietotājs pašlaik aizpilda lauku: ${args.fieldContext}.`
       : PROFILE_FIELD_GUIDE;
+
+    const ragKnowledgeContext: string = await ctx.runQuery(
+      internal.ragChat.getActiveRagChatContext,
+      { maxChars: 8000 }
+    );
+
+    const systemInstruction = ragKnowledgeContext
+      ? `${baseSystemInstruction}\n\nPapildu zināšanu bāze (Markdown):\n${ragKnowledgeContext}\n\nJa lietotāja jautājums sakrīt ar šo bāzi, atbildi balsti uz tās saturu.`
+      : baseSystemInstruction;
 
     const history = (args.history ?? [])
       .filter((msg) => msg.role === "user" || msg.role === "model")

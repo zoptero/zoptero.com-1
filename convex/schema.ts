@@ -58,4 +58,14 @@ export default defineSchema({
       dimensions: 768,
       filterFields: ["accountType", "city"],
     }),
+  ragChatDocuments: defineTable({
+    slug: v.string(),
+    title: v.string(),
+    markdown: v.string(),
+    isActive: v.boolean(),
+    updatedAt: v.number(),
+    updatedByClerkId: v.optional(v.string()),
+  })
+    .index("by_slug", ["slug"])
+    .index("by_is_active", ["isActive"]),
 });
