@@ -433,7 +433,10 @@ function isRetryableProviderError(message: string): boolean {
     isQuotaExceededError(message) ||
     normalized.includes("no endpoints found") ||
     normalized.includes("temporarily unavailable") ||
-    normalized.includes("rate limit")
+    normalized.includes("rate limit") ||
+    normalized.includes("provider returned error") ||
+    normalized.includes("service unavailable") ||
+    normalized.includes("model is not available")
   );
 }
 
@@ -516,8 +519,8 @@ async function generateWithOpenRouter(args: {
     if (!response.ok) {
       const errorMessage = data?.error?.message ?? `OpenRouter request failed with status ${response.status}`;
       lastError = new Error(errorMessage);
-      const isNoEndpoint = errorMessage.toLowerCase().includes("no endpoints found");
-      if (isNoEndpoint) {
+      const isAuthError = response.status === 401 || response.status === 403;
+      if (!isAuthError) {
         continue;
       }
       throw lastError;
