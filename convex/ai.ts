@@ -418,6 +418,93 @@ Profila lauki un to nozīme:
 Sniedz konkrētus piemērus, ja tas palīdz. Ja jautājums nav saistīts ar profila aizpildīšanu, pieklājīgi novirzini uz tēmu.
 `.trim();
 
+function isQuotaExceededError(message: string): boolean {
+  const normalized = message.toLowerCase();
+  return (
+    normalized.includes("resource_exhausted") ||
+    normalized.includes("quota") ||
+    normalized.includes("429")
+  );
+}
+
+function localProfileAssistantFallback(message: string, fieldContext?: string): string {
+  const lower = `${fieldContext ?? ""} ${message}`.toLowerCase();
+
+  if (lower.includes("vārds") || lower.includes("uzvārds") || lower.includes("displayname")) {
+    return "AI limits īslaicīgi sasniegti, bet varu palīdzēt uzreiz. Vārds Uzvārds laukā raksti pilnu vārdu vai uzņēmuma nosaukumu. Piemēri: 'Jānis Bērziņš', 'SIA Zoptero Studio'. Izvairies no emoji un liekām frāzēm.";
+  }
+
+  if (lower.includes("bio") || lower.includes("īss apraksts")) {
+    return "AI limits īslaicīgi sasniegti, tāpēc dodu gatavu šablonu: 'Palīdzu [kam?] sasniegt [rezultāts], specializējos [niša].' Piemērs: 'Palīdzu mazajiem uzņēmumiem izveidot modernu mājaslapu, specializējos Next.js un SEO.'";
+  }
+
+  if (lower.includes("slug") || lower.includes("url")) {
+    return "URL identifikatoram lieto mazos burtus, ciparus un defises. Piemēri: 'janis-berzins', 'zoptero-studio'. Nelieto atstarpes un garumzīmes.";
+  }
+
+  if (lower.includes("whatsapp") || lower.includes("tālrun") || lower.includes("phone")) {
+    return "Kontaktam izmanto starptautisko formātu ar +371. Piemērs: '+371 2XXXXXXX'. Tas palīdz klientiem uzreiz saprast, kā sazināties.";
+  }
+
+  if (lower.includes("seo")) {
+    return "SEO virsraksts: līdz 60 rakstzīmēm, ar pakalpojumu + pilsētu. SEO apraksts: līdz 160 rakstzīmēm ar skaidru ieguvumu un aicinājumu sazināties.";
+  }
+
+  return "AI limits īslaicīgi sasniegti. Vari jautāt par konkrētu lauku, piemēram: Vārds Uzvārds, Īss apraksts, URL identifikators, Kontakti vai SEO, un es došu precīzu piemēru.";
+}
+
+type AssistantTurn = {
+  role: "user" | "model";
+  content: string;
+};
+
+async function generateWithOpenRouter(args: {
+  message: string;
+  systemInstruction: string;
+  history: AssistantTurn[];
+}): Promise<string> {
+  const apiKey = process.env.OPENROUTER_API_KEY;
+  if (!apiKey) {
+    throw new ConvexError("Missing OPENROUTER_API_KEY environment variable");
+  }
+
+  const model = process.env.OPENROUTER_MODEL ?? "deepseek/deepseek-r1-0528:free";
+  const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${apiKey}`,
+      "Content-Type": "application/json",
+      "HTTP-Referer": "https://zoptero.com",
+      "X-Title": "Zoptero Profile Assistant",
+    },
+    body: JSON.stringify({
+      model,
+      messages: [
+        { role: "system", content: args.systemInstruction },
+        ...args.history.map((msg) => ({
+          role: msg.role === "model" ? "assistant" : "user",
+          content: msg.content,
+        })),
+        { role: "user", content: args.message },
+      ],
+      temperature: 0.4,
+    }),
+  });
+
+  const data = await response.json();
+  if (!response.ok) {
+    const errorMessage = data?.error?.message ?? `OpenRouter request failed with status ${response.status}`;
+    throw new Error(errorMessage);
+  }
+
+  const content = data?.choices?.[0]?.message?.content;
+  if (typeof content === "string" && content.trim()) {
+    return content.trim();
+  }
+
+  throw new Error("OpenRouter returned an empty response");
+}
+
 export const profileAssistantChat = action({
   args: {
     message: v.string(),
@@ -428,17 +515,36 @@ export const profileAssistantChat = action({
   },
   returns: v.string(),
   handler: async (_ctx, args) => {
+    const systemInstruction = args.fieldContext
+      ? `${PROFILE_FIELD_GUIDE}\n\nLietotājs pašlaik aizpilda lauku: ${args.fieldContext}.`
+      : PROFILE_FIELD_GUIDE;
+
+    const history = (args.history ?? [])
+      .filter((msg) => msg.role === "user" || msg.role === "model")
+      .map((msg) => ({
+        role: msg.role as "user" | "model",
+        content: msg.content,
+      }));
+
+    if (process.env.OPENROUTER_API_KEY) {
+      try {
+        return await generateWithOpenRouter({
+          message: args.message,
+          systemInstruction,
+          history,
+        });
+      } catch (error) {
+        const message = error instanceof Error ? error.message : String(error);
+        if (!isQuotaExceededError(message)) {
+          throw new ConvexError(`Profile assistant failed: ${message}`);
+        }
+      }
+    }
+
     try {
       const client = getEmbeddingClient();
-
-      const systemInstruction = args.fieldContext
-        ? `${PROFILE_FIELD_GUIDE}\n\nLietotājs pašlaik aizpilda lauku: ${args.fieldContext}.`
-        : PROFILE_FIELD_GUIDE;
-
-      const history = args.history ?? [];
       const contents = [
         ...history
-          .filter((msg) => msg.role === "user" || msg.role === "model")
           .map((msg) => ({
             role: msg.role as "user" | "model",
             parts: [{ text: msg.content }],
@@ -462,6 +568,9 @@ export const profileAssistantChat = action({
       return text;
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
+      if (isQuotaExceededError(message)) {
+        return localProfileAssistantFallback(args.message, args.fieldContext);
+      }
       throw new ConvexError(`Profile assistant failed: ${message}`);
     }
   },
