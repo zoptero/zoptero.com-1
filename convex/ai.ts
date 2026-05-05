@@ -428,35 +428,42 @@ export const profileAssistantChat = action({
   },
   returns: v.string(),
   handler: async (_ctx, args) => {
-    const client = getEmbeddingClient();
+    try {
+      const client = getEmbeddingClient();
 
-    const systemInstruction = args.fieldContext
-      ? `${PROFILE_FIELD_GUIDE}\n\nLietotājs pašlaik aizpilda lauku: **${args.fieldContext}**.`
-      : PROFILE_FIELD_GUIDE;
+      const systemInstruction = args.fieldContext
+        ? `${PROFILE_FIELD_GUIDE}\n\nLietotājs pašlaik aizpilda lauku: ${args.fieldContext}.`
+        : PROFILE_FIELD_GUIDE;
 
-    const history = args.history ?? [];
-    const contents = [
-      ...history.map((msg) => ({
-        role: msg.role as "user" | "model",
-        parts: [{ text: msg.content }],
-      })),
-      {
-        role: "user" as const,
-        parts: [{ text: args.message }],
-      },
-    ];
+      const history = args.history ?? [];
+      const contents = [
+        ...history
+          .filter((msg) => msg.role === "user" || msg.role === "model")
+          .map((msg) => ({
+            role: msg.role as "user" | "model",
+            parts: [{ text: msg.content }],
+          })),
+        {
+          role: "user" as const,
+          parts: [{ text: args.message }],
+        },
+      ];
 
-    const response = await client.models.generateContent({
-      model: "gemini-2.0-flash-lite",
-      contents,
-      config: { systemInstruction },
-    });
+      const response = await client.models.generateContent({
+        model: "gemini-2.0-flash",
+        contents,
+        config: { systemInstruction },
+      });
 
-    const text = response.text;
-    if (!text) {
-      throw new ConvexError("Empty response from Gemini");
+      const text = response.text?.trim();
+      if (!text) {
+        throw new ConvexError("Gemini returned an empty response");
+      }
+      return text;
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      throw new ConvexError(`Profile assistant failed: ${message}`);
     }
-    return text;
   },
 });
 
