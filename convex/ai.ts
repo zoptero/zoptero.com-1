@@ -396,6 +396,48 @@ function profileAssistantFallbackFromRag(fallbackMarkdown: string | null): strin
   return "AI pašlaik nav pieejams. Lūdzu, mēģini vēlreiz pēc brīža.";
 }
 
+function buildProfileSnapshotText(profile: {
+  displayName?: string;
+  bio?: string;
+  aboutMe?: string;
+  slug?: string;
+  email?: string;
+  phone?: string;
+  whatsapp?: string;
+  city?: string;
+  sector?: string;
+  workingEnvironment?: string;
+  seoTitle?: string;
+  seoDescription?: string;
+  searchTriggers?: string[];
+  strongKeywords?: string[];
+}): string {
+  const rows = [
+    ["Vārds Uzvārds", profile.displayName],
+    ["Īss apraksts", profile.bio],
+    ["Par mani", profile.aboutMe],
+    ["URL identifikators", profile.slug],
+    ["E-pasts", profile.email],
+    ["Tālrunis", profile.phone],
+    ["WhatsApp", profile.whatsapp],
+    ["Pilsēta", profile.city],
+    ["Nozare", profile.sector],
+    ["Darba vide", profile.workingEnvironment],
+    ["SEO virsraksts", profile.seoTitle],
+    ["SEO apraksts", profile.seoDescription],
+    ["Atslēgas vārdi", profile.strongKeywords?.join(", ")],
+    ["Meklēšanas trigeri", profile.searchTriggers?.join(", ")],
+  ]
+    .filter(([, value]) => typeof value === "string" && value.trim().length > 0)
+    .map(([label, value]) => `- ${label}: ${value}`);
+
+  if (rows.length === 0) {
+    return "";
+  }
+
+  return `Lietotāja pašreizējais profils (izmanto validācijai):\n${rows.join("\n")}`;
+}
+
 type AssistantTurn = {
   role: "user" | "model";
   content: string;
@@ -572,6 +614,8 @@ export const profileAssistantChat = action({
   },
   returns: v.string(),
   handler: async (ctx, args): Promise<string> => {
+    const identity = await ctx.auth.getUserIdentity();
+
     const ragKnowledgeContext: string = await ctx.runQuery(
       internal.ragChat.getActiveRagChatContext,
       { maxChars: 8000, slugPrefix: "profile-assistant-" }
@@ -586,12 +630,34 @@ export const profileAssistantChat = action({
       return "⚠️ RAG zināšanu bāze nav aizpildīta. Pievieno aktīvu markdown dokumentu ar slug 'profile-assistant-guide'.";
     }
 
+    const currentProfile = identity
+      ? await ctx.runQuery(internal.profiles.getByClerkId, { clerkId: identity.subject })
+      : null;
+    const profileSnapshot = currentProfile
+      ? buildProfileSnapshotText({
+          displayName: currentProfile.displayName,
+          bio: currentProfile.bio,
+          aboutMe: currentProfile.aboutMe,
+          slug: currentProfile.slug,
+          email: currentProfile.email,
+          phone: currentProfile.phone,
+          whatsapp: currentProfile.whatsapp,
+          city: currentProfile.city,
+          sector: currentProfile.sector,
+          workingEnvironment: currentProfile.workingEnvironment,
+          seoTitle: currentProfile.seoTitle,
+          seoDescription: currentProfile.seoDescription,
+          strongKeywords: currentProfile.strongKeywords,
+          searchTriggers: currentProfile.searchTriggers,
+        })
+      : "";
+
     const baseSystemInstruction = args.fieldContext
-      ? `${ragKnowledgeContext}\n\nLietotājs pašlaik aizpilda lauku: ${args.fieldContext}.`
+      ? `${ragKnowledgeContext}\n\n${profileSnapshot}\n\nLietotājs pašlaik aizpilda lauku: ${args.fieldContext}.`
       : ragKnowledgeContext;
 
     const systemInstruction = ragKnowledgeContext
-      ? `${baseSystemInstruction}\n\nPapildu zināšanu bāze (Markdown):\n${ragKnowledgeContext}\n\nJa lietotāja jautājums sakrīt ar šo bāzi, atbildi balsti uz tās saturu.`
+      ? `${baseSystemInstruction}\n\nJa lietotāja jautājums ir par formātu vai korektumu, pārbaudi pret pašreizējo profila snapshot un iedod konkrētu labojumu.`
       : baseSystemInstruction;
 
     const history = (args.history ?? [])
