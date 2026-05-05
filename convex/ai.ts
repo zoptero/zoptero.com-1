@@ -427,6 +427,16 @@ function isQuotaExceededError(message: string): boolean {
   );
 }
 
+function isRetryableProviderError(message: string): boolean {
+  const normalized = message.toLowerCase();
+  return (
+    isQuotaExceededError(message) ||
+    normalized.includes("no endpoints found") ||
+    normalized.includes("temporarily unavailable") ||
+    normalized.includes("rate limit")
+  );
+}
+
 function localProfileAssistantFallback(message: string, fieldContext?: string): string {
   const lower = `${fieldContext ?? ""} ${message}`.toLowerCase();
 
@@ -552,8 +562,11 @@ export const profileAssistantChat = action({
           systemInstruction,
           history,
         });
-      } catch {
-        // Gracefully fall back to Gemini/local helper if OpenRouter model endpoints are unavailable.
+      } catch (error) {
+        const message = error instanceof Error ? error.message : String(error);
+        if (!isRetryableProviderError(message)) {
+          throw new ConvexError(`OpenRouter failed: ${message}`);
+        }
       }
     }
 
