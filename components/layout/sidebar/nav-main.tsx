@@ -140,26 +140,16 @@ export const navItems: NavGroup[] = [
     title: "AI Apps",
     items: [
       {
-        title: "Image Generator",
+        title: "Attēlu veidotājs",
         href: "/dashboard/apps/ai-image-generator",
-        icon: ImagesIcon
-      },
-      {
-        title: "Text to Speech",
-        href: "/dashboard/apps/text-to-speech",
-        icon: SpeechIcon,
-        isComing: true
+        icon: ImagesIcon,
+        lock: true
       }
     ]
   },
   {
     title: "Pages",
     items: [
-      {
-        title: "Users List",
-        href: "/dashboard/pages/users",
-        icon: UsersIcon
-      },
       {
         title: "Profile V2",
         href: "/dashboard/pages/user-profile",
