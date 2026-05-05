@@ -42,10 +42,13 @@ export default function ProfileAssistantChat({
     setLoading(true);
 
     try {
-      const historyForApi = nextMessages.slice(0, -1).map((m) => ({
-        role: m.role,
-        content: m.content,
-      }));
+      const historyForApi = nextMessages
+        .slice(0, -1)
+        .filter((m) => m !== WELCOME)
+        .map((m) => ({
+          role: m.role,
+          content: m.content,
+        }));
 
       const reply = await chat({
         message: text,
