@@ -1014,7 +1014,7 @@ export default function DashboardPageClient() {
 
                   <div className="flex justify-end">
                     <Button type="submit" disabled={(!form.formState.isDirty && !previewFile && !removeAvatar) || form.formState.isSubmitting || uploadingAvatar}>
-                      {uploadingAvatar ? "Augšupielādē attēlu..." : form.formState.isSubmitting ? "Saglabā..." : "Saglabāt izmaiņas"}
+                      {uploadingAvatar ? "Augšupielādē attēlu..." : form.formState.isSubmitting ? "Saglabā..." : "Saglabāt"}
                     </Button>
                   </div>
                 </form>
