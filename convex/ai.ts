@@ -656,16 +656,16 @@ export const profileAssistantChat = action({
     if (process.env.CLOUDFLARE_AI_API_KEY) {
       try {
         return await generateWithCloudflare({ message: args.message, systemInstruction, history });
-      } catch {
-        // Fall through to next provider
+      } catch (error) {
+        return `⚠️ Cloudflare kļūda: ${error instanceof Error ? error.message : String(error)}`;
       }
     }
 
     if (process.env.NVIDIA_API_KEY) {
       try {
         return await generateWithNvidia({ message: args.message, systemInstruction, history });
-      } catch {
-        // Fall through to next provider
+      } catch (error) {
+        return `⚠️ NVIDIA kļūda: ${error instanceof Error ? error.message : String(error)}`;
       }
     }
 
@@ -677,10 +677,7 @@ export const profileAssistantChat = action({
           history,
         });
       } catch (error) {
-        const message = error instanceof Error ? error.message : String(error);
-        if (!isRetryableProviderError(message)) {
-          return `⚠️ OpenRouter kļūda: ${message}`;
-        }
+        return `⚠️ OpenRouter kļūda: ${error instanceof Error ? error.message : String(error)}`;
       }
     }
 
