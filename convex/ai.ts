@@ -404,6 +404,12 @@ function buildProfileSnapshotText(profile: {
   email?: string;
   phone?: string;
   whatsapp?: string;
+  instagram?: string;
+  tiktok?: string;
+  telegram?: string;
+  facebook?: string;
+  threads?: string;
+  youtube?: string;
   city?: string;
   sector?: string;
   workingEnvironment?: string;
@@ -420,6 +426,12 @@ function buildProfileSnapshotText(profile: {
     ["E-pasts", profile.email],
     ["Tālrunis", profile.phone],
     ["WhatsApp", profile.whatsapp],
+    ["Instagram", profile.instagram],
+    ["TikTok", profile.tiktok],
+    ["Telegram", profile.telegram],
+    ["Facebook", profile.facebook],
+    ["Threads", profile.threads],
+    ["YouTube", profile.youtube],
     ["Pilsēta", profile.city],
     ["Nozare", profile.sector],
     ["Darba vide", profile.workingEnvironment],
@@ -642,6 +654,12 @@ export const profileAssistantChat = action({
           email: currentProfile.email,
           phone: currentProfile.phone,
           whatsapp: currentProfile.whatsapp,
+          instagram: currentProfile.instagram,
+          tiktok: currentProfile.tiktok,
+          telegram: currentProfile.telegram,
+          facebook: currentProfile.facebook,
+          threads: currentProfile.threads,
+          youtube: currentProfile.youtube,
           city: currentProfile.city,
           sector: currentProfile.sector,
           workingEnvironment: currentProfile.workingEnvironment,
@@ -652,13 +670,19 @@ export const profileAssistantChat = action({
         })
       : "";
 
-    const baseSystemInstruction = args.fieldContext
-      ? `${ragKnowledgeContext}\n\n${profileSnapshot}\n\nLietotājs pašlaik aizpilda lauku: ${args.fieldContext}.`
-      : ragKnowledgeContext;
+    const focusedFieldInstruction = args.fieldContext
+      ? `Lietotājs pašlaik aizpilda lauku: ${args.fieldContext}.`
+      : "";
 
-    const systemInstruction = ragKnowledgeContext
-      ? `${baseSystemInstruction}\n\nJa lietotāja jautājums ir par formātu vai korektumu, pārbaudi pret pašreizējo profila snapshot un iedod konkrētu labojumu.`
-      : baseSystemInstruction;
+    const systemInstruction = [
+      ragKnowledgeContext,
+      profileSnapshot,
+      focusedFieldInstruction,
+      "Ja lietotāja jautājums ir par formātu vai korektumu, pārbaudi pret pašreizējo profila snapshot un skaidri pasaki, vai lauks ir aizpildīts.",
+      "Ja lauks nav aizpildīts vai ir nepareizā formātā, iedod precīzu laboto vērtību.",
+    ]
+      .filter((part) => part && part.trim().length > 0)
+      .join("\n\n");
 
     const history = (args.history ?? [])
       .filter((msg) => msg.role === "user" || msg.role === "model")
