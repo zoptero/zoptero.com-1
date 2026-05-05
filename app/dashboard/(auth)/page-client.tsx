@@ -495,7 +495,7 @@ export default function DashboardPageClient() {
           </div>
         </div>
 
-        <div className="flex w-full items-start gap-4">
+        <div className="flex w-full items-stretch gap-4">
           <div className="min-w-0 flex-1">
           <Card>
             <CardContent className="pt-6">
@@ -1029,7 +1029,7 @@ export default function DashboardPageClient() {
             </CardContent>
           </Card>
           </div>
-          <div className="hidden xl:block xl:w-80 shrink-0">
+          <div className="hidden shrink-0 xl:flex xl:w-80">
             <ProfileAssistantChat focusedField={focusedField} />
           </div>
         </div>

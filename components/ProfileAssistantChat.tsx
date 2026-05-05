@@ -79,7 +79,7 @@ export default function ProfileAssistantChat({
   }
 
   return (
-    <Card className="flex h-[clamp(420px,calc(100vh-12rem),760px)] flex-col">
+    <Card className="flex h-full min-h-0 flex-1 flex-col">
       <CardHeader className="shrink-0 pb-3">
         <CardTitle className="flex items-center gap-2 text-sm font-semibold">
           <Bot className="size-4 text-primary" />
