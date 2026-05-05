@@ -471,6 +471,56 @@ type AssistantTurn = {
   content: string;
 };
 
+async function generateWithCloudflare(args: {
+  message: string;
+  systemInstruction: string;
+  history: AssistantTurn[];
+}): Promise<string> {
+  const apiKey = process.env.CLOUDFLARE_AI_API_KEY;
+  const accountId = process.env.CLOUDFLARE_ACCOUNT_ID;
+  if (!apiKey || !accountId) {
+    throw new Error("Missing CLOUDFLARE_AI_API_KEY or CLOUDFLARE_ACCOUNT_ID");
+  }
+
+  const model = process.env.CLOUDFLARE_MODEL ?? "@cf/meta/llama-3.1-8b-instruct";
+  const response = await fetch(
+    `https://api.cloudflare.com/client/v4/accounts/${accountId}/ai/v1/chat/completions`,
+    {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        model,
+        messages: [
+          { role: "system", content: args.systemInstruction },
+          ...args.history.map((msg) => ({
+            role: msg.role === "model" ? "assistant" : "user",
+            content: msg.content,
+          })),
+          { role: "user", content: args.message },
+        ],
+        temperature: 0.4,
+        max_tokens: 1024,
+      }),
+    }
+  );
+
+  const data = await response.json();
+  if (!response.ok) {
+    const errMsg = data?.errors?.[0]?.message ?? data?.error?.message ?? `Cloudflare AI failed with status ${response.status}`;
+    throw new Error(errMsg);
+  }
+
+  const content = data?.result?.response ?? data?.choices?.[0]?.message?.content;
+  if (typeof content === "string" && content.trim()) {
+    return content.trim();
+  }
+
+  throw new Error("Cloudflare AI returned an empty response");
+}
+
 async function generateWithNvidia(args: {
   message: string;
   systemInstruction: string;
@@ -602,6 +652,14 @@ export const profileAssistantChat = action({
         role: msg.role as "user" | "model",
         content: msg.content,
       }));
+
+    if (process.env.CLOUDFLARE_AI_API_KEY) {
+      try {
+        return await generateWithCloudflare({ message: args.message, systemInstruction, history });
+      } catch {
+        // Fall through to next provider
+      }
+    }
 
     if (process.env.NVIDIA_API_KEY) {
       try {
