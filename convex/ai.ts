@@ -565,7 +565,7 @@ export const profileAssistantChat = action({
       } catch (error) {
         const message = error instanceof Error ? error.message : String(error);
         if (!isRetryableProviderError(message)) {
-          throw new ConvexError(`OpenRouter failed: ${message}`);
+          return `⚠️ OpenRouter kļūda: ${message}`;
         }
       }
     }
@@ -592,15 +592,12 @@ export const profileAssistantChat = action({
 
       const text = response.text?.trim();
       if (!text) {
-        throw new ConvexError("Gemini returned an empty response");
+        return localProfileAssistantFallback(args.message, args.fieldContext);
       }
       return text;
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
-      if (isQuotaExceededError(message)) {
-        return localProfileAssistantFallback(args.message, args.fieldContext);
-      }
-      throw new ConvexError(`Profile assistant failed: ${message}`);
+      return localProfileAssistantFallback(args.message, args.fieldContext);
     }
   },
 });
