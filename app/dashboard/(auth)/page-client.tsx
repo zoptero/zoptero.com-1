@@ -131,7 +131,10 @@ export default function DashboardPageClient() {
   const updateProfile = useMutation(api.profiles.update);
   const [activeTab, setActiveTab] = useState("profile");
   const [underlinePosition, setUnderlinePosition] = useState({ left: 0, width: 0 });
+  const [showLeftShadow, setShowLeftShadow] = useState(false);
+  const [showRightShadow, setShowRightShadow] = useState(false);
   const tabsListRef = useRef<HTMLDivElement>(null);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(profileFormSchema),
@@ -174,32 +177,54 @@ export default function DashboardPageClient() {
   }, [profile, user, form]);
 
   useEffect(() => {
-    const updateUnderlinePosition = () => {
-      if (!tabsListRef.current) {
-        return;
-      }
+    const updateUnderlineAndScroll = () => {
+      if (!tabsListRef.current) return;
 
       const activeTrigger = tabsListRef.current.querySelector(
         `[data-state="active"]`
       ) as HTMLElement | null;
 
-      if (!activeTrigger) {
-        return;
-      }
+      if (!activeTrigger) return;
 
       setUnderlinePosition({
         left: activeTrigger.offsetLeft,
         width: activeTrigger.offsetWidth,
       });
+
+      if (scrollContainerRef.current) {
+        const el = scrollContainerRef.current;
+        const scrollTo =
+          activeTrigger.offsetLeft - el.clientWidth / 2 + activeTrigger.offsetWidth / 2;
+        el.scrollTo({ left: Math.max(0, scrollTo), behavior: "smooth" });
+      }
     };
 
-    updateUnderlinePosition();
-    window.addEventListener("resize", updateUnderlinePosition);
+    updateUnderlineAndScroll();
+    window.addEventListener("resize", updateUnderlineAndScroll);
 
     return () => {
-      window.removeEventListener("resize", updateUnderlinePosition);
+      window.removeEventListener("resize", updateUnderlineAndScroll);
     };
   }, [activeTab]);
+
+  useEffect(() => {
+    const el = scrollContainerRef.current;
+    if (!el) return;
+
+    const updateShadows = () => {
+      setShowLeftShadow(el.scrollLeft > 0);
+      setShowRightShadow(el.scrollLeft < el.scrollWidth - el.clientWidth - 1);
+    };
+
+    updateShadows();
+    el.addEventListener("scroll", updateShadows);
+    window.addEventListener("resize", updateShadows);
+
+    return () => {
+      el.removeEventListener("scroll", updateShadows);
+      window.removeEventListener("resize", updateShadows);
+    };
+  }, []);
 
   const onSubmit = async (values: ProfileFormValues) => {
     if (!user?.id) {
@@ -270,22 +295,40 @@ export default function DashboardPageClient() {
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4 lg:pl-2.5">
-        <div ref={tabsListRef} className="relative mb-4">
-          <TabsList className="z-10">
-            <TabsTrigger value="profile">Profile</TabsTrigger>
-            <TabsTrigger value="contact">Contact</TabsTrigger>
-            <TabsTrigger value="social">Social</TabsTrigger>
-            <TabsTrigger value="business">Business</TabsTrigger>
-            <TabsTrigger value="seo">SEO</TabsTrigger>
-            <TabsTrigger value="payments">Payments</TabsTrigger>
-          </TabsList>
-          <AnimatedUnderline
-            orientation="horizontal"
-            style={{
-              left: underlinePosition.left,
-              width: underlinePosition.width,
-            }}
+        <div className="relative mb-4">
+          {/* Left shadow mask */}
+          <div
+            className="pointer-events-none absolute inset-y-0 left-0 z-10 w-10 bg-gradient-to-r from-background to-transparent transition-opacity duration-200"
+            style={{ opacity: showLeftShadow ? 1 : 0 }}
           />
+          {/* Right shadow mask */}
+          <div
+            className="pointer-events-none absolute inset-y-0 right-0 z-10 w-10 bg-gradient-to-l from-background to-transparent transition-opacity duration-200"
+            style={{ opacity: showRightShadow ? 1 : 0 }}
+          />
+          {/* Scroll container */}
+          <div
+            ref={scrollContainerRef}
+            className="scrollbar-hide overflow-x-auto"
+          >
+            <div ref={tabsListRef} className="relative w-max">
+              <TabsList className="z-10">
+                <TabsTrigger value="profile">Profile</TabsTrigger>
+                <TabsTrigger value="contact">Contact</TabsTrigger>
+                <TabsTrigger value="social">Social</TabsTrigger>
+                <TabsTrigger value="business">Business</TabsTrigger>
+                <TabsTrigger value="seo">SEO</TabsTrigger>
+                <TabsTrigger value="payments">Payments</TabsTrigger>
+              </TabsList>
+              <AnimatedUnderline
+                orientation="horizontal"
+                style={{
+                  left: underlinePosition.left,
+                  width: underlinePosition.width,
+                }}
+              />
+            </div>
+          </div>
         </div>
 
         <div className="mx-auto w-full max-w-4xl">
