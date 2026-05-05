@@ -7,12 +7,15 @@ import { useMutation, useQuery } from "convex/react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { toast } from "sonner";
+import { Upload, X } from "lucide-react";
+import { useFileUpload } from "@/hooks/use-file-upload";
 
 import { api } from "@/convex/_generated/api";
 import { Button } from "@/components/ui/button";
 import { AnimatedUnderline } from "@/components/ui/tabs-animated";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent } from "@/components/ui/card";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   Select,
   SelectContent,
@@ -30,6 +33,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { Input3 } from "@/components/input3";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 
@@ -56,12 +60,13 @@ const urlOrEmptySchema = z
   .refine((value) => value === "" || isValidUrl(value), "Enter a valid URL.");
 
 const profileFormSchema = z.object({
-  displayName: z.string().trim().min(2, "Name must be at least 2 characters.").max(80),
+  displayName: z.string().trim().min(3, "Vārdam nepieciešams vismaz 3 simboli.").max(80),
+  surname: z.string().trim().max(80),
   email: z.string().trim().email("Enter a valid email.").or(z.literal("")),
   phone: z.string().trim().max(30),
   city: z.string().trim().max(80),
   aboutMe: z.string().trim().max(2000),
-  bio: z.string().trim().max(500),
+  bio: z.string().trim().max(140),
   accountType: z.union([z.literal(""), z.literal("b2b"), z.literal("b2c")]),
   sector: z.string().trim().max(120),
   slug: z
@@ -95,6 +100,7 @@ type ProfileFormValues = z.infer<typeof profileFormSchema>;
 
 const defaultValues: ProfileFormValues = {
   displayName: "",
+  surname: "",
   email: "",
   phone: "",
   city: "",
@@ -135,6 +141,13 @@ export default function DashboardPageClient() {
   const [showRightShadow, setShowRightShadow] = useState(false);
   const tabsListRef = useRef<HTMLDivElement>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const [{ files }, { addFiles, removeFile }] = useFileUpload({
+    accept: "image/*",
+    maxFiles: 1,
+    maxSize: 5 * 1024 * 1024,
+  });
+  const previewFile = files[0];
+  const previewUrl = previewFile?.preview ?? (profile?.avatarUrl || undefined);
 
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(profileFormSchema),
@@ -145,6 +158,7 @@ export default function DashboardPageClient() {
   useEffect(() => {
     form.reset({
       displayName: profile?.displayName ?? user?.fullName ?? "",
+      surname: "",
       email: profile?.email ?? user?.primaryEmailAddress?.emailAddress ?? "",
       phone: profile?.phone ?? "",
       city: profile?.city ?? "",
@@ -273,8 +287,8 @@ export default function DashboardPageClient() {
       <>
         <div className="mb-4 flex flex-row items-center justify-between space-y-2 lg:pl-2.5">
           <div className="space-y-1">
-            <h1 className="text-2xl font-bold tracking-tight">Mans profils</h1>
-            <p className="text-muted-foreground text-sm">Pārvaldi savu publisko profilu un iestatījumus</p>
+            <h1 className="text-2xl font-bold tracking-tight">Mana informācija</h1>
+            <p className="text-muted-foreground text-sm">Pārvaldi savus datus un savu redzamību.</p>
           </div>
         </div>
 
@@ -291,8 +305,8 @@ export default function DashboardPageClient() {
     <>
       <div className="mb-4 flex flex-row items-center justify-between space-y-2 lg:pl-2.5">
         <div className="space-y-1">
-          <h1 className="text-2xl font-bold tracking-tight">Mans profils</h1>
-          <p className="text-muted-foreground text-sm">Pārvaldi savu publisko profilu un iestatījumus</p>
+          <h1 className="text-2xl font-bold tracking-tight">Mana informācija</h1>
+          <p className="text-muted-foreground text-sm">Pārvaldi savus datus un savu redzamību.</p>
         </div>
       </div>
 
@@ -345,9 +359,13 @@ export default function DashboardPageClient() {
                         name="displayName"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Name</FormLabel>
+                            <FormLabel>Vārds</FormLabel>
                             <FormControl>
-                              <Input placeholder="Your full name" {...field} />
+                              <Input3
+                                placeholder="Your full name"
+                                helperText="Tavs vārds tiks parādīts publiskajā profilā."
+                                {...field}
+                              />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -355,54 +373,18 @@ export default function DashboardPageClient() {
                       />
                       <FormField
                         control={form.control}
-                        name="accountType"
+                        name="surname"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Account type</FormLabel>
-                            <Select onValueChange={field.onChange} value={field.value}>
-                              <FormControl>
-                                <SelectTrigger className="w-full">
-                                  <SelectValue placeholder="Select account type" />
-                                </SelectTrigger>
-                              </FormControl>
-                              <SelectContent>
-                                <SelectItem value="b2c">B2C</SelectItem>
-                                <SelectItem value="b2b">B2B</SelectItem>
-                              </SelectContent>
-                            </Select>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </div>
-
-                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                      <FormField
-                        control={form.control}
-                        name="slug"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Public slug</FormLabel>
+                            <FormLabel>Uzvārds</FormLabel>
                             <FormControl>
-                              <Input placeholder="your-public-slug" {...field} />
+                              <Input3
+                                placeholder="Your surname"
+                                helperText="Uzvārds tiks rādīts profilā kopā ar vārdu."
+                                {...field}
+                              />
                             </FormControl>
-                            <FormDescription>Used in your public profile URL.</FormDescription>
                             <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={form.control}
-                        name="onlineStatus"
-                        render={({ field }) => (
-                          <FormItem className="flex items-center justify-between rounded-md border p-3">
-                            <div>
-                              <FormLabel>Online status</FormLabel>
-                              <FormDescription>Show as available on your profile.</FormDescription>
-                            </div>
-                            <FormControl>
-                              <Switch checked={field.value} onCheckedChange={field.onChange} />
-                            </FormControl>
                           </FormItem>
                         )}
                       />
@@ -413,15 +395,19 @@ export default function DashboardPageClient() {
                       name="bio"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Bio</FormLabel>
+                          <div className="flex items-center justify-between">
+                            <FormLabel>Ĭss apraksts</FormLabel>
+                            <span className="text-muted-foreground text-xs">{(field.value ?? "").length}/140</span>
+                          </div>
                           <FormControl>
                             <Textarea
-                              placeholder="Write a short introduction about yourself"
+                              placeholder="Dažos vārdos pastāsti par sevi..."
                               className="min-h-24 resize-y"
+                              maxLength={140}
                               {...field}
                             />
                           </FormControl>
-                          <FormDescription>Max 500 characters.</FormDescription>
+                          <FormDescription className="text-xs">Dažos vārdos pastāsti par sevi. Šo redzēs publiski meklēšanas rezultātos.</FormDescription>
                           <FormMessage />
                         </FormItem>
                       )}
@@ -430,15 +416,42 @@ export default function DashboardPageClient() {
                     <FormField
                       control={form.control}
                       name="aboutMe"
-                      render={({ field }) => (
+                      render={() => (
                         <FormItem>
-                          <FormLabel>About me</FormLabel>
+                          <FormLabel>Profila attēls</FormLabel>
                           <FormControl>
-                            <Textarea
-                              placeholder="Detailed information about your profile"
-                              className="min-h-28 resize-y"
-                              {...field}
-                            />
+                            <div className="flex items-center gap-4">
+                              <Avatar className="size-20 shrink-0">
+                                <AvatarImage src={previewUrl} alt="Profila attēls" />
+                                <AvatarFallback className="text-lg">
+                                  {(form.watch("displayName")?.[0] ?? "?").toUpperCase()}
+                                </AvatarFallback>
+                              </Avatar>
+                              <div className="flex flex-col gap-2">
+                                <label className="flex cursor-pointer items-center gap-2 rounded-md border px-3 py-2 text-sm transition-colors hover:bg-accent">
+                                  <Upload className="size-4" />
+                                  Augšupielādēt attēlu
+                                  <input
+                                    type="file"
+                                    accept="image/*"
+                                    className="sr-only"
+                                    onChange={(e) => {
+                                      if (e.target.files) addFiles(e.target.files);
+                                    }}
+                                  />
+                                </label>
+                                {previewFile && (
+                                  <button
+                                    type="button"
+                                    onClick={() => removeFile(previewFile.id)}
+                                    className="flex items-center gap-1 text-xs text-muted-foreground hover:text-destructive"
+                                  >
+                                    <X className="size-3" /> Noņemt attēlu
+                                  </button>
+                                )}
+                                <p className="text-xs text-muted-foreground">JPG, PNG vai WebP. Maks. 5 MB.</p>
+                              </div>
+                            </div>
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -455,7 +468,12 @@ export default function DashboardPageClient() {
                           <FormItem>
                             <FormLabel>Email</FormLabel>
                             <FormControl>
-                              <Input type="email" placeholder="you@example.com" {...field} />
+                              <Input3
+                                type="email"
+                                placeholder="you@example.com"
+                                helperText="Izmantosim saziņai un svarīgiem paziņojumiem."
+                                {...field}
+                              />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -468,7 +486,11 @@ export default function DashboardPageClient() {
                           <FormItem>
                             <FormLabel>Phone</FormLabel>
                             <FormControl>
-                              <Input placeholder="+371 ..." {...field} />
+                              <Input3
+                                placeholder="+371 ..."
+                                helperText="Pēc izvēles, lai klienti var ar tevi sazināties ātrāk."
+                                {...field}
+                              />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -482,9 +504,13 @@ export default function DashboardPageClient() {
                         name="city"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>City</FormLabel>
+                            <FormLabel>Pilsēta</FormLabel>
                             <FormControl>
-                              <Input placeholder="Riga" {...field} />
+                              <Input3
+                                placeholder="Rīga"
+                                helperText="Norādi pilsētu, kurā strādā vai esi pieejams."
+                                {...field}
+                              />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -497,7 +523,11 @@ export default function DashboardPageClient() {
                           <FormItem>
                             <FormLabel>WhatsApp</FormLabel>
                             <FormControl>
-                              <Input placeholder="WhatsApp username or number" {...field} />
+                              <Input3
+                                placeholder="+371 2000 0000"
+                                helperText="Numurs, uz kuru klienti var rakstīt WhatsApp."
+                                {...field}
+                              />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -515,7 +545,11 @@ export default function DashboardPageClient() {
                           <FormItem>
                             <FormLabel>Instagram</FormLabel>
                             <FormControl>
-                              <Input placeholder="@yourhandle" {...field} />
+                              <Input3
+                                placeholder="@tavs_profils"
+                                helperText="Tavs Instagram lietotājvārds."
+                                {...field}
+                              />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -528,7 +562,11 @@ export default function DashboardPageClient() {
                           <FormItem>
                             <FormLabel>Facebook</FormLabel>
                             <FormControl>
-                              <Input placeholder="facebook.com/yourpage" {...field} />
+                              <Input3
+                                placeholder="facebook.com/tavslapa"
+                                helperText="Saite uz Facebook lapu vai profilu."
+                                {...field}
+                              />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -544,7 +582,11 @@ export default function DashboardPageClient() {
                           <FormItem>
                             <FormLabel>TikTok</FormLabel>
                             <FormControl>
-                              <Input placeholder="TikTok profile" {...field} />
+                              <Input3
+                                placeholder="@tavs_profils"
+                                helperText="Tavs TikTok lietotājvārds."
+                                {...field}
+                              />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -557,7 +599,11 @@ export default function DashboardPageClient() {
                           <FormItem>
                             <FormLabel>Telegram</FormLabel>
                             <FormControl>
-                              <Input placeholder="Telegram username" {...field} />
+                              <Input3
+                                placeholder="@tavs_profils"
+                                helperText="Tavs Telegram lietotājvārds."
+                                {...field}
+                              />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -573,7 +619,11 @@ export default function DashboardPageClient() {
                           <FormItem>
                             <FormLabel>Threads</FormLabel>
                             <FormControl>
-                              <Input placeholder="Threads profile" {...field} />
+                              <Input3
+                                placeholder="@tavs_profils"
+                                helperText="Tavs Threads lietotājvārds."
+                                {...field}
+                              />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -586,7 +636,11 @@ export default function DashboardPageClient() {
                           <FormItem>
                             <FormLabel>YouTube</FormLabel>
                             <FormControl>
-                              <Input placeholder="YouTube channel" {...field} />
+                              <Input3
+                                placeholder="youtube.com/@tavs_kanāls"
+                                helperText="Saite uz savu YouTube kanālu."
+                                {...field}
+                              />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -600,9 +654,13 @@ export default function DashboardPageClient() {
                         name="linktree"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Linktree URL</FormLabel>
+                            <FormLabel>Linktree</FormLabel>
                             <FormControl>
-                              <Input placeholder="https://linktr.ee/..." {...field} />
+                              <Input3
+                                placeholder="https://linktr.ee/..."
+                                helperText="Saite uz savu Linktree lapu."
+                                {...field}
+                              />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -613,9 +671,13 @@ export default function DashboardPageClient() {
                         name="etsy"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Etsy URL</FormLabel>
+                            <FormLabel>Etsy</FormLabel>
                             <FormControl>
-                              <Input placeholder="https://etsy.com/shop/..." {...field} />
+                              <Input3
+                                placeholder="https://etsy.com/shop/..."
+                                helperText="Saite uz savu Etsy veikalu."
+                                {...field}
+                              />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -631,9 +693,13 @@ export default function DashboardPageClient() {
                         name="sector"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Sector</FormLabel>
+                            <FormLabel>Nozare</FormLabel>
                             <FormControl>
-                              <Input placeholder="Business sector" {...field} />
+                              <Input3
+                                placeholder="Piem., IT, Būvniecība, Tīrradne..."
+                                helperText="Nozare, kurā darbojas vai piedāvā pakalpojumus."
+                                {...field}
+                              />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -644,9 +710,13 @@ export default function DashboardPageClient() {
                         name="workingEnvironment"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Working environment</FormLabel>
+                            <FormLabel>Darba vide</FormLabel>
                             <FormControl>
-                              <Input placeholder="Remote, on-site, hybrid..." {...field} />
+                              <Input3
+                                placeholder="Attālināti, klātienē, hibrīds..."
+                                helperText="Kā tu parasti strādā ar klientiem."
+                                {...field}
+                              />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -659,11 +729,11 @@ export default function DashboardPageClient() {
                       name="strongKeywordsText"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Strong keywords</FormLabel>
+                          <FormLabel>Galvenās priekšrocības</FormLabel>
                           <FormControl>
-                            <Textarea placeholder="keyword1, keyword2, keyword3" {...field} />
+                            <Textarea placeholder="dizains, foto, video, mārketings..." {...field} />
                           </FormControl>
-                          <FormDescription>Comma-separated list.</FormDescription>
+                          <FormDescription className="text-xs">Atslēgvārdi, kas labi raksturo tavu darbu. Ieraksti ar komatu atdalītus.</FormDescription>
                           <FormMessage />
                         </FormItem>
                       )}
@@ -674,11 +744,11 @@ export default function DashboardPageClient() {
                       name="searchTriggersText"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Search triggers</FormLabel>
+                          <FormLabel>Meklēšanas trigerji</FormLabel>
                           <FormControl>
-                            <Textarea placeholder="trigger1, trigger2" {...field} />
+                            <Textarea placeholder="logotips, brand book, reklāma..." {...field} />
                           </FormControl>
-                          <FormDescription>Comma-separated list.</FormDescription>
+                          <FormDescription className="text-xs">Frāzes vai prasības, pēc kurām klienti var tevi atrast. Ieraksti ar komatu atdalītus.</FormDescription>
                           <FormMessage />
                         </FormItem>
                       )}
@@ -690,9 +760,13 @@ export default function DashboardPageClient() {
                         name="mediaUrl"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Media URL</FormLabel>
+                            <FormLabel>Portfōlija saite</FormLabel>
                             <FormControl>
-                              <Input placeholder="https://..." {...field} />
+                              <Input3
+                                placeholder="https://..."
+                                helperText="Saite uz savu portfōliju vai galeriju."
+                                {...field}
+                              />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -703,9 +777,13 @@ export default function DashboardPageClient() {
                         name="profileVideoUrl"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Profile video URL</FormLabel>
+                            <FormLabel>Video prezentācija</FormLabel>
                             <FormControl>
-                              <Input placeholder="https://..." {...field} />
+                              <Input3
+                                placeholder="https://..."
+                                helperText="Saite uz video, kas prezentē tevi vai darbu."
+                                {...field}
+                              />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -720,9 +798,13 @@ export default function DashboardPageClient() {
                       name="seoTitle"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>SEO title</FormLabel>
+                          <FormLabel>SEO nosaukums</FormLabel>
                           <FormControl>
-                            <Input placeholder="Search result title" {...field} />
+                            <Input3
+                              placeholder="Piem., Grāmatvedis Rīgā | Jānis Bērziņš"
+                              helperText="Rādīsies meklēšanas rezultātos kā lapās nosaukums. Ieteicams līdz 60 rakstzīmēm."
+                              {...field}
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -733,10 +815,11 @@ export default function DashboardPageClient() {
                       name="seoDescription"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>SEO description</FormLabel>
+                          <FormLabel>SEO apraksts</FormLabel>
                           <FormControl>
-                            <Textarea placeholder="Search result description" {...field} />
+                            <Textarea placeholder="Įss apraksts, ko redzēs Google meklēšanas rezultātos..." {...field} />
                           </FormControl>
+                          <FormDescription className="text-xs">Apraksts, kas rādīsies meklēšanas rezultātos zem nosaukuma. Ieteicams līdz 160 rakstzīmēm.</FormDescription>
                           <FormMessage />
                         </FormItem>
                       )}
@@ -750,7 +833,7 @@ export default function DashboardPageClient() {
                         name="paymentCash"
                         render={({ field }) => (
                           <FormItem className="flex items-center justify-between rounded-md border p-3">
-                            <FormLabel>Cash</FormLabel>
+                            <FormLabel>Skaidra nauda</FormLabel>
                             <FormControl>
                               <Switch checked={field.value} onCheckedChange={field.onChange} />
                             </FormControl>
@@ -762,7 +845,7 @@ export default function DashboardPageClient() {
                         name="paymentBankTransfer"
                         render={({ field }) => (
                           <FormItem className="flex items-center justify-between rounded-md border p-3">
-                            <FormLabel>Bank transfer</FormLabel>
+                            <FormLabel>Bankas pārskaitījums</FormLabel>
                             <FormControl>
                               <Switch checked={field.value} onCheckedChange={field.onChange} />
                             </FormControl>
@@ -774,7 +857,7 @@ export default function DashboardPageClient() {
                         name="paymentCard"
                         render={({ field }) => (
                           <FormItem className="flex items-center justify-between rounded-md border p-3">
-                            <FormLabel>Card</FormLabel>
+                            <FormLabel>Bankas karte</FormLabel>
                             <FormControl>
                               <Switch checked={field.value} onCheckedChange={field.onChange} />
                             </FormControl>
