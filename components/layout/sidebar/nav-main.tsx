@@ -88,7 +88,7 @@ type NavItem = {
 
 export const navItems: NavGroup[] = [
   {
-    title: "Dashboards",
+    title: "Vadības panelis",
     items: [
       // E-commerce removed
       // Payment Dashboard removed
@@ -96,6 +96,11 @@ export const navItems: NavGroup[] = [
         title: "Profils",
         href: "/dashboard",
         icon: FolderDotIcon,
+      },
+      {
+        title: "Statistika",
+        href: "/dashboard/website-analytics",
+        icon: GaugeIcon
       },
       // Real Estate removed
       // Sales removed
@@ -107,7 +112,7 @@ export const navItems: NavGroup[] = [
     ]
   },
   {
-    title: "Apps",
+    title: "Rīki",
     items: [
       // Notes app removed
       { title: "POS App", href: "/dashboard/apps/pos-system", icon: CookieIcon },
@@ -128,7 +133,7 @@ export const navItems: NavGroup[] = [
     ]
   },
   {
-    title: "AI Apps",
+    title: "MI rīki",
     items: [
       {
         title: "Attēlu veidotājs",
@@ -160,11 +165,6 @@ export const navItems: NavGroup[] = [
           { title: "Display", href: "/dashboard/pages/settings/display" },
           { title: "Pricing", href: "http://localhost:3000/dashboard/pages/pricing/column", icon: BadgeDollarSignIcon, isComing: true }
         ]
-      },
-      {
-        title: "Statistika",
-        href: "/dashboard/website-analytics",
-        icon: GaugeIcon
       },
       // Authentication, Notifications Page, and Error Pages removed
     ]

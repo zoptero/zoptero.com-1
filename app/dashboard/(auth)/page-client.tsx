@@ -510,8 +510,10 @@ export default function DashboardPageClient() {
                 <TabsTrigger value="veikals">Veikals</TabsTrigger>
                 <TabsTrigger value="sludinajumi">Sludinājumi</TabsTrigger>
                 <TabsTrigger value="qr">QR</TabsTrigger>
+                <TabsTrigger value="buj">BUJ</TabsTrigger>
                 <TabsTrigger value="seo">SEO</TabsTrigger>
                 <TabsTrigger value="payments">Apmaksa</TabsTrigger>
+                <TabsTrigger value="atsauksmes">Atsauksmes</TabsTrigger>
               </TabsList>
               <AnimatedUnderline
                 orientation="horizontal"

@@ -27,8 +27,11 @@ export async function generateMetadata() {
 export default function Page() {
   return (
     <div className="space-y-4">
-      <div className="flex flex-row items-center justify-between">
-        <h1 className="text-xl font-bold tracking-tight lg:text-2xl">Website Analytics</h1>
+      <div className="mb-4 flex flex-row items-center justify-between space-y-2 lg:pl-2.5">
+        <div className="space-y-1">
+          <h1 className="text-2xl font-bold tracking-tight">Statistika</h1>
+          <p className="text-muted-foreground text-sm">Profila apmeklējumu un aktivitāšu pārskats</p>
+        </div>
         <div className="flex items-center space-x-2">
           <div className="grow">
             <CalendarDateRangePicker />
