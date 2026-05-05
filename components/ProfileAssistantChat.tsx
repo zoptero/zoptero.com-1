@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState, type KeyboardEvent } from "react";
 import { useAction } from "convex/react";
+import { useUser } from "@clerk/nextjs";
 import { Send, Bot } from "lucide-react";
 import { api } from "@/convex/_generated/api";
 import { Button } from "@/components/ui/button";
@@ -13,20 +14,28 @@ type Message = {
   content: string;
 };
 
-const WELCOME: Message = {
-  role: "model",
-  content:
-    "Sveiki! Es esmu tavs profila palīgs. Varu palīdzēt aizpildīt jebkuru lauku — tikai jautā!",
-};
+function buildWelcomeMessage(name?: string): Message {
+  const greeting = name?.trim()
+    ? `Sveiki, ${name}! Es esmu tavs profila palīgs. Varu palīdzēt aizpildīt jebkuru lauku - tikai jautā!`
+    : "Sveiki! Es esmu tavs profila palīgs. Varu palīdzēt aizpildīt jebkuru lauku - tikai jautā!";
+
+  return {
+    role: "model",
+    content: greeting,
+  };
+}
 
 export default function ProfileAssistantChat({
   focusedField,
 }: {
   focusedField?: string;
 }) {
+  const { user } = useUser();
+  const userName = user?.firstName ?? user?.fullName ?? undefined;
   const TYPEWRITER_STEP_CHARS = 2;
   const TYPEWRITER_STEP_MS = 16;
-  const [messages, setMessages] = useState<Message[]>([WELCOME]);
+  const welcomeMessage = buildWelcomeMessage(userName);
+  const [messages, setMessages] = useState<Message[]>([welcomeMessage]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -44,6 +53,15 @@ export default function ProfileAssistantChat({
   useEffect(() => {
     scrollRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
   }, [messages, loading]);
+
+  useEffect(() => {
+    setMessages((prev) => {
+      if (prev.length === 1 && prev[0]?.role === "model") {
+        return [welcomeMessage];
+      }
+      return prev;
+    });
+  }, [welcomeMessage.content]);
 
   async function appendModelMessageWithTypewriter(fullText: string): Promise<void> {
     setMessages((prev) => [...prev, { role: "model", content: "" }]);
@@ -93,7 +111,7 @@ export default function ProfileAssistantChat({
     try {
       const historyForApi = nextMessages
         .slice(0, -1)
-        .filter((m) => m !== WELCOME)
+        .filter((_, index) => index !== 0)
         .map((m) => ({
           role: m.role,
           content: m.content,
@@ -149,7 +167,7 @@ export default function ProfileAssistantChat({
             ))}
             {loading && (
               <div className="mr-4 self-start rounded-xl bg-muted px-3 py-2 text-xs text-muted-foreground">
-                <span className="animate-pulse">Domāju..</span>
+                <span className="animate-pulse">Domā...</span>
               </div>
             )}
             <div ref={scrollRef} />
