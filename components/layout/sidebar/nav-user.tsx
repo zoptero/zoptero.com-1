@@ -9,18 +9,21 @@ import {
 export function NavUser() {
   return (
     <SidebarMenu>
-      <SidebarMenuItem 
-        className="px-2"
-        onClick={(e) => e.stopPropagation()} // Stop bubbling here
-      >
-        <div className="flex items-center w-full">
+      <SidebarMenuItem className="px-2">
+        <div 
+          className="flex items-center w-full"
+          // Mēs izmantojam "onPointerDownOutside" novēršanu (netieši)
+          // Pārliecināmies, ka klikšķis netiek nodots Sheet
+          onClick={(e) => {
+            e.stopPropagation();
+          }}
+        >
           <UserButton
             appearance={{
               elements: {
                 avatarBox: "h-8 w-8 rounded-lg",
-                userButtonTrigger: "flex items-center gap-2 w-full",
-                // Force high z-index to overlay on top of mobile sheet
-                userButtonPopover: "z-[9999] min-w-56",
+                // Z-index palīdz, bet galvenais ir portāla atrašanās vieta
+                userButtonPopover: "z-[9999] pointer-events-auto",
               }
             }}
           />
