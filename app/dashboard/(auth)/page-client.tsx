@@ -501,11 +501,17 @@ export default function DashboardPageClient() {
             <div ref={tabsListRef} className="relative w-max">
               <TabsList className="z-10">
                 <TabsTrigger value="profile">Profils</TabsTrigger>
+                <TabsTrigger value="business">Prasmes</TabsTrigger>
                 <TabsTrigger value="contact">Kontakti</TabsTrigger>
                 <TabsTrigger value="social">Social</TabsTrigger>
-                <TabsTrigger value="business">Business</TabsTrigger>
+                <TabsTrigger value="foto">Foto</TabsTrigger>
+                <TabsTrigger value="video">Video</TabsTrigger>
+                <TabsTrigger value="blogs">Blogs</TabsTrigger>
+                <TabsTrigger value="veikals">Veikals</TabsTrigger>
+                <TabsTrigger value="sludinajumi">Sludinājumi</TabsTrigger>
+                <TabsTrigger value="qr">QR</TabsTrigger>
                 <TabsTrigger value="seo">SEO</TabsTrigger>
-                <TabsTrigger value="payments">Payments</TabsTrigger>
+                <TabsTrigger value="payments">Apmaksa</TabsTrigger>
               </TabsList>
               <AnimatedUnderline
                 orientation="horizontal"

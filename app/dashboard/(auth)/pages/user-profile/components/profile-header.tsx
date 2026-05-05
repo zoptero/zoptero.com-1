@@ -9,7 +9,10 @@ import {
   TrendingUp,
   XIcon
 } from "lucide-react";
-import { useId } from "react";
+import { useId, useEffect, useRef, useState } from "react";
+import { useUser } from "@clerk/nextjs";
+import { useQuery, useAction } from "convex/react";
+import { api } from "@/convex/_generated/api";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
@@ -257,6 +260,38 @@ function ProfileAvatar({ initialFiles }: { initialFiles: FileMetadata[] }) {
 
 export function ProfileHeader() {
   const user = useProfileStore((state) => state.user);
+  const { user: clerkUser } = useUser();
+  const profile = useQuery(api.profiles.getMe);
+  const generateViewUrl = useAction(api.media.generateViewUrl);
+  const [resolvedAvatarUrl, setResolvedAvatarUrl] = useState<string | undefined>(undefined);
+  const lastResolvedKeyRef = useRef<string | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    const resolve = async () => {
+      if (!profile?.avatarKey || !clerkUser?.id) {
+        setResolvedAvatarUrl(profile?.avatarUrl || undefined);
+        return;
+      }
+      if (lastResolvedKeyRef.current === profile.avatarKey && resolvedAvatarUrl) return;
+      if (!resolvedAvatarUrl && profile.avatarUrl) setResolvedAvatarUrl(profile.avatarUrl);
+      try {
+        const { viewUrl } = await generateViewUrl({ clerkId: clerkUser.id, key: profile.avatarKey });
+        if (!cancelled) {
+          setResolvedAvatarUrl(viewUrl);
+          lastResolvedKeyRef.current = profile.avatarKey;
+        }
+      } catch {
+        if (!cancelled && profile.avatarUrl) setResolvedAvatarUrl(profile.avatarUrl);
+      }
+    };
+    void resolve();
+    return () => { cancelled = true; };
+  }, [profile?.avatarKey, profile?.avatarUrl, clerkUser?.id, generateViewUrl, resolvedAvatarUrl]);
+
+  const displayName = profile?.displayName || clerkUser?.fullName || user.name;
+  const avatarSrc = resolvedAvatarUrl || undefined;
+  const fallback = displayName.charAt(0);
 
   return (
     <div className="relative">
@@ -277,11 +312,11 @@ export function ProfileHeader() {
 
       <div className="-mt-10 px-4 pb-4 text-center lg:-mt-14">
         <Avatar className="border-background mx-auto size-20 border-4 lg:size-28">
-          <AvatarImage src={user.avatar} alt={user.name} />
-          <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
+          <AvatarImage src={avatarSrc} alt={displayName} />
+          <AvatarFallback>{fallback}</AvatarFallback>
         </Avatar>
         <div className="flex items-center justify-center gap-2">
-          <h4 className="text-lg font-semibold lg:text-2xl">{user.name}</h4>
+          <h4 className="text-lg font-semibold lg:text-2xl">{displayName}</h4>
         </div>
 
         <div className="text-muted-foreground mt-3 flex items-center justify-center gap-6 text-sm">

@@ -1,12 +1,21 @@
 "use client";
 
-import { Mail, Phone, Briefcase, TrendingUp, Users, FolderKanban } from "lucide-react";
+import { Mail, Phone, Briefcase, TrendingUp, Users } from "lucide-react";
+import { useQuery } from "convex/react";
+import { api } from "@/convex/_generated/api";
 import { Progress } from "@/components/ui/progress";
 import { useProfileStore } from "../store";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export function ProfileSidebar() {
-  const { user, profileCompletion } = useProfileStore();
+  const { profileCompletion } = useProfileStore();
+  const profile = useQuery(api.profiles.getMe);
+
+  const displayName = profile?.displayName ?? "";
+  const email = profile?.email ?? "";
+  const phone = profile?.phone ?? "";
+  const city = profile?.city ?? "";
+  const accountType = profile?.accountType ?? "";
 
   return (
     <div className="space-y-4">
@@ -29,15 +38,15 @@ export function ProfileSidebar() {
           <div className="space-y-3">
             <div className="flex items-center gap-3 text-sm">
               <Users className="text-muted-foreground h-4 w-4" />
-              <span>{user.name}</span>
+              <span>{displayName}</span>
             </div>
             <div className="flex items-center gap-3 text-sm">
               <Briefcase className="text-muted-foreground h-4 w-4" />
-              <span>{user.department}</span>
+              <span>{city}</span>
             </div>
             <div className="flex items-center gap-3 text-sm">
               <TrendingUp className="text-muted-foreground h-4 w-4" />
-              <span>{user.role}</span>
+              <span>{accountType}</span>
             </div>
           </div>
 
@@ -46,25 +55,11 @@ export function ProfileSidebar() {
             <div className="space-y-3">
               <div className="flex items-center gap-3 text-sm">
                 <Mail className="text-muted-foreground h-4 w-4" />
-                <span>{user.email}</span>
+                <span>{email}</span>
               </div>
               <div className="flex items-center gap-3 text-sm">
                 <Phone className="text-muted-foreground h-4 w-4" />
-                <span>{user.phone}</span>
-              </div>
-            </div>
-          </div>
-
-          <div>
-            <p className="text-muted-foreground mb-3 text-xs font-medium uppercase">Teams</p>
-            <div className="space-y-3">
-              <div className="flex items-center gap-3 text-sm">
-                <Users className="text-muted-foreground h-4 w-4" />
-                <span>Member of {user.teams} teams</span>
-              </div>
-              <div className="flex items-center gap-3 text-sm">
-                <FolderKanban className="text-muted-foreground h-4 w-4" />
-                <span>Working on {user.projects} projects</span>
+                <span>{phone}</span>
               </div>
             </div>
           </div>
