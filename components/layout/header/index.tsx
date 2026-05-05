@@ -6,6 +6,7 @@ import Search from "@/components/layout/header/search";
 import ThemeSwitch from "@/components/layout/header/theme-switch";
 import { Button } from "@/components/ui/button";
 import { useSidebar } from "@/components/ui/sidebar";
+import { UserButton } from "@clerk/nextjs";
 
 export function SiteHeader() {
   const { toggleSidebar, open } = useSidebar();
@@ -21,6 +22,15 @@ export function SiteHeader() {
 
         <div className="ml-auto flex items-center gap-2">
           <ThemeSwitch />
+          <UserButton
+            appearance={{
+              elements: {
+                avatarBox: "h-8 w-8 rounded-lg",
+                userButtonTrigger: "flex items-center gap-2 h-10",
+                userButtonPopover: "w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg z-50",
+              }
+            }}
+          />
         </div>
       </div>
     </header>
