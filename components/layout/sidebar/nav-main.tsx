@@ -87,28 +87,23 @@ type NavItem = {
 }[];
 
 export const navItems: NavGroup[] = [
+  {
+    title: "Dashboards",
+    items: [
+      // E-commerce removed
+      // Payment Dashboard removed
       {
-        title: "Dashboards",
+        title: "Profils",
+        href: "/dashboard",
+        icon: FolderDotIcon,
         items: [
-          // E-commerce removed
-          // Payment Dashboard removed
-          {
-            title: "Dashboard",
-            href: "/dashboard",
-            icon: FolderDotIcon,
-            items: [
-              { title: "Dashboard", href: "/dashboard" },
-              { title: "Project List", href: "/dashboard/project-list" }
-            ]
-          },
-          // Real Estate removed
+          { title: "Dashboard", href: "/dashboard" },
+          { title: "Project List", href: "/dashboard/project-list" }
+        ]
+      },
+      // Real Estate removed
       // Sales removed
       // CRM removed
-      {
-        title: "Statistika",
-        href: "/dashboard/website-analytics",
-        icon: GaugeIcon
-      },
       // Crypto removed
       // Academy/School removed
       // Hospital Management removed
@@ -169,6 +164,11 @@ export const navItems: NavGroup[] = [
           { title: "Display", href: "/dashboard/pages/settings/display" },
           { title: "Pricing", href: "http://localhost:3000/dashboard/pages/pricing/column", icon: BadgeDollarSignIcon, isComing: true }
         ]
+      },
+      {
+        title: "Statistika",
+        href: "/dashboard/website-analytics",
+        icon: GaugeIcon
       },
       // Authentication, Notifications Page, and Error Pages removed
     ]
