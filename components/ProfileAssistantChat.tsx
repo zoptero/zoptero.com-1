@@ -57,10 +57,11 @@ export default function ProfileAssistantChat({
       });
 
       setMessages((prev) => [...prev, { role: "model", content: reply }]);
-    } catch {
+    } catch (err) {
+      console.error("ProfileAssistantChat error:", err);
       setMessages((prev) => [
         ...prev,
-        { role: "model", content: "Diemžēl neizdevās iegūt atbildi. Lūdzu, mēģini vēlreiz." },
+        { role: "model", content: `Kļūda: ${err instanceof Error ? err.message : String(err)}` },
       ]);
     } finally {
       setLoading(false);
