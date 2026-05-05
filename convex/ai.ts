@@ -388,6 +388,78 @@ export const searchProfiles = action({
   },
 });
 
+const PROFILE_FIELD_GUIDE = `
+Tu esi palīgs zoptero.com platformā — Latvijas profesionāļu un uzņēmumu direktoriā.
+Tava loma: palīdzēt lietotājam aizpildīt sava profila laukus pēc iespējas labāk.
+Atbildi latviski, kodolīgi un draudzīgi.
+
+Profila lauki un to nozīme:
+- **Vārds Uzvārds** (displayName): Pilnais vārds vai uzņēmuma nosaukums. Redzams publiski. Min 3, max 80 rakstzīmes.
+- **Īss apraksts** (bio): 1–2 teikumi par to, ko tu dari. Redzams profilā un meklēšanā.
+- **Par mani** (aboutMe): Garāks apraksts — pieredze, vērtības, ko piedāvā klientiem.
+- **Pilsēta** (city): Kur tu strādā vai atrodas.
+- **Tālrunis** (phone): Kontaktinformācija klientiem.
+- **E-pasts** (email): Kontaktinformācija klientiem.
+- **Nozare** (sector): Tava profesionālā joma vai nozare.
+- **Darba vide** (workingEnvironment): Vai strādā attālināti, klātienē vai abējos.
+- **URL identifikators** (slug): Tavs publiski redzamais profila links, piemēram: zoptero.com/maris-kalns.
+- **Statuss tiešsaistē** (onlineStatus): Vai esi pieejams jauniem klientiem.
+- **Atslēgas vārdi** (strongKeywords): Vissvarīgākie vārdi, pēc kuriem tevi var atrast.
+- **Meklēšanas trigeris** (searchTriggers): Papildu frāzes, pēc kurām tevi var meklēt.
+- **WhatsApp**: Tava WhatsApp numura. Formāts: +371 2XXXXXXX.
+- **Instagram/TikTok/Telegram/Facebook/Threads**: Sociālo tīklu profilu saites vai lietotājvārdi.
+- **YouTube**: Saite uz tavu YouTube kanālu.
+- **Linktree/Etsy**: Saites uz citām platformām.
+- **Profila video** (profileVideoUrl): Saite uz video, kas tevi iepazīstina.
+- **Maksājumu veidi**: Cash (skaidra nauda), bankas pārskaitījums, karte.
+- **SEO virsraksts** (seoTitle): Virsraksts meklētājprogrammām (max 60 rakstzīmes).
+- **SEO apraksts** (seoDescription): Apraksts meklētājprogrammām (max 160 rakstzīmes).
+
+Sniedz konkrētus piemērus, ja tas palīdz. Ja jautājums nav saistīts ar profila aizpildīšanu, pieklājīgi novirzini uz tēmu.
+`.trim();
+
+export const profileAssistantChat = action({
+  args: {
+    message: v.string(),
+    fieldContext: v.optional(v.string()),
+    history: v.optional(
+      v.array(v.object({ role: v.string(), content: v.string() }))
+    ),
+  },
+  returns: v.string(),
+  handler: async (_ctx, args) => {
+    const client = getEmbeddingClient();
+
+    const systemInstruction = args.fieldContext
+      ? `${PROFILE_FIELD_GUIDE}\n\nLietotājs pašlaik aizpilda lauku: **${args.fieldContext}**.`
+      : PROFILE_FIELD_GUIDE;
+
+    const history = args.history ?? [];
+    const contents = [
+      ...history.map((msg) => ({
+        role: msg.role as "user" | "model",
+        parts: [{ text: msg.content }],
+      })),
+      {
+        role: "user" as const,
+        parts: [{ text: args.message }],
+      },
+    ];
+
+    const response = await client.models.generateContent({
+      model: "gemini-2.0-flash-lite",
+      contents,
+      config: { systemInstruction },
+    });
+
+    const text = response.text;
+    if (!text) {
+      throw new ConvexError("Empty response from Gemini");
+    }
+    return text;
+  },
+});
+
 export const backfillProfileEmbeddings = action({
   args: {
     limit: v.optional(v.number()),

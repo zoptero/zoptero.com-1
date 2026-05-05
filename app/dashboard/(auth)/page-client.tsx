@@ -37,6 +37,7 @@ import { Input3 } from "@/components/input3";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Skeleton } from "@/components/ui/skeleton";
+import ProfileAssistantChat from "@/components/ProfileAssistantChat";
 
 function isValidUrl(value: string): boolean {
   try {
@@ -191,6 +192,7 @@ export default function DashboardPageClient() {
   });
   const [removeAvatar, setRemoveAvatar] = useState(false);
   const [resolvedAvatarUrl, setResolvedAvatarUrl] = useState<string | undefined>(undefined);
+  const [focusedField, setFocusedField] = useState<string | undefined>(undefined);
   const previewFile = files[0];
   const previewUrl = previewFile?.preview ?? (removeAvatar ? undefined : resolvedAvatarUrl);
 
@@ -493,7 +495,8 @@ export default function DashboardPageClient() {
           </div>
         </div>
 
-        <div className="w-full max-w-3xl">
+        <div className="flex w-full items-start gap-4">
+          <div className="min-w-0 flex-1">
           <Card>
             <CardContent className="pt-6">
               <Form {...form}>
@@ -510,7 +513,9 @@ export default function DashboardPageClient() {
                               <Input3
                                 placeholder="Piem., Jānis Bērziņš"
                                 helperText="Vārds būs redzams profilā."
+                                onFocus={() => setFocusedField("Vārds Uzvārds")}
                                 {...field}
+                                onBlur={() => { field.onBlur(); setFocusedField(undefined); }}
                               />
                             </FormControl>
                             <FormMessage />
@@ -533,7 +538,9 @@ export default function DashboardPageClient() {
                               placeholder="Dažos vārdos pastāsti par sevi..."
                               className="min-h-24 resize-y"
                               maxLength={140}
+                              onFocus={() => setFocusedField("Īss apraksts par mani")}
                               {...field}
+                              onBlur={() => { field.onBlur(); setFocusedField(undefined); }}
                             />
                           </FormControl>
                           <FormDescription className="text-xs">Apraksts būs redzams profilā.</FormDescription>
@@ -611,7 +618,7 @@ export default function DashboardPageClient() {
                         name="email"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Email</FormLabel>
+                            <FormLabel>E-pasts</FormLabel>
                             <FormControl>
                               <Input3
                                 type="email"
@@ -629,7 +636,7 @@ export default function DashboardPageClient() {
                         name="phone"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Phone</FormLabel>
+                            <FormLabel>Tālrunis</FormLabel>
                             <FormControl>
                               <Input3
                                 placeholder="+371 ..."
@@ -669,7 +676,7 @@ export default function DashboardPageClient() {
                             <FormLabel>WhatsApp</FormLabel>
                             <FormControl>
                               <Input3
-                                placeholder="+371 2000 0000"
+                                placeholder="+371 ..."
                                 helperText="Numurs, uz kuru klienti var rakstīt WhatsApp."
                                 {...field}
                               />
@@ -1021,6 +1028,10 @@ export default function DashboardPageClient() {
               </Form>
             </CardContent>
           </Card>
+          </div>
+          <div className="hidden xl:block xl:w-80 shrink-0">
+            <ProfileAssistantChat focusedField={focusedField} />
+          </div>
         </div>
       </Tabs>
     </>
