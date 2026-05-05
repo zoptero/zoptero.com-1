@@ -14,6 +14,21 @@ import { makeFunctionReference, type FunctionReference } from "convex/server";
 import { action, internalAction } from "./_generated/server";
 import { internal } from "./_generated/api";
 
+function buildPublicMediaUrl(fileKey: string): string {
+  const configuredPublic = process.env.R2_PUBLIC_URL?.replace(/\/+$/, "");
+  if (configuredPublic) {
+    return `${configuredPublic}/${fileKey}`;
+  }
+
+  const endpoint = process.env.R2_ENDPOINT?.replace(/\/+$/, "") ?? "";
+  const bucket = process.env.R2_BUCKET_NAME ?? "";
+  if (endpoint && bucket) {
+    return `${endpoint}/${bucket}/${fileKey}`;
+  }
+
+  throw new ConvexError("Missing R2 public URL configuration");
+}
+
 export const generateUploadUrl = action({
   args: {
     clerkId: v.string(),
@@ -26,7 +41,7 @@ export const generateUploadUrl = action({
   returns: v.object({
     fileKey: v.string(),
     uploadUrl: v.string(),
-    publicUrl: v.optional(v.string()),
+    publicUrl: v.string(),
   }),
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
@@ -75,8 +90,7 @@ export const generateUploadUrl = action({
       ContentType: args.fileType,
     });
     const uploadUrl = await getSignedUrl(s3, command, { expiresIn: 300 });
-    const basePublicUrl = process.env.R2_PUBLIC_URL?.replace(/\/+$/, "");
-    const publicUrl = basePublicUrl ? `${basePublicUrl}/${fileKey}` : undefined;
+    const publicUrl = buildPublicMediaUrl(fileKey);
     return { fileKey, uploadUrl, publicUrl };
   },
 });
