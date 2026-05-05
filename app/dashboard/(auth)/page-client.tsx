@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useUser } from "@clerk/nextjs";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation, useQuery } from "convex/react";
+import { useAction, useMutation, useQuery } from "convex/react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { toast } from "sonner";
@@ -133,6 +133,8 @@ export default function DashboardPageClient() {
   const { user } = useUser();
   const profile = useQuery(api.profiles.getMe);
   const updateProfile = useMutation(api.profiles.update);
+  const generateUploadUrl = useAction(api.media.generateUploadUrl);
+  const [uploadingAvatar, setUploadingAvatar] = useState(false);
   const [activeTab, setActiveTab] = useState("profile");
   const [underlinePosition, setUnderlinePosition] = useState({ left: 0, width: 0 });
   const [showLeftShadow, setShowLeftShadow] = useState(false);
@@ -140,9 +142,9 @@ export default function DashboardPageClient() {
   const tabsListRef = useRef<HTMLDivElement>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [{ files }, { addFiles, removeFile }] = useFileUpload({
-    accept: "image/*",
+    accept: "image/jpeg,image/png,image/webp,image/avif",
     maxFiles: 1,
-    maxSize: 5 * 1024 * 1024,
+    maxSize: 500 * 1024,
   });
   const previewFile = files[0];
   const previewUrl = previewFile?.preview ?? (profile?.avatarUrl || undefined);
@@ -243,8 +245,49 @@ export default function DashboardPageClient() {
       return;
     }
 
+    let avatarKey: string | undefined;
+    let avatarUrl: string | undefined;
+
+    // Upload new avatar to R2 if a file was selected
+    if (previewFile && previewFile.file instanceof File) {
+      const file = previewFile.file;
+      if (!["image/jpeg", "image/png", "image/webp", "image/avif"].includes(file.type)) {
+        toast.error("Neatbalstīts attēla formāts. Izmantojiet JPG, PNG, WebP vai AVIF.");
+        return;
+      }
+      if (file.size > 500 * 1024) {
+        toast.error("Attēls ir pārāk liels. Maksimālais izmērs ir 500 KB.");
+        return;
+      }
+      try {
+        setUploadingAvatar(true);
+        const { fileKey, uploadUrl } = await generateUploadUrl({
+          clerkId: user.id,
+          fileType: file.type,
+          fileSize: file.size,
+          displayName: values.displayName,
+          usage: "avatar",
+        });
+        await fetch(uploadUrl, {
+          method: "PUT",
+          body: file,
+          headers: { "Content-Type": file.type },
+        });
+        avatarKey = fileKey;
+        // Derive permanent public URL by stripping presigned query params
+        avatarUrl = uploadUrl.split("?")[0];
+      } catch (err) {
+        console.error("Avatar upload failed", err);
+        toast.error("Neizdevās augšupielādēt attēlu. Lūdzu, mēģiniet vēlreiz.");
+        return;
+      } finally {
+        setUploadingAvatar(false);
+      }
+    }
+
     await updateProfile({
       clerkId: user.id,
+      ...(avatarKey !== undefined ? { avatarKey, avatarUrl } : {}),
       displayName: values.displayName,
       email: values.email || undefined,
       phone: values.phone || undefined,
@@ -276,7 +319,7 @@ export default function DashboardPageClient() {
       paymentCard: values.paymentCard,
     });
 
-    toast.success("Profile updated");
+    toast.success("Profils saglabāts");
   };
 
   if (profile === undefined) {
@@ -413,7 +456,7 @@ export default function DashboardPageClient() {
                                   Augšupielādēt attēlu
                                   <input
                                     type="file"
-                                    accept="image/*"
+                                    accept="image/jpeg,image/png,image/webp,image/avif"
                                     className="sr-only"
                                     onChange={(e) => {
                                       if (e.target.files) addFiles(e.target.files);
@@ -429,7 +472,7 @@ export default function DashboardPageClient() {
                                     <X className="size-3" /> Noņemt attēlu
                                   </button>
                                 )}
-                                <p className="text-xs text-muted-foreground">JPG, PNG vai WebP. Maks. 5 MB.</p>
+                                <p className="text-xs text-muted-foreground">JPG, PNG, WebP vai AVIF. Maks. 500 KB.</p>
                               </div>
                             </div>
                           </FormControl>
@@ -848,8 +891,8 @@ export default function DashboardPageClient() {
                   </TabsContent>
 
                   <div className="flex justify-end">
-                    <Button type="submit" disabled={!form.formState.isDirty || form.formState.isSubmitting}>
-                      {form.formState.isSubmitting ? "Saving..." : "Save changes"}
+                    <Button type="submit" disabled={(!form.formState.isDirty && !previewFile) || form.formState.isSubmitting || uploadingAvatar}>
+                      {uploadingAvatar ? "Augšupielādē attēlu..." : form.formState.isSubmitting ? "Saglabā..." : "Saglabāt izmaiņas"}
                     </Button>
                   </div>
                 </form>

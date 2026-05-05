@@ -173,6 +173,7 @@ export const update = mutation({
     clerkId: v.string(),
       accountType: v.optional(v.union(v.literal("b2c"), v.literal("b2b"))),
     avatarKey: v.optional(v.string()),
+    avatarUrl: v.optional(v.string()),
     displayName: v.optional(v.string()),
     aboutMe: v.optional(v.string()),
     bio: v.optional(v.string()),
