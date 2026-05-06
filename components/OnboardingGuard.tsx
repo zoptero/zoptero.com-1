@@ -45,17 +45,13 @@ function GuardContent({ children, preloadedStatus }: { children: React.ReactNode
 
   // UI RENDERING: Show skeleton IMMEDIATELY (no Suspense delay)
   if (onboardingStatus === undefined) {
-    return (
-      <div className="absolute inset-0 flex items-center justify-center w-full h-full">
-        <OnboardingSkeleton />
-      </div>
-    );
+    return <OnboardingSkeleton />;
   }
 
   // Show syncing state
   if (onboardingStatus.status === "syncing") {
     return (
-      <div className="absolute inset-0 flex items-center justify-center w-full h-full">
+      <div className="flex min-h-screen min-h-[100svh] min-h-[100dvh] items-center justify-center w-full">
         <div className="text-center">
           <div className="text-lg font-medium mb-2">Sinhronizējam profilu...</div>
           <div className="text-sm text-gray-500">Lūdzu, uzgaidiet</div>
@@ -66,11 +62,7 @@ function GuardContent({ children, preloadedStatus }: { children: React.ReactNode
 
   // Show onboarding UI only if incomplete
   if (onboardingStatus.status === "incomplete") {
-    return (
-      <div className="absolute inset-0 flex items-center justify-center w-full h-full">
-        {children}
-      </div>
-    );
+    return <>{children}</>;
   }
 
   // For all other states (complete with accountType, not_logged_in), return null

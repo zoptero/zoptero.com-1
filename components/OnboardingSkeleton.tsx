@@ -3,7 +3,7 @@ import { Card } from "@/components/ui/card";
 
 export function OnboardingSkeleton() {
   return (
-    <div className="absolute inset-0 flex flex-col items-center justify-center w-full h-full">
+    <div className="flex min-h-screen min-h-[100svh] min-h-[100dvh] flex-col items-center justify-center w-full">
       <div className="flex flex-col items-center w-full max-w-2xl mx-auto gap-8">
         {/* Badge and Title Section */}
         <div className="flex flex-col items-center w-full mb-2 mt-8">
