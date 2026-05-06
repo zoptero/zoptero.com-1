@@ -2,7 +2,6 @@ import React from "react";
 import { cookies } from "next/headers";
 import { cn } from "@/lib/utils";
 import { ThemeProvider } from "next-themes";
-import GoogleAnalyticsInit from "@/lib/ga";
 import { fontVariables } from "@/lib/fonts";
 import NextTopLoader from "nextjs-toploader";
 // Providers are now imported from components/Providers
@@ -35,14 +34,6 @@ export default async function RootLayout({
       .map(([key, value]) => [`data-theme-${key.replace(/([A-Z])/g, "-$1").toLowerCase()}`, value])
   );
 
-    const lvLV = {
-      locale: 'lv-LV',
-      translations: {
-        'signIn.title': 'Ienākt Zoptero',
-        'signIn.subtitle': 'Lai turpinātu, lūdzu, pierakstieties',
-      }
-    };
-
     return (
       <html lang='lv' suppressHydrationWarning>
         <head>
@@ -62,7 +53,6 @@ export default async function RootLayout({
                 {children}
                 <Toaster position="top-center" richColors />
                 <NextTopLoader color="var(--primary)" showSpinner={false} height={2} shadow-sm="none" />
-                {process.env.NODE_ENV === "production" ? <GoogleAnalyticsInit /> : null}
               </ActiveThemeProvider>
             </ThemeProvider>
           </Providers>
