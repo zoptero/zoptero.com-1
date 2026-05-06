@@ -28,13 +28,13 @@ export function HeroTitleRotator() {
 
   return (
     <h1
-      className="text-3xl font-bold lg:text-5xl xl:text-6xl text-center"
+      className="text-[1.8rem] font-bold text-center sm:text-[2.1rem] lg:text-5xl xl:text-6xl"
       aria-label="Expertu meklētājs un pakalpojumu meklētājs"
     >
       <span className="sr-only">Expertu meklētājs un pakalpojumu meklētājs</span>
       <span
         aria-hidden="true"
-        className="relative mx-auto block h-[1.25em] min-w-[22ch] overflow-hidden leading-tight whitespace-nowrap"
+        className="relative mx-auto block h-[1.15em] min-w-[22ch] overflow-hidden leading-none whitespace-nowrap sm:h-[1.2em] lg:h-[1.25em]"
       >
         <AnimatePresence initial={false} mode="wait">
           <motion.span
