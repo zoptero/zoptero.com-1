@@ -3,6 +3,7 @@ import { cookies } from "next/headers";
 
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/layout/sidebar/app-sidebar";
+import { GlobalFooter } from "@/components/layout/global-footer";
 import { SiteHeader } from "@/components/layout/header";
 
 export default async function AuthLayout({
@@ -32,8 +33,13 @@ export default async function AuthLayout({
       <SidebarInset>
         <SiteHeader />
         <div className="bg-muted/40 flex flex-1 flex-col">
-          <div className="@container/main p-(--content-padding) xl:group-data-[theme-content-layout=centered]/layout:container xl:group-data-[theme-content-layout=centered]/layout:mx-auto">
-            {children}
+          <div className="@container/main flex flex-1 flex-col p-(--content-padding) pb-0 xl:group-data-[theme-content-layout=centered]/layout:container xl:group-data-[theme-content-layout=centered]/layout:mx-auto">
+            <div className="flex-1 pb-(--content-padding)">
+              {children}
+            </div>
+          </div>
+          <div className="@container/main px-(--content-padding) xl:group-data-[theme-content-layout=centered]/layout:container xl:group-data-[theme-content-layout=centered]/layout:mx-auto">
+            <GlobalFooter />
           </div>
         </div>
       </SidebarInset>

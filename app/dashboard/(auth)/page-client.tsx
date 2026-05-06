@@ -501,7 +501,7 @@ export default function DashboardPageClient() {
             <div ref={tabsListRef} className="relative w-max">
               <TabsList className="z-10">
                 <TabsTrigger value="profile">Profils</TabsTrigger>
-                <TabsTrigger value="business">Prasmes</TabsTrigger>
+                <TabsTrigger value="business">Pakalpojumi</TabsTrigger>
                 <TabsTrigger value="contact">Kontakti</TabsTrigger>
                 <TabsTrigger value="social">Social</TabsTrigger>
                 <TabsTrigger value="foto">Foto</TabsTrigger>

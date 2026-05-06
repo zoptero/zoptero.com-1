@@ -1,6 +1,7 @@
 "use client";
 
 import ThemeSwitch from "@/components/layout/header/theme-switch";
+import { GlobalFooter } from "@/components/layout/global-footer";
 import { HeroTitleRotator } from "@/components/hero-title-rotator";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
@@ -67,23 +68,7 @@ export default function HeroSection() {
         </div>
       </div>
 
-      <footer
-        className="flex w-full flex-none flex-col items-center justify-center pt-2 pb-2 text-center text-xs text-muted-foreground md:pt-2 md:pb-4"
-      >
-        <div className="flex w-full flex-col items-center justify-center gap-1.5 text-center md:gap-2">
-          <div className="flex flex-wrap items-center justify-center gap-x-2 gap-y-1">
-            <span>&copy; {new Date().getFullYear()} Zoptero</span>
-            <span className="hidden md:inline">·</span>
-            <Link href="#" className="hover:text-primary no-underline">Par mums</Link>
-            <span className="hidden md:inline">·</span>
-            <Link href="#" className="hover:text-primary no-underline">Kontakti</Link>
-            <span className="hidden md:inline">·</span>
-            <Link href="#" className="hover:text-primary no-underline">Privātuma politika</Link>
-            <span className="hidden md:inline">·</span>
-            <Link href="#" className="hover:text-primary no-underline">Sīkdatņu politika</Link>
-          </div>
-        </div>
-      </footer>
+      <GlobalFooter />
     </section>
   );
 }
