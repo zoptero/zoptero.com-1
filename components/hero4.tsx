@@ -13,8 +13,8 @@ import { NavigationMenu } from "@/components/ui/navigation-menu";
 
 export default function HeroSection() {
   return (
-    <section className="flex min-h-screen flex-col items-center justify-between bg-[radial-gradient(125%_125%_at_50%_90%,#ffffff_40%,var(--color-purple-200)_100%)] bg-cover bg-center text-center text-sm max-md:px-4 dark:bg-[radial-gradient(125%_125%_at_50%_90%,var(--color-background)_40%,var(--color-purple-800)_100%)]">
-      <nav className="flex w-full items-center justify-between py-4 md:px-16 lg:px-24 xl:px-32">
+    <section className="flex min-h-screen min-h-[100svh] min-h-[100dvh] flex-col bg-[radial-gradient(125%_125%_at_50%_90%,#ffffff_40%,var(--color-purple-200)_100%)] bg-cover bg-center px-4 text-center text-sm dark:bg-[radial-gradient(125%_125%_at_50%_90%,var(--color-background)_40%,var(--color-purple-800)_100%)] md:px-8 lg:px-12 xl:px-16">
+      <nav className="flex w-full flex-none items-center justify-between py-3 md:py-4 md:px-8 lg:px-12 xl:px-16">
         {/* Logo removed as requested */}
 
         <NavigationMenu
@@ -32,7 +32,8 @@ export default function HeroSection() {
         </div>
       </nav>
 
-      <div className="flex w-full max-w-xl flex-1 flex-col items-center justify-center space-y-4">
+      <div className="flex w-full flex-1 items-center justify-center py-4 md:py-6">
+        <div className="flex w-full max-w-xl flex-col items-center justify-center gap-4 md:gap-5">
         <Badge className="gap-1 mb-2" variant="outline">
           <svg aria-hidden="true" className="text-emerald-600" width="12" height="12" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6.00016 11.1998L2.80016 7.99984L1.86683 8.93317L6.00016 13.0665L15.0002 4.0665L14.0668 3.13317L6.00016 11.1998Z" fill="currentColor"/></svg>
           Informācijas platforma
@@ -63,11 +64,11 @@ export default function HeroSection() {
             </Button>
           </div>
         </div>
-
+        </div>
       </div>
 
       <footer
-        className="w-full flex flex-col items-center justify-center text-center text-muted-foreground text-xs pb-3 pt-6 md:pb-5 md:pt-0 mt-10 md:mt-16"
+        className="flex w-full flex-none flex-col items-center justify-center pt-4 pb-3 text-center text-xs text-muted-foreground md:pt-2 md:pb-5"
       >
         <div className="w-full flex flex-col items-center justify-center text-center gap-2">
           <div className="flex flex-wrap items-center justify-center gap-2">
