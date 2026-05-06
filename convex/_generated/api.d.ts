@@ -23,6 +23,7 @@ import type * as profiles from "../profiles.js";
 import type * as publicActions from "../publicActions.js";
 import type * as ragChat from "../ragChat.js";
 import type * as users from "../users.js";
+import type * as utils from "../utils.js";
 
 import type {
   ApiFromModules,
@@ -46,6 +47,7 @@ declare const fullApi: ApiFromModules<{
   publicActions: typeof publicActions;
   ragChat: typeof ragChat;
   users: typeof users;
+  utils: typeof utils;
 }>;
 
 /**

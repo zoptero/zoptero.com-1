@@ -89,29 +89,43 @@ export async function POST(req: Request) {
       }
 
       console.log(
-        `[Post-Login] Syncing user ${clerkId} (${event.type})`,
-        { email: primaryEmail, name }
+        `[WEBHOOK] Starting sync for user ${clerkId} (${event.type})`
       );
 
       // Call ensureCurrentUser mutation to sync user to Convex
-      // This happens server-side, avoiding race conditions
-      const startTime = Date.now();
+      // SYNCHRONOUS: waits for mutation to complete before returning
+      // This prevents browser-side race conditions ("syncing" spinner)
+      const webhookStartTime = Date.now();
       
-      await convex.mutation(api.users.ensureCurrentUser, {
-        email: primaryEmail,
-        name,
-        avatarUrl,
-      });
+      try {
+        const result = await convex.mutation(api.users.ensureCurrentUser, {
+          email: primaryEmail,
+          name,
+          avatarUrl,
+        });
 
-      const latency = Date.now() - startTime;
-      console.log(
-        `[Post-Login] User sync completed in ${latency}ms for user ${clerkId}`
-      );
+        const totalLatency = Date.now() - webhookStartTime;
+        console.log(
+          `[WEBHOOK] ✅ User sync completed in ${totalLatency}ms for user ${clerkId}. Onboarding: ${result.onboardingComplete ? "complete" : "incomplete"}`
+        );
 
-      return NextResponse.json(
-        { success: true, latency },
-        { status: 200 }
-      );
+        return NextResponse.json(
+          { success: true, latency: totalLatency, onboardingComplete: result.onboardingComplete },
+          { status: 200 }
+        );
+      } catch (mutationError) {
+        const errorLatency = Date.now() - webhookStartTime;
+        console.error(
+          `[WEBHOOK] ❌ User sync FAILED in ${errorLatency}ms for user ${clerkId}:`,
+          mutationError
+        );
+        // Still return 200 - webhook should succeed even if mutation fails
+        // The frontend will handle retry/recovery
+        return NextResponse.json(
+          { success: false, error: mutationError instanceof Error ? mutationError.message : "Unknown error", latency: errorLatency },
+          { status: 200 }
+        );
+      }
     }
 
     // Ignore other event types
