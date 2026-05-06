@@ -4,14 +4,13 @@
 import OnboardingCards from "@/components/OnboardingCards";
 import { useMutation, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
-import { useUser, useSession } from "@clerk/nextjs";
+import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import { useOnboarding } from "@/components/onboarding-context";
 
   export default function OnboardingPage() {
   const { user } = useUser();
-  const { session } = useSession();
   const router = useRouter();
   const setAccountType = useMutation(api.onboarding.setAccountTypeForUserAndProfile);
   const { setIsOptimisticRedirecting } = useOnboarding();
@@ -62,9 +61,5 @@ import { useOnboarding } from "@/components/onboarding-context";
     }
   };
 
-  return (
-    <div className="min-h-screen w-full bg-white flex items-center justify-center py-12 px-4">
-      <OnboardingCards onContinue={handleContinue} error={error} isSubmitting={isSubmitting} />
-    </div>
-  );
+  return <OnboardingCards onContinue={handleContinue} error={error} isSubmitting={isSubmitting} />;
 }
