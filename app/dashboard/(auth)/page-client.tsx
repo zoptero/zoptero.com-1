@@ -502,6 +502,7 @@ export default function DashboardPageClient() {
               <TabsList className="z-10">
                 <TabsTrigger value="profile">Profils</TabsTrigger>
                 <TabsTrigger value="business">Pakalpojumi</TabsTrigger>
+                <TabsTrigger value="uzdevumi">Uzdevumi</TabsTrigger>
                 <TabsTrigger value="contact">Kontakti</TabsTrigger>
                 <TabsTrigger value="social">Social</TabsTrigger>
                 <TabsTrigger value="foto">Foto</TabsTrigger>
