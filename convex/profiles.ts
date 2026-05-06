@@ -93,6 +93,37 @@ function normalizeDigits(value: string | undefined): string {
   return value.replace(/\D+/g, "");
 }
 
+function calculateDistanceKm(
+  lat1: number,
+  lng1: number,
+  lat2: number,
+  lng2: number,
+): number {
+  const toRadians = (value: number) => (value * Math.PI) / 180;
+  const earthRadiusKm = 6371;
+
+  const dLat = toRadians(lat2 - lat1);
+  const dLng = toRadians(lng2 - lng1);
+
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(toRadians(lat1)) *
+      Math.cos(toRadians(lat2)) *
+      Math.sin(dLng / 2) *
+      Math.sin(dLng / 2);
+
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return earthRadiusKm * c;
+}
+
+function proximityBoost(distanceKm: number): number {
+  if (distanceKm <= 5) return 1.5;
+  if (distanceKm <= 20) return 1.0;
+  if (distanceKm <= 50) return 0.5;
+  if (distanceKm <= 100) return 0.2;
+  return 0;
+}
+
 function looksLikeProfileId(value: string): value is Id<"profiles"> {
   return /^j[0-9a-z]+$/i.test(value);
 }
@@ -181,6 +212,8 @@ export const update = mutation({
     searchTriggers: v.optional(v.array(v.string())),
     phone: v.optional(v.string()),
     city: v.optional(v.string()),
+    latitude: v.optional(v.number()),
+    longitude: v.optional(v.number()),
     workingEnvironment: v.optional(v.string()),
     mediaUrl: v.optional(v.string()),
     seoTitle: v.optional(v.string()),
@@ -552,11 +585,14 @@ export const searchProfilesByText = internalQuery({
   args: {
     query: v.string(),
     limit: v.number(),
+    lat: v.optional(v.number()),
+    lng: v.optional(v.number()),
   },
   returns: v.array(
     v.object({
       _id: v.id("profiles"),
       _score: v.number(),
+      _distanceKm: v.optional(v.number()),
       slug: v.optional(v.string()),
       displayName: v.optional(v.string()),
       aboutMe: v.optional(v.string()),
@@ -564,6 +600,8 @@ export const searchProfilesByText = internalQuery({
       sector: v.optional(v.string()),
       searchTriggers: v.optional(v.array(v.string())),
       city: v.optional(v.string()),
+      latitude: v.optional(v.number()),
+      longitude: v.optional(v.number()),
       phone: v.optional(v.string()),
       email: v.optional(v.string()),
       linktree: v.optional(v.string()),
@@ -582,7 +620,10 @@ export const searchProfilesByText = internalQuery({
     })
   ),
   handler: async (ctx, args) => {
-    return await searchProfilesByTextImpl(ctx, args.query, args.limit);
+    return await searchProfilesByTextImpl(ctx, args.query, args.limit, {
+      lat: args.lat,
+      lng: args.lng,
+    });
   },
 });
 
@@ -590,11 +631,14 @@ export const searchProfilesReactive = query({
   args: {
     query: v.string(),
     limit: v.optional(v.number()),
+    lat: v.optional(v.number()),
+    lng: v.optional(v.number()),
   },
   returns: v.array(
     v.object({
       _id: v.id("profiles"),
       _score: v.number(),
+      _distanceKm: v.optional(v.number()),
       slug: v.optional(v.string()),
       displayName: v.optional(v.string()),
       aboutMe: v.optional(v.string()),
@@ -602,6 +646,8 @@ export const searchProfilesReactive = query({
       sector: v.optional(v.string()),
       searchTriggers: v.optional(v.array(v.string())),
       city: v.optional(v.string()),
+      latitude: v.optional(v.number()),
+      longitude: v.optional(v.number()),
       phone: v.optional(v.string()),
       email: v.optional(v.string()),
       linktree: v.optional(v.string()),
@@ -629,6 +675,10 @@ export const searchProfilesReactive = query({
       ctx,
       trimmedQuery,
       Math.max(1, Math.min(args.limit ?? 12, 20)),
+      {
+        lat: args.lat,
+        lng: args.lng,
+      },
     );
   },
 });
@@ -637,6 +687,7 @@ async function searchProfilesByTextImpl(
   ctx: QueryCtx,
   query: string,
   limit: number,
+  userLocation?: { lat?: number; lng?: number },
 ) {
   const normalizedQuery = normalizeSearchText(query);
   if (!normalizedQuery) {
@@ -721,6 +772,22 @@ async function searchProfilesByTextImpl(
         }
       }
 
+      let distanceKm: number | undefined;
+      if (
+        typeof userLocation?.lat === "number" &&
+        typeof userLocation?.lng === "number" &&
+        typeof profile.latitude === "number" &&
+        typeof profile.longitude === "number"
+      ) {
+        distanceKm = calculateDistanceKm(
+          userLocation.lat,
+          userLocation.lng,
+          profile.latitude,
+          profile.longitude,
+        );
+        score += proximityBoost(distanceKm);
+      }
+
       if (score <= 0) {
         return null;
       }
@@ -728,6 +795,7 @@ async function searchProfilesByTextImpl(
       return {
         _id: profile._id,
         _score: Number(score.toFixed(3)),
+        _distanceKm: typeof distanceKm === "number" ? Number(distanceKm.toFixed(2)) : undefined,
         slug: profile.slug,
         displayName: profile.displayName ?? userName,
         aboutMe: profile.aboutMe,
@@ -735,6 +803,8 @@ async function searchProfilesByTextImpl(
         sector: profile.sector,
         searchTriggers: profile.searchTriggers,
         city: profile.city,
+        latitude: profile.latitude,
+        longitude: profile.longitude,
         phone: profile.phone,
         email: profile.email,
         linktree: profile.linktree,
@@ -753,7 +823,21 @@ async function searchProfilesByTextImpl(
       };
     })
     .filter((entry): entry is NonNullable<typeof entry> => Boolean(entry))
-    .sort((a, b) => b._score - a._score)
+    .sort((a, b) => {
+      if (b._score !== a._score) {
+        return b._score - a._score;
+      }
+      if (typeof a._distanceKm === "number" && typeof b._distanceKm === "number") {
+        return a._distanceKm - b._distanceKm;
+      }
+      if (typeof a._distanceKm === "number") {
+        return -1;
+      }
+      if (typeof b._distanceKm === "number") {
+        return 1;
+      }
+      return 0;
+    })
     .slice(0, Math.max(1, Math.min(limit, 20)));
 
   return scored;

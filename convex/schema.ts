@@ -28,6 +28,8 @@ export default defineSchema({
     searchTriggers: v.optional(v.array(v.string())),
     phone: v.optional(v.string()),
     city: v.optional(v.string()),
+    latitude: v.optional(v.number()),
+    longitude: v.optional(v.number()),
     workingEnvironment: v.optional(v.string()),
     mediaUrl: v.optional(v.string()),
     seoTitle: v.optional(v.string()),

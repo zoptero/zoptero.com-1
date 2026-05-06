@@ -1,37 +1,106 @@
 "use client";
 
+import { useMemo, useState } from "react";
+import { useQuery } from "convex/react";
 import ThemeSwitch from "@/components/layout/header/theme-switch";
+import { api } from "@/convex/_generated/api";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
-import { AlignJustify, Plus, ArrowRight } from "lucide-react";
+import { Plus, ArrowRight, Locate } from "lucide-react";
 // import { Tooltip8 } from "@/components/ui/tooltip8";
 // import Footer1 from "@/components/footer1";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import {
-  Sheet,
-  SheetClose,
-  SheetContent,
-  SheetTrigger,
-} from "@/components/ui/sheet";
-import {
-  NavigationMenu,
-  NavigationMenuItem,
-  NavigationMenuLink,
-  NavigationMenuList,
-} from "@/components/ui/navigation-menu";
-import Image from "next/image";
+import { NavigationMenu } from "@/components/ui/navigation-menu";
+import { cn, calculateDistance } from "@/lib/utils";
+import { toast } from "sonner";
 
-
-
-const SUGGESTIONS = [
-  "SaaS finance dashboard layout.",
-  "Marketing site for an AI startup.",
-  "Mobile UI for a fitness app.",
-  "Dark mode landing for an agency.",
-];
+type LocationState =
+  | { status: "idle" }
+  | { status: "loading" }
+  | { status: "active"; lat: number; lng: number }
+  | { status: "error" };
 
 export default function HeroSection() {
+  const [query, setQuery] = useState("");
+  const [locationState, setLocationState] = useState<LocationState>({ status: "idle" });
+
+  const trimmedQuery = query.trim();
+  const hasActiveLocation = locationState.status === "active";
+
+  const searchArgs =
+    trimmedQuery.length > 0
+      ? {
+          query: trimmedQuery,
+          limit: 8,
+          lat: hasActiveLocation ? locationState.lat : undefined,
+          lng: hasActiveLocation ? locationState.lng : undefined,
+        }
+      : "skip";
+
+  const searchResults = useQuery(api.profiles.searchProfilesReactive, searchArgs);
+
+  const visibleResults = useMemo(() => {
+    if (!searchResults) {
+      return [];
+    }
+
+    if (!hasActiveLocation) {
+      return searchResults;
+    }
+
+    return searchResults.map((result) => {
+      if (typeof result.latitude !== "number" || typeof result.longitude !== "number") {
+        return result;
+      }
+
+      const distanceKm = calculateDistance(
+        locationState.lat,
+        locationState.lng,
+        result.latitude,
+        result.longitude,
+      );
+
+      return {
+        ...result,
+        _distanceKm: Number(distanceKm.toFixed(2)),
+      };
+    });
+  }, [searchResults, hasActiveLocation, locationState]);
+
+  const activateLocation = () => {
+    if (typeof window === "undefined" || !("geolocation" in navigator)) {
+      toast.error("Šajā pārlūkā nav pieejama atrašanās vieta.");
+      setLocationState({ status: "error" });
+      return;
+    }
+
+    setLocationState({ status: "loading" });
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        setLocationState({
+          status: "active",
+          lat: position.coords.latitude,
+          lng: position.coords.longitude,
+        });
+        toast.success("Location Active");
+      },
+      (error) => {
+        setLocationState({ status: "error" });
+        const message =
+          error.code === error.PERMISSION_DENIED
+            ? "Atrašanās vietas piekļuve tika liegta."
+            : "Neizdevās noteikt atrašanās vietu.";
+        toast.error(message);
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 0,
+      },
+    );
+  };
+
   return (
     <section className="flex min-h-screen flex-col items-center justify-between bg-[radial-gradient(125%_125%_at_50%_90%,#ffffff_40%,var(--color-purple-200)_100%)] bg-cover bg-center text-center text-sm max-md:px-4 dark:bg-[radial-gradient(125%_125%_at_50%_90%,var(--color-background)_40%,var(--color-purple-800)_100%)]">
       <nav className="flex w-full items-center justify-between py-4 md:px-16 lg:px-24 xl:px-32">
@@ -60,7 +129,7 @@ export default function HeroSection() {
         <header className="space-y-3">
           <h1 className="text-3xl leading-tight font-bold lg:text-5xl xl:text-6xl">Expertu meklētājs.</h1>
           <p className="text-muted-foreground text-sm">
-            Meklē uzticamu informāciju ar MI.
+            Šeit var atrast uzticamu informāciju ar MI.
           </p>
         </header>
         <div className="bg-muted mt-4 w-full space-y-4 overflow-hidden rounded-xl focus-within:ring-2 focus-within:ring-white/40">
@@ -68,21 +137,66 @@ export default function HeroSection() {
             placeholder="Kas nepieciešams atrast?"
             rows={3}
             className="min-h-16 resize-none border-0 bg-transparent! p-4 pb-0 shadow-none focus-visible:ring-0 text-sm placeholder:text-sm"
+            value={query}
+            onChange={(event) => setQuery(event.target.value)}
           />
           <div className="flex items-center justify-between px-3 pb-3">
-            <Button
-              variant="outline"
-              size="icon-sm"
-              aria-label="Add"
-              className="rounded-full"
-            >
-              <Plus />
-            </Button>
+            <div className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                size="icon-sm"
+                aria-label="Add"
+                className="rounded-full"
+              >
+                <Plus />
+              </Button>
+              <Button
+                variant="outline"
+                size="icon-sm"
+                aria-label="Find nearby items"
+                onClick={activateLocation}
+                className={cn(
+                  "rounded-full transition-colors",
+                  hasActiveLocation && "bg-primary/10 text-primary border-primary/40",
+                )}
+              >
+                <Locate
+                  className={cn(
+                    "transition-transform",
+                    locationState.status === "loading" && "animate-pulse",
+                  )}
+                />
+              </Button>
+            </div>
             <Button size="icon-sm" aria-label="Send" className="rounded-full">
               <ArrowRight />
             </Button>
           </div>
         </div>
+
+        {trimmedQuery.length > 0 ? (
+          <div className="bg-muted/70 mt-3 w-full rounded-xl border border-border/60 p-3 text-left">
+            {searchResults === undefined ? (
+              <p className="text-muted-foreground text-xs">Meklējam ekspertus...</p>
+            ) : visibleResults.length === 0 ? (
+              <p className="text-muted-foreground text-xs">Nekas netika atrasts.</p>
+            ) : (
+              <ul className="space-y-2">
+                {visibleResults.slice(0, 5).map((result) => (
+                  <li key={result._id} className="flex items-center justify-between rounded-lg bg-background/80 px-3 py-2">
+                    <div>
+                      <p className="text-sm font-medium">{result.displayName ?? "Bez nosaukuma"}</p>
+                      <p className="text-muted-foreground text-xs">{result.city ?? "Atrašanās vieta nav norādīta"}</p>
+                    </div>
+                    {typeof result._distanceKm === "number" ? (
+                      <span className="text-muted-foreground text-xs">{result._distanceKm.toFixed(1)} km</span>
+                    ) : null}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        ) : null}
 
       </div>
 
