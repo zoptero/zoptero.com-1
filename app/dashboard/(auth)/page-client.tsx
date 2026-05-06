@@ -133,40 +133,75 @@ const defaultValues: ProfileFormValues = {
 
 function DashboardProfileSkeleton() {
   return (
-    <div className="w-full max-w-3xl">
-      <Card>
-        <CardContent className="space-y-6 pt-6">
-          <div className="space-y-2">
-            <Skeleton className="h-4 w-28" />
-            <Skeleton className="h-10 w-full" />
-            <Skeleton className="h-3 w-72" />
-          </div>
+    <div className="space-y-4 lg:pl-2.5">
+      <div className="mb-4">
+        <div className="flex w-max items-center gap-2 rounded-lg border p-1">
+          <Skeleton className="h-8 w-16" />
+          <Skeleton className="h-8 w-24" />
+          <Skeleton className="h-8 w-20" />
+          <Skeleton className="h-8 w-18" />
+          <Skeleton className="h-8 w-14" />
+          <Skeleton className="h-8 w-16" />
+          <Skeleton className="h-8 w-16" />
+        </div>
+      </div>
 
-          <div className="space-y-2">
-            <div className="flex items-center justify-between">
-              <Skeleton className="h-4 w-24" />
-              <Skeleton className="h-3 w-12" />
-            </div>
-            <Skeleton className="h-24 w-full" />
-            <Skeleton className="h-3 w-80" />
-          </div>
-
-          <div className="space-y-2">
-            <Skeleton className="h-4 w-24" />
-            <div className="flex items-center gap-4">
-              <Skeleton className="size-20 rounded-full" />
-              <div className="flex flex-col gap-2">
-                <Skeleton className="h-9 w-44" />
-                <Skeleton className="h-3 w-56" />
+      <div className="flex w-full items-stretch gap-4">
+        <div className="min-w-0 flex-1">
+          <Card>
+            <CardContent className="space-y-6 pt-6">
+              <div className="space-y-2">
+                <Skeleton className="h-4 w-28" />
+                <Skeleton className="h-10 w-full" />
+                <Skeleton className="h-3 w-72" />
               </div>
-            </div>
-          </div>
 
-          <div className="flex justify-end">
-            <Skeleton className="h-10 w-40" />
-          </div>
-        </CardContent>
-      </Card>
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <Skeleton className="h-4 w-24" />
+                  <Skeleton className="h-3 w-12" />
+                </div>
+                <Skeleton className="h-24 w-full" />
+                <Skeleton className="h-3 w-80" />
+              </div>
+
+              <div className="space-y-2">
+                <Skeleton className="h-4 w-24" />
+                <div className="flex items-center gap-4">
+                  <Skeleton className="size-20 rounded-full" />
+                  <div className="flex flex-col gap-2">
+                    <Skeleton className="h-9 w-44" />
+                    <Skeleton className="h-3 w-56" />
+                  </div>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                <Skeleton className="h-16 w-full" />
+                <Skeleton className="h-16 w-full" />
+              </div>
+
+              <div className="flex justify-end">
+                <Skeleton className="h-10 w-40" />
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        <div className="hidden shrink-0 xl:flex xl:w-80">
+          <Card className="w-full">
+            <CardContent className="space-y-4 pt-6">
+              <Skeleton className="h-5 w-40" />
+              <Skeleton className="h-20 w-full" />
+              <Skeleton className="h-20 w-full" />
+              <Skeleton className="h-20 w-full" />
+              <div className="mt-auto pt-2">
+                <Skeleton className="h-10 w-full" />
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
     </div>
   );
 }
@@ -465,9 +500,7 @@ export default function DashboardPageClient() {
           </div>
         </div>
 
-        <div className="w-full max-w-3xl">
-          <DashboardProfileSkeleton />
-        </div>
+        <DashboardProfileSkeleton />
       </>
     );
   }
