@@ -5,6 +5,7 @@ import { useQuery } from "convex/react";
 import { ChevronRight } from "lucide-react";
 import { api } from "@/convex/_generated/api";
 import { Badge } from "@/components/ui/badge";
+import FadeInSlide from "@/components/FadeInSlide";
 import { SignIn } from '@clerk/nextjs';
 import { useEffect, useRef } from 'react';
 
@@ -56,30 +57,37 @@ export default function UnifiedAuthPage() {
       <section className='relative hidden flex-col items-center justify-center border-r border-zinc-200 bg-zinc-50/50 lg:flex'>
         <div className='relative z-20 flex flex-col items-center gap-12 p-12 text-center'>
           <div className='flex flex-col items-center gap-6'>
-            <div className='max-w-md space-y-4'>
-              <Badge className='mb-1.5 gap-1 md:mb-2' variant='outline'>
-                <svg aria-hidden='true' className='text-emerald-600' width='12' height='12' viewBox='0 0 16 16' fill='none' xmlns='http://www.w3.org/2000/svg'>
-                  <path d='M6.00016 11.1998L2.80016 7.99984L1.86683 8.93317L6.00016 13.0665L15.0002 4.0665L14.0668 3.13317L6.00016 11.1998Z' fill='currentColor' />
-                </svg>
-                Laipni lūdzam
-              </Badge>
-              <h1 className='text-2xl font-bold tracking-tight text-zinc-950 md:text-3xl'>
-                Informācijas platforma ar MI
-              </h1>
-              <p className='space-y-4 text-xs leading-relaxed text-zinc-500'>
+            <div className='flex max-w-md flex-col items-center gap-4'>
+              <FadeInSlide delay={0} className='flex justify-center'>
+                <Badge className='gap-1' variant='outline'>
+                  <svg aria-hidden='true' className='text-emerald-600' width='12' height='12' viewBox='0 0 16 16' fill='none' xmlns='http://www.w3.org/2000/svg'>
+                    <path d='M6.00016 11.1998L2.80016 7.99984L1.86683 8.93317L6.00016 13.0665L15.0002 4.0665L14.0668 3.13317L6.00016 11.1998Z' fill='currentColor' />
+                  </svg>
+                  Laipni lūdzam
+                </Badge>
+              </FadeInSlide>
+
+              <FadeInSlide delay={0.1} className='text-center'>
+                <h1 className='text-2xl font-bold tracking-tight text-zinc-950 md:text-3xl'>
+                  Informācijas platforma ar MI
+                </h1>
+              </FadeInSlide>
+
+              <FadeInSlide delay={0.2} className='text-xs leading-relaxed text-zinc-500 text-center'>
                 <span className='block'>
                   Profesionāla speciālistu, pakalpojumu, veikalu un dažādu rīku platforma. Piemērota individuālai un biznesa lietošanai. Pievienojies!
                 </span>
+              </FadeInSlide>
+
+              <FadeInSlide delay={0.3} className='text-xs leading-relaxed text-center'>
                 <span className='block font-medium text-zinc-600'>
-                  <>
-                    Pievienojies{' '}
-                    <span className='font-bold text-zinc-950'>
-                      {liveUserCount}
-                    </span>{' '}
-                    lietotājiem
-                  </>
+                  Pievienojies{' '}
+                  <span className='font-bold text-zinc-950'>
+                    {liveUserCount}
+                  </span>{' '}
+                  lietotājiem
                 </span>
-              </p>
+              </FadeInSlide>
             </div>
           </div>
         </div>

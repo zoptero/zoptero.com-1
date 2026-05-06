@@ -4,6 +4,9 @@ import { useEffect, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 
 const TITLE_VARIANTS = ["Expertu meklētājs", "Pakalpojumu meklētājs"] as const;
+const LONGEST_TITLE = TITLE_VARIANTS.reduce((longest, current) =>
+  current.length > longest.length ? current : longest,
+TITLE_VARIANTS[0]);
 const ROTATION_INTERVAL_MS = 2600;
 const TRANSITION = {
   duration: 0.62,
@@ -28,18 +31,18 @@ export function HeroTitleRotator() {
 
   return (
     <h1
-      className="text-[1.8rem] font-bold text-center sm:text-[2.1rem] lg:text-5xl xl:text-6xl"
+      className="w-full text-[1.8rem] font-bold text-center sm:text-[2.1rem] lg:text-5xl xl:text-6xl"
       aria-label="Expertu meklētājs un pakalpojumu meklētājs"
     >
       <span className="sr-only">Expertu meklētājs un pakalpojumu meklētājs</span>
       <span
         aria-hidden="true"
-        className="relative mx-auto block h-[1.15em] min-w-[22ch] overflow-hidden leading-none whitespace-nowrap sm:h-[1.2em] lg:h-[1.25em]"
+        className="relative mx-auto block h-[1.15em] w-[120%] ml-[-10%] overflow-hidden leading-none sm:h-[1.2em] lg:h-[1.25em]"
       >
         <AnimatePresence initial={false} mode="wait">
           <motion.span
             key={TITLE_VARIANTS[activeIndex]}
-            className="absolute inset-0 block whitespace-nowrap text-center will-change-transform"
+            className="absolute inset-0 flex items-center justify-center whitespace-nowrap text-center will-change-transform"
             initial={prefersReducedMotion ? false : { y: "100%", opacity: 0.9 }}
             animate={prefersReducedMotion ? { y: "0%", opacity: 1 } : { y: "0%", opacity: 1 }}
             exit={prefersReducedMotion ? { opacity: 0 } : { y: "-100%", opacity: 0.9 }}
