@@ -15,16 +15,16 @@ export default function OnboardingCards({ onContinue, error, isSubmitting }: { o
   const [selected, setSelected] = useState<string | null>(null);
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen min-h-[100svh] min-h-[100dvh] w-full px-4 py-12">
-      <div className="flex flex-col items-center w-full max-w-2xl mx-auto gap-8">
+    <div className="flex h-screen h-[100svh] h-[100dvh] w-full items-center justify-center overflow-hidden px-4 py-4 sm:py-6">
+      <div className="flex w-full max-w-2xl flex-col items-center gap-5 sm:gap-6">
         {/* Badge and Title Section - Staggered Animation */}
-        <FadeInSlide delay={0} className="flex flex-col items-center w-full mb-2 mt-8">
+        <FadeInSlide delay={0} className="flex w-full flex-col items-center">
           <Badge className="gap-1 mb-2" variant="outline">
             <svg aria-hidden="true" className="text-emerald-600" width="12" height="12" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6.00016 11.1998L2.80016 7.99984L1.86683 8.93317L6.00016 13.0665L15.0002 4.0665L14.0668 3.13317L6.00016 11.1998Z" fill="currentColor"/></svg>
             Informācijas platforma
           </Badge>
           <h1 className="text-2xl font-bold tracking-tight text-center mb-2">Es darbošos kā</h1>
-          <p className="text-muted-foreground text-sm text-center mb-4">Izvēlies piemērotāko veidu</p>
+          <p className="text-muted-foreground text-sm text-center">Izvēlies piemērotāko veidu</p>
         </FadeInSlide>
         
         {/* Error Display - Staggered Animation */}
@@ -67,7 +67,7 @@ export default function OnboardingCards({ onContinue, error, isSubmitting }: { o
           <Button
             size="lg"
             disabled={!selected || isSubmitting}
-            className="mt-4"
+            className="mt-1"
             onClick={() => {
               if (selected) {
                 onContinue?.(selected);
