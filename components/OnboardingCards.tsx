@@ -44,7 +44,7 @@ export default function OnboardingCards({ onContinue, error, isSubmitting }: { o
               className="text-left"
             >
               <Card
-                className={["transition-all", selected === option.value ? "border-green-600 ring-1 ring-green-600" : "border-foreground/10"].join(" ")}
+                className={["transition-all", selected === option.value ? "border-green-600" : "border-foreground/10"].join(" ")}
               >
                 <CardHeader>
                   <div className="flex items-start justify-between">
