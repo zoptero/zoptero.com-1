@@ -481,7 +481,6 @@ export default function DashboardPageClient() {
       sector: values.sector || undefined,
       slug: values.slug || undefined,
       workingEnvironment: values.workingEnvironment || undefined,
-      ...(values.startDate ? { startDate: values.startDate } : {}),
       onlineStatus: values.onlineStatus,
       strongKeywords: values.strongKeywords,
       searchTriggers: parseCsv(values.searchTriggersText),
@@ -509,16 +508,6 @@ export default function DashboardPageClient() {
       setRemoveAvatar(false);
       toast.success("Izmaiņas saglabātas");
     } catch (error) {
-      const message = error instanceof Error ? error.message : String(error);
-      // Backward compatibility: older deployed Convex functions may not accept startDate yet.
-      if (message.toLowerCase().includes("startdate") && "startDate" in payload) {
-        const { startDate: _ignored, ...fallbackPayload } = payload;
-        await updateProfile(fallbackPayload);
-        setRemoveAvatar(false);
-        toast.success("Izmaiņas saglabātas");
-        return;
-      }
-
       console.error("Profile update failed", error);
       toast.error("Neizdevās saglabāt izmaiņas.");
     }
