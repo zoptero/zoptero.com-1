@@ -28,7 +28,6 @@ Profila lauki un to nozīme:
 - **Meklēšanas trigeris** (MyServices): Papildu frāzes, pēc kurām tevi var meklēt.
 - **WhatsApp**: Tava WhatsApp numura formāts: +371 2XXXXXXX.
 - **Instagram/TikTok/Telegram/Facebook/Threads**: Sociālo tīklu profilu saites vai lietotājvārdi.
-- **YouTube**: Saite uz tavu YouTube kanālu.
 - **Linktree/Etsy**: Saites uz citām platformām.
 - **Profila video** (profileVideoUrl): Saite uz video, kas tevi iepazīstina.
 - **Maksājumu veidi**: Cash (skaidra nauda), bankas pārskaitījums, karte.

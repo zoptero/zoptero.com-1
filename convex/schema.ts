@@ -46,6 +46,7 @@ export default defineSchema({
     telegram: v.optional(v.string()),
     facebook: v.optional(v.string()),
     threads: v.optional(v.string()),
+    // Legacy field kept temporarily for backward compatibility with existing documents.
     youtube: v.optional(v.string()),
     profileVideoUrl: v.optional(v.string()),
     linktree: v.optional(v.string()),

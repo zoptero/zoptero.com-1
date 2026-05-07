@@ -31,7 +31,6 @@ type SearchProfileResult = {
   telegram?: string;
   instagram?: string;
   tiktok?: string;
-  youtube?: string;
   facebook?: string;
 };
 
@@ -62,7 +61,6 @@ type HydratedSearchDoc = {
   telegram?: string;
   instagram?: string;
   tiktok?: string;
-  youtube?: string;
   facebook?: string;
   threads?: string;
 };
@@ -110,7 +108,6 @@ function buildProfileEmbeddingInput(source: {
   telegram?: string;
   instagram?: string;
   tiktok?: string;
-  youtube?: string;
   facebook?: string;
   threads?: string;
   linktree?: string;
@@ -137,7 +134,6 @@ function buildProfileEmbeddingInput(source: {
     source.telegram ? `Telegram: ${normalizeSearchText(source.telegram)}` : "",
     source.instagram ? `Instagram: ${normalizeSearchText(source.instagram)}` : "",
     source.tiktok ? `TikTok: ${normalizeSearchText(source.tiktok)}` : "",
-    source.youtube ? `YouTube: ${normalizeSearchText(source.youtube)}` : "",
     source.facebook ? `Facebook: ${normalizeSearchText(source.facebook)}` : "",
     source.threads ? `Threads: ${normalizeSearchText(source.threads)}` : "",
     source.linktree ? `Linktree: ${normalizeSearchText(source.linktree)}` : "",
@@ -246,7 +242,6 @@ export const searchProfiles = action({
       telegram: v.optional(v.string()),
       instagram: v.optional(v.string()),
       tiktok: v.optional(v.string()),
-      youtube: v.optional(v.string()),
       facebook: v.optional(v.string()),
     })
   ),
@@ -310,7 +305,6 @@ export const searchProfiles = action({
         doc.telegram,
         doc.instagram,
         doc.tiktok,
-        doc.youtube,
         doc.facebook,
         doc.threads,
         faqText,
@@ -345,7 +339,6 @@ export const searchProfiles = action({
         telegram: doc.telegram,
         instagram: doc.instagram,
         tiktok: doc.tiktok,
-        youtube: doc.youtube,
         facebook: doc.facebook,
       });
     }
@@ -379,7 +372,6 @@ export const searchProfiles = action({
         telegram: entry.telegram,
         instagram: entry.instagram,
         tiktok: entry.tiktok,
-        youtube: entry.youtube,
         facebook: entry.facebook,
       }));
     }
@@ -409,7 +401,6 @@ function buildProfileSnapshotText(profile: {
   telegram?: string;
   facebook?: string;
   threads?: string;
-  youtube?: string;
   city?: string;
   sector?: string;
   workingEnvironment?: string;
@@ -431,7 +422,6 @@ function buildProfileSnapshotText(profile: {
     ["Telegram", profile.telegram],
     ["Facebook", profile.facebook],
     ["Threads", profile.threads],
-    ["YouTube", profile.youtube],
     ["Pilsēta", profile.city],
     ["Nozare", profile.sector],
     ["Darba vide", profile.workingEnvironment],
@@ -672,7 +662,6 @@ export const profileAssistantChat = action({
           telegram: currentProfile.telegram,
           facebook: currentProfile.facebook,
           threads: currentProfile.threads,
-          youtube: currentProfile.youtube,
           city: currentProfile.city,
           sector: currentProfile.sector,
           workingEnvironment: currentProfile.workingEnvironment,
