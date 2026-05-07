@@ -468,43 +468,48 @@ export default function DashboardPageClient() {
           ? { avatarKey: "", avatarUrl: "" }
           : {};
 
-    await updateProfile({
-      clerkId: user.id,
-      ...avatarDeletePayload,
-      displayName: values.displayName,
-      email: values.email || undefined,
-      phone: values.phone || undefined,
-      city: values.city || undefined,
-      aboutMe: values.aboutMe || undefined,
-      bio: values.bio || undefined,
-      accountType: values.accountType || undefined,
-      sector: values.sector || undefined,
-      slug: values.slug || undefined,
-      workingEnvironment: values.workingEnvironment || undefined,
-      startDate: values.startDate || undefined,
-      onlineStatus: values.onlineStatus,
-      strongKeywords: values.strongKeywords,
-      searchTriggers: parseCsv(values.searchTriggersText),
-      mediaUrl: values.mediaUrl || undefined,
-      profileVideoUrl: values.profileVideoUrl || undefined,
-      seoTitle: values.seoTitle || undefined,
-      seoDescription: values.seoDescription || undefined,
-      whatsapp: values.whatsapp || undefined,
-      instagram: values.instagram || undefined,
-      tiktok: values.tiktok || undefined,
-      telegram: values.telegram || undefined,
-      facebook: values.facebook || undefined,
-      threads: values.threads || undefined,
-      youtube: values.youtube || undefined,
-      linktree: values.linktree || undefined,
-      etsy: values.etsy || undefined,
-      paymentCash: values.paymentCash,
-      paymentBankTransfer: values.paymentBankTransfer,
-      paymentCard: values.paymentCard,
-    });
+    try {
+      await updateProfile({
+        clerkId: user.id,
+        ...avatarDeletePayload,
+        displayName: values.displayName,
+        email: values.email || undefined,
+        phone: values.phone || undefined,
+        city: values.city || undefined,
+        aboutMe: values.aboutMe || undefined,
+        bio: values.bio || undefined,
+        accountType: values.accountType || undefined,
+        sector: values.sector || undefined,
+        slug: values.slug || undefined,
+        workingEnvironment: values.workingEnvironment || undefined,
+        startDate: values.startDate || undefined,
+        onlineStatus: values.onlineStatus,
+        strongKeywords: values.strongKeywords,
+        searchTriggers: parseCsv(values.searchTriggersText),
+        mediaUrl: values.mediaUrl || undefined,
+        profileVideoUrl: values.profileVideoUrl || undefined,
+        seoTitle: values.seoTitle || undefined,
+        seoDescription: values.seoDescription || undefined,
+        whatsapp: values.whatsapp || undefined,
+        instagram: values.instagram || undefined,
+        tiktok: values.tiktok || undefined,
+        telegram: values.telegram || undefined,
+        facebook: values.facebook || undefined,
+        threads: values.threads || undefined,
+        youtube: values.youtube || undefined,
+        linktree: values.linktree || undefined,
+        etsy: values.etsy || undefined,
+        paymentCash: values.paymentCash,
+        paymentBankTransfer: values.paymentBankTransfer,
+        paymentCard: values.paymentCard,
+      });
 
-    setRemoveAvatar(false);
-    toast.success("Izmaiņas saglabātas");
+      setRemoveAvatar(false);
+      toast.success("Izmaiņas saglabātas");
+    } catch (error) {
+      console.error("Profile update failed", error);
+      toast.error("Neizdevās saglabāt izmaiņas.");
+    }
   };
 
   if (profile === undefined) {
@@ -998,7 +1003,11 @@ export default function DashboardPageClient() {
                                     selected={parseDateFromInput(field.value)}
                                     onSelect={(date) => {
                                       if (!date) {
-                                        field.onChange("");
+                                        form.setValue("startDate", "", {
+                                          shouldDirty: true,
+                                          shouldTouch: true,
+                                          shouldValidate: true,
+                                        });
                                         return;
                                       }
 
@@ -1006,7 +1015,11 @@ export default function DashboardPageClient() {
                                         return;
                                       }
 
-                                      field.onChange(format(date, "yyyy-MM-dd"));
+                                      form.setValue("startDate", format(date, "yyyy-MM-dd"), {
+                                        shouldDirty: true,
+                                        shouldTouch: true,
+                                        shouldValidate: true,
+                                      });
                                     }}
                                     disabled={(date) => date < todayStart}
                                     captionLayout="dropdown"
