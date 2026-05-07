@@ -30,6 +30,7 @@ export default defineSchema({
     MyServices: v.optional(v.array(v.string())),
     phone: v.optional(v.string()),
     city: v.optional(v.string()),
+    hourPrice: v.optional(v.string()),
     latitude: v.optional(v.number()),
     longitude: v.optional(v.number()),
     workingEnvironment: v.optional(v.string()),

@@ -40,6 +40,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Skeleton } from "@/components/ui/skeleton";
 import ProfileAssistantChat from "@/components/ProfileAssistantChat";
 import { KeywordsInput } from "@/components/keywords-input";
+import { Select14 } from "@/components/select14";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
@@ -108,6 +109,28 @@ const phoneOrEmptySchema = z
     "Norādi derīgu numuru, piemēram, +37120000000.",
   );
 
+const SECTOR_OPTIONS = [
+  "Profesionālie pakalpojumi",
+  "Tirdzniecība",
+  "Būvniecība",
+  "Nekustamais īpašums",
+  "Transports",
+  "Loģistika",
+  "Izglītība",
+  "Veselība",
+  "Ēdināšana",
+  "Viesmīlība",
+  "Informācijas tehnoloģijas",
+  "Ražošana",
+  "Sabiedriskie pakalpojumi",
+  "Izklaide",
+  "Sports",
+  "Dzīvesstils",
+].map((option) => ({
+  label: option,
+  value: option,
+}));
+
 const profileFormSchema = z.object({
   displayName: z.string().trim().min(3, "Vārdam nepieciešams vismaz 3 simboli.").max(80),
   email: z.string().trim().email("Enter a valid email.").or(z.literal("")),
@@ -126,6 +149,11 @@ const profileFormSchema = z.object({
   startDate: z.string().optional(),
   onlineStatus: z.boolean(),
   strongKeywords: z.array(z.string().min(2, "Vismaz 2 simboli.").max(24, "Maksimāli 24 simboli.")).max(5, "Maksimāli 5 atslēgvārdi."),
+  hourPrice: z
+    .string()
+    .trim()
+    .max(3, "Maksimāli 3 cipari.")
+    .refine((value) => /^\d*$/.test(value), "Atļauti tikai cipari."),
   myServicesText: z.string().trim().max(500),
   mediaUrl: httpsUrlOrEmptySchema,
   profileVideoUrl: urlOrEmptySchema,
@@ -161,6 +189,7 @@ const defaultValues: ProfileFormValues = {
   startDate: "",
   onlineStatus: true,
   strongKeywords: [],
+  hourPrice: "",
   myServicesText: "",
   mediaUrl: "",
   profileVideoUrl: "",
@@ -182,7 +211,7 @@ const defaultValues: ProfileFormValues = {
 
 const TAB_VALIDATION_FIELDS: Partial<Record<string, Array<keyof ProfileFormValues>>> = {
   profile: ["displayName", "bio"],
-  business: ["myServicesText", "workingEnvironment", "startDate", "strongKeywords", "sector"],
+  business: ["myServicesText", "workingEnvironment", "startDate", "strongKeywords", "hourPrice", "sector"],
   contact: [
     "phone",
     "email",
@@ -316,6 +345,7 @@ export default function DashboardPageClient() {
       startDate: profile?.startDate ?? "",
       onlineStatus: profile?.onlineStatus ?? true,
       strongKeywords: profile?.strongKeywords ?? [],
+      hourPrice: profile?.hourPrice ?? "",
       myServicesText: (
         profile?.MyServices ??
         ((profile as unknown as { searchTriggers?: string[] })?.searchTriggers ?? [])
@@ -521,6 +551,7 @@ export default function DashboardPageClient() {
     const currentStartDate = profile?.startDate ?? "";
     const currentWorkingEnvironment = profile?.workingEnvironment ?? "";
     const currentBio = profile?.bio ?? "";
+    const currentHourPrice = profile?.hourPrice ?? "";
     const currentProfileVideoUrl = profile?.profileVideoUrl ?? "";
     const currentSeoTitle = profile?.seoTitle ?? "";
     const currentSeoDescription = profile?.seoDescription ?? "";
@@ -544,6 +575,7 @@ export default function DashboardPageClient() {
       ...(values.startDate !== currentStartDate ? { startDate: values.startDate || "" } : {}),
       onlineStatus: values.onlineStatus,
       strongKeywords: values.strongKeywords,
+      ...(values.hourPrice !== currentHourPrice ? { hourPrice: values.hourPrice || "" } : {}),
       MyServices: parseCsv(values.myServicesText),
       mediaUrl: values.mediaUrl || undefined,
       ...(values.profileVideoUrl !== currentProfileVideoUrl
@@ -1128,27 +1160,49 @@ export default function DashboardPageClient() {
                       />
                     </div>
 
-                    <FormField
-                      control={form.control}
-                      name="strongKeywords"
-                      render={({ field }) => (
-                        <FormItem>
-                          <div className="flex items-center justify-between">
-                            <FormLabel>Atslēgvārdi</FormLabel>
-                            <span className={`text-xs tabular-nums ${field.value.length >= 5 ? "text-destructive font-medium" : "text-muted-foreground"}`}>{field.value.length}/5</span>
-                          </div>
-                          <FormControl>
-                            <KeywordsInput
-                              value={field.value}
-                              onChange={field.onChange}
-                              placeholder="Piem., elektriķis, seo, galdnieks"
-                            />
-                          </FormControl>
-                          <FormDescription className="text-xs">Norādi atslēgvārdus, kuri palīdzētu MI atrast profilu. Spied Enter vai komatu, lai pievienotu piecus svarīgākos.</FormDescription>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                      <FormField
+                        control={form.control}
+                        name="strongKeywords"
+                        render={({ field }) => (
+                          <FormItem>
+                            <div className="flex items-center justify-between">
+                              <FormLabel>Atslēgvārdi</FormLabel>
+                              <span className={`text-xs tabular-nums ${field.value.length >= 5 ? "text-destructive font-medium" : "text-muted-foreground"}`}>{field.value.length}/5</span>
+                            </div>
+                            <FormControl>
+                              <KeywordsInput
+                                value={field.value}
+                                onChange={field.onChange}
+                                placeholder="Piem., elektriķis, seo, galdnieks"
+                              />
+                            </FormControl>
+                            <FormDescription className="text-xs">Norādi atslēgvārdus, kuri palīdzētu MI atrast profilu. Spied Enter vai komatu, lai pievienotu piecus svarīgākos.</FormDescription>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      <FormField
+                        control={form.control}
+                        name="hourPrice"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Stundas likme</FormLabel>
+                            <FormControl>
+                              <Input3
+                                placeholder="Piem., 35"
+                                helperText="Norādiet stundas likmi. Neobligāti."
+                                inputMode="numeric"
+                                maxLength={3}
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
 
                     <FormField
                       control={form.control}
@@ -1157,12 +1211,16 @@ export default function DashboardPageClient() {
                         <FormItem>
                           <FormLabel>Nozare</FormLabel>
                           <FormControl>
-                            <Input3
-                              placeholder="Piem., IT, Būvniecība, Tīrradne..."
-                              helperText="Nozare, kurā darbojas vai piedāvā pakalpojumus."
-                              {...field}
+                            <Select14
+                              options={SECTOR_OPTIONS}
+                              value={field.value ?? ""}
+                              onChange={field.onChange}
+                              placeholder="Izvēlies nozari"
+                              searchPlaceholder="Meklē nozari..."
+                              emptyLabel="Nozare nav atrasta"
                             />
                           </FormControl>
+                          <FormDescription className="text-xs">Norādi pakalpojumu nozari, lai vieglāk MI būtu atrast informāciju.</FormDescription>
                           <FormMessage />
                         </FormItem>
                       )}

@@ -16,80 +16,33 @@ import {
 import { Label } from "@/components/ui/label";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
-const frameworks = [
-  {
-    label: "Next.js",
-    value: "next.js"
-  },
-  {
-    label: "SvelteKit",
-    value: "sveltekit"
-  },
-  {
-    label: "Nuxt.js",
-    value: "nuxt.js"
-  },
-  {
-    label: "Remix",
-    value: "remix"
-  },
-  {
-    label: "Astro",
-    value: "astro"
-  },
-  {
-    label: "Angular",
-    value: "angular"
-  },
-  {
-    label: "Vue.js",
-    value: "vue"
-  },
-  {
-    label: "React",
-    value: "react"
-  },
-  {
-    label: "Ember.js",
-    value: "ember"
-  },
-  {
-    label: "Gatsby",
-    value: "gatsby"
-  },
-  {
-    label: "Eleventy",
-    value: "eleventy"
-  },
-  {
-    label: "SolidJS",
-    value: "solid"
-  },
-  {
-    label: "Preact",
-    value: "preact"
-  },
-  {
-    label: "Qwik",
-    value: "qwik"
-  },
-  {
-    label: "Alpine.js",
-    value: "alpine"
-  },
-  {
-    label: "Lit",
-    value: "lit"
-  }
-];
+export type Select14Option = {
+  label: string;
+  value: string;
+};
 
-export default function Component() {
+type Select14Props = {
+  options: Select14Option[];
+  value: string;
+  onChange: (value: string) => void;
+  placeholder?: string;
+  searchPlaceholder?: string;
+  emptyLabel?: string;
+};
+
+export function Select14({
+  options,
+  value,
+  onChange,
+  placeholder = "Izvēlies",
+  searchPlaceholder = "Meklēt...",
+  emptyLabel = "Nav atrasts",
+}: Select14Props) {
   const id = useId();
   const [open, setOpen] = useState<boolean>(false);
-  const [value, setValue] = useState<string>("");
 
   return (
-    <div className="w-full max-w-xs">
+    <div className="w-full">
       <Popover onOpenChange={setOpen} open={open}>
         <PopoverTrigger asChild>
           <Button
@@ -100,8 +53,8 @@ export default function Component() {
             variant="outline">
             <span className={cn("truncate", !value && "text-muted-foreground")}>
               {value
-                ? frameworks.find((framework) => framework.value === value)?.label
-                : "Select framework"}
+                ? options.find((option) => option.value === value)?.label
+                : placeholder}
             </span>
             <ChevronDownIcon
               aria-hidden="true"
@@ -114,20 +67,20 @@ export default function Component() {
           align="start"
           className="border-input w-full min-w-(--radix-popper-anchor-width) p-0">
           <Command>
-            <CommandInput placeholder="Search framework..." />
+            <CommandInput placeholder={searchPlaceholder} />
             <CommandList>
-              <CommandEmpty>No framework found.</CommandEmpty>
+              <CommandEmpty>{emptyLabel}</CommandEmpty>
               <CommandGroup>
-                {frameworks.map((framework) => (
+                {options.map((option) => (
                   <CommandItem
-                    key={framework.value}
+                    key={option.value}
                     onSelect={(currentValue) => {
-                      setValue(currentValue === value ? "" : currentValue);
+                      onChange(currentValue === value ? "" : currentValue);
                       setOpen(false);
                     }}
-                    value={framework.value}>
-                    {framework.label}
-                    {value === framework.value && <CheckIcon className="ml-auto" size={16} />}
+                    value={option.value}>
+                    {option.label}
+                    {value === option.value && <CheckIcon className="ml-auto" size={16} />}
                   </CommandItem>
                 ))}
               </CommandGroup>
@@ -138,3 +91,5 @@ export default function Component() {
     </div>
   );
 }
+
+export default Select14;
