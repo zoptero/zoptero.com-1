@@ -102,6 +102,11 @@ export const navItems: NavGroup[] = [
         href: "/dashboard/website-analytics",
         icon: GaugeIcon
       },
+      {
+        title: "Publiskais profils",
+        href: "/dashboard/pages/user-profile",
+        icon: UserIcon
+      },
       // Real Estate removed
       // Sales removed
       // CRM removed
@@ -146,11 +151,6 @@ export const navItems: NavGroup[] = [
   {
     title: "Pages",
     items: [
-      {
-        title: "Profile V2",
-        href: "/dashboard/pages/user-profile",
-        icon: UserIcon
-      },
       // Empty States removed
       {
         title: "Settings",

@@ -79,16 +79,39 @@ function getTodayStart(): Date {
   return today;
 }
 
+function isValidPhoneNumber(value: string): boolean {
+  const normalized = value.replace(/[\s()-]/g, "");
+  return /^\+[1-9]\d{7,14}$/.test(normalized);
+}
+
 const urlOrEmptySchema = z
   .string()
   .trim()
   .max(250)
   .refine((value) => value === "" || isValidUrl(value), "Enter a valid URL.");
 
+const httpsUrlOrEmptySchema = z
+  .string()
+  .trim()
+  .max(250)
+  .refine(
+    (value) => value === "" || (value.startsWith("https://") && isValidUrl(value)),
+    "Norādi derīgu saiti ar https://",
+  );
+
+const phoneOrEmptySchema = z
+  .string()
+  .trim()
+  .max(30)
+  .refine(
+    (value) => value === "" || isValidPhoneNumber(value),
+    "Norādi derīgu numuru, piemēram, +37120000000.",
+  );
+
 const profileFormSchema = z.object({
   displayName: z.string().trim().min(3, "Vārdam nepieciešams vismaz 3 simboli.").max(80),
   email: z.string().trim().email("Enter a valid email.").or(z.literal("")),
-  phone: z.string().trim().max(30),
+  phone: phoneOrEmptySchema,
   city: z.string().trim().max(80),
   aboutMe: z.string().trim().max(2000),
   bio: z.string().trim().max(140),
@@ -104,19 +127,19 @@ const profileFormSchema = z.object({
   onlineStatus: z.boolean(),
   strongKeywords: z.array(z.string().min(2, "Vismaz 2 simboli.").max(24, "Maksimāli 24 simboli.")).max(5, "Maksimāli 5 atslēgvārdi."),
   searchTriggersText: z.string().trim().max(500),
-  mediaUrl: urlOrEmptySchema,
+  mediaUrl: httpsUrlOrEmptySchema,
   profileVideoUrl: urlOrEmptySchema,
   seoTitle: z.string().trim().max(120),
   seoDescription: z.string().trim().max(300),
-  whatsapp: z.string().trim().max(120),
-  instagram: z.string().trim().max(120),
-  tiktok: z.string().trim().max(120),
+  whatsapp: phoneOrEmptySchema,
+  instagram: httpsUrlOrEmptySchema,
+  tiktok: httpsUrlOrEmptySchema,
   telegram: z.string().trim().max(120),
-  facebook: z.string().trim().max(120),
-  threads: z.string().trim().max(120),
-  youtube: z.string().trim().max(120),
-  linktree: urlOrEmptySchema,
-  etsy: urlOrEmptySchema,
+  facebook: httpsUrlOrEmptySchema,
+  threads: httpsUrlOrEmptySchema,
+  youtube: httpsUrlOrEmptySchema,
+  linktree: httpsUrlOrEmptySchema,
+  etsy: httpsUrlOrEmptySchema,
   paymentCash: z.boolean(),
   paymentBankTransfer: z.boolean(),
   paymentCard: z.boolean(),
