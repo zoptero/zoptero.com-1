@@ -962,7 +962,7 @@ export default function DashboardPageClient() {
                       render={({ field }) => (
                         <FormItem>
                           <div className="flex items-center justify-between">
-                            <FormLabel>Galvenās priekšrocības</FormLabel>
+                            <FormLabel>Atslēgvārdi</FormLabel>
                             <span className={`text-xs tabular-nums ${field.value.length >= 5 ? "text-destructive font-medium" : "text-muted-foreground"}`}>{field.value.length}/5</span>
                           </div>
                           <FormControl>

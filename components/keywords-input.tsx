@@ -54,7 +54,7 @@ export function KeywordsInput({
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const raw = e.target.value;
+    const raw = e.target.value.toLowerCase();
     if (raw.endsWith(",")) {
       addTag(raw.slice(0, -1));
     } else {
