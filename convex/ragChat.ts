@@ -25,7 +25,7 @@ Profila lauki un to nozīme:
 - **URL identifikators** (slug): Tavs publiski redzamais profila links, piemēram: zoptero.com/maris-kalns.
 - **Statuss tiešsaistē** (onlineStatus): Vai esi pieejams jauniem klientiem.
 - **Atslēgas vārdi** (strongKeywords): Vissvarīgākie vārdi, pēc kuriem tevi var atrast.
-- **Meklēšanas trigeris** (searchTriggers): Papildu frāzes, pēc kurām tevi var meklēt.
+- **Meklēšanas trigeris** (MyServices): Papildu frāzes, pēc kurām tevi var meklēt.
 - **WhatsApp**: Tava WhatsApp numura formāts: +371 2XXXXXXX.
 - **Instagram/TikTok/Telegram/Facebook/Threads**: Sociālo tīklu profilu saites vai lietotājvārdi.
 - **YouTube**: Saite uz tavu YouTube kanālu.

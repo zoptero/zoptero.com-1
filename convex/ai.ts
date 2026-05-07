@@ -19,7 +19,7 @@ type SearchProfileResult = {
   aboutMe?: string;
   bio?: string;
   sector?: string;
-  searchTriggers?: string[];
+  MyServices?: string[];
   city?: string;
   phone?: string;
   email?: string;
@@ -42,7 +42,7 @@ type HydratedSearchDoc = {
   aboutMe?: string;
   bio?: string;
   sector?: string;
-  searchTriggers?: string[];
+  MyServices?: string[];
   city?: string;
   phone?: string;
   email?: string;
@@ -99,7 +99,7 @@ function buildProfileEmbeddingInput(source: {
   aboutMe?: string;
   bio?: string;
   sector?: string;
-  searchTriggers?: string[];
+  MyServices?: string[];
   city?: string;
   phone?: string;
   email?: string;
@@ -147,8 +147,8 @@ function buildProfileEmbeddingInput(source: {
     source.paymentBankTransfer ? "Payment: bank transfer" : "",
     source.paymentCard ? "Payment: card" : "",
     faqText ? `FAQs: ${faqText}` : "",
-    source.searchTriggers?.length
-      ? `Search triggers: ${source.searchTriggers.map((term) => normalizeSearchText(term)).join(", ")}`
+    source.MyServices?.length
+      ? `Search triggers: ${source.MyServices.map((term) => normalizeSearchText(term)).join(", ")}`
       : "",
   ].filter(Boolean);
 
@@ -234,7 +234,7 @@ export const searchProfiles = action({
       aboutMe: v.optional(v.string()),
       bio: v.optional(v.string()),
       sector: v.optional(v.string()),
-      searchTriggers: v.optional(v.array(v.string())),
+      MyServices: v.optional(v.array(v.string())),
       city: v.optional(v.string()),
       phone: v.optional(v.string()),
       email: v.optional(v.string()),
@@ -318,7 +318,7 @@ export const searchProfiles = action({
         doc.paymentBankTransfer ? "bank transfer payment" : "",
         doc.paymentCard ? "card payment" : "",
       ]
-        .concat(doc.searchTriggers ?? [])
+        .concat(doc.MyServices ?? [])
         .filter(Boolean)
         .join(" ");
       if (!hasTokenOverlap(queryTokens, candidateText)) {
@@ -333,7 +333,7 @@ export const searchProfiles = action({
         aboutMe: doc.aboutMe,
         bio: doc.bio,
         sector: doc.sector,
-        searchTriggers: doc.searchTriggers,
+        MyServices: doc.MyServices,
         city: doc.city,
         phone: doc.phone,
         email: doc.email,
@@ -367,7 +367,7 @@ export const searchProfiles = action({
         aboutMe: entry.aboutMe,
         bio: entry.bio,
         sector: entry.sector,
-        searchTriggers: entry.searchTriggers,
+        MyServices: entry.MyServices,
         city: entry.city,
         phone: entry.phone,
         email: entry.email,
@@ -415,7 +415,7 @@ function buildProfileSnapshotText(profile: {
   workingEnvironment?: string;
   seoTitle?: string;
   seoDescription?: string;
-  searchTriggers?: string[];
+  MyServices?: string[];
   strongKeywords?: string[];
 }): string {
   const rows = [
@@ -438,7 +438,7 @@ function buildProfileSnapshotText(profile: {
     ["SEO virsraksts", profile.seoTitle],
     ["SEO apraksts", profile.seoDescription],
     ["Atslēgas vārdi", profile.strongKeywords?.join(", ")],
-    ["Meklēšanas trigeri", profile.searchTriggers?.join(", ")],
+    ["Meklēšanas trigeri", profile.MyServices?.join(", ")],
   ]
     .filter(([, value]) => typeof value === "string" && value.trim().length > 0)
     .map(([label, value]) => `- ${label}: ${value}`);
@@ -679,7 +679,7 @@ export const profileAssistantChat = action({
           seoTitle: currentProfile.seoTitle,
           seoDescription: currentProfile.seoDescription,
           strongKeywords: currentProfile.strongKeywords,
-          searchTriggers: currentProfile.searchTriggers,
+          MyServices: currentProfile.MyServices,
         })
       : "";
 

@@ -126,7 +126,7 @@ const profileFormSchema = z.object({
   startDate: z.string().optional(),
   onlineStatus: z.boolean(),
   strongKeywords: z.array(z.string().min(2, "Vismaz 2 simboli.").max(24, "Maksimāli 24 simboli.")).max(5, "Maksimāli 5 atslēgvārdi."),
-  searchTriggersText: z.string().trim().max(500),
+  myServicesText: z.string().trim().max(500),
   mediaUrl: httpsUrlOrEmptySchema,
   profileVideoUrl: urlOrEmptySchema,
   seoTitle: z.string().trim().max(120),
@@ -161,7 +161,7 @@ const defaultValues: ProfileFormValues = {
   startDate: "",
   onlineStatus: true,
   strongKeywords: [],
-  searchTriggersText: "",
+  myServicesText: "",
   mediaUrl: "",
   profileVideoUrl: "",
   seoTitle: "",
@@ -182,7 +182,7 @@ const defaultValues: ProfileFormValues = {
 
 const TAB_VALIDATION_FIELDS: Partial<Record<string, Array<keyof ProfileFormValues>>> = {
   profile: ["displayName", "bio"],
-  business: ["searchTriggersText", "workingEnvironment", "startDate", "strongKeywords", "sector"],
+  business: ["myServicesText", "workingEnvironment", "startDate", "strongKeywords", "sector"],
   contact: [
     "phone",
     "email",
@@ -316,7 +316,10 @@ export default function DashboardPageClient() {
       startDate: profile?.startDate ?? "",
       onlineStatus: profile?.onlineStatus ?? true,
       strongKeywords: profile?.strongKeywords ?? [],
-      searchTriggersText: (profile?.searchTriggers ?? []).join(", "),
+      myServicesText: (
+        profile?.MyServices ??
+        ((profile as unknown as { searchTriggers?: string[] })?.searchTriggers ?? [])
+      ).join(", "),
       mediaUrl: profile?.mediaUrl ?? "",
       profileVideoUrl: profile?.profileVideoUrl ?? "",
       seoTitle: profile?.seoTitle ?? "",
@@ -539,7 +542,7 @@ export default function DashboardPageClient() {
       ...(values.startDate !== currentStartDate ? { startDate: values.startDate || "" } : {}),
       onlineStatus: values.onlineStatus,
       strongKeywords: values.strongKeywords,
-      searchTriggers: parseCsv(values.searchTriggersText),
+      MyServices: parseCsv(values.myServicesText),
       mediaUrl: values.mediaUrl || undefined,
       ...(values.profileVideoUrl !== currentProfileVideoUrl
         ? { profileVideoUrl: values.profileVideoUrl || "" }
@@ -1020,7 +1023,7 @@ export default function DashboardPageClient() {
                   <TabsContent value="business" className="space-y-4">
                     <FormField
                       control={form.control}
-                      name="searchTriggersText"
+                      name="myServicesText"
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>Pakalpojumu veidi</FormLabel>

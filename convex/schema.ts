@@ -25,7 +25,9 @@ export default defineSchema({
     sector: v.optional(v.string()),
     onlineStatus: v.optional(v.boolean()),
     strongKeywords: v.optional(v.array(v.string())),
+    // Legacy field kept for backward compatibility with existing documents.
     searchTriggers: v.optional(v.array(v.string())),
+    MyServices: v.optional(v.array(v.string())),
     phone: v.optional(v.string()),
     city: v.optional(v.string()),
     latitude: v.optional(v.number()),
