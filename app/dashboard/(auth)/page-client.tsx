@@ -55,6 +55,16 @@ function isValidUrl(value: string): boolean {
   }
 }
 
+function normalizeSlug(input: string): string {
+  return input
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9\s-]/g, "") // Remove special characters
+    .replace(/\s+/g, "-") // Replace spaces with hyphens
+    .replace(/-+/g, "-") // Replace multiple hyphens with single hyphen
+    .replace(/^-+|-+$/g, ""); // Remove leading/trailing hyphens
+}
+
 function parseCsv(input: string): string[] {
   return input
     .split(",")
@@ -306,6 +316,7 @@ export default function DashboardPageClient() {
   const generateViewUrl = useAction(api.media.generateViewUrl);
   const [uploadingAvatar, setUploadingAvatar] = useState(false);
   const [savingProfile, setSavingProfile] = useState(false);
+  const [normalizedSlug, setNormalizedSlug] = useState("");
   const lastResolvedAvatarKeyRef = useRef<string | null>(null);
   const [activeTab, setActiveTab] = useState("profile");
   const [underlinePosition, setUnderlinePosition] = useState({ left: 0, width: 0 });
@@ -605,7 +616,7 @@ export default function DashboardPageClient() {
       ...(values.bio !== currentBio ? { bio: values.bio || "" } : {}),
       accountType: values.accountType || undefined,
       sector: values.sector || undefined,
-      slug: values.slug || undefined,
+      slug: values.slug ? normalizeSlug(values.slug) : undefined,
       ...(values.workingEnvironment !== currentWorkingEnvironment
         ? { workingEnvironment: values.workingEnvironment || "" }
         : {}),
@@ -653,7 +664,8 @@ export default function DashboardPageClient() {
       toast.success("Izmaiņas saglabātas");
     } catch (error) {
       console.error("Profile update failed", error);
-      toast.error("Neizdevās saglabāt izmaiņas.");
+      const errorMessage = error instanceof Error ? error.message : "Neizdevās saglabāt izmaiņas.";
+      toast.error(errorMessage);
     } finally {
       setSavingProfile(false);
     }
@@ -1300,11 +1312,19 @@ export default function DashboardPageClient() {
                                   .replace(/^https?:\/\/zoptero\.com\//i, "")
                                   .trim();
                                 field.onChange(normalized);
+                                // Update preview with normalized slug
+                                setNormalizedSlug(normalizeSlug(normalized));
                               }}
                               placeholder="mans-profils"
                               baseUrl="https://zoptero.com/"
                             />
                           </FormControl>
+                          {normalizedSlug && (
+                            <div className="mt-2 text-xs text-muted-foreground">
+                              <span className="block">Preview:</span>
+                              <span className="block font-mono text-sm">zoptero.com/p/{normalizedSlug}</span>
+                            </div>
+                          )}
                           <FormDescription
                             className={cn(
                               "text-xs",
