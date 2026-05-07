@@ -570,6 +570,15 @@ export default function DashboardPageClient() {
       setSavingProfile(true);
       await updateProfile(payload);
 
+      // Clear local upload queue so later saves (e.g. bio only) don't re-upload avatar.
+      if (previewFile) {
+        removeFile(previewFile.id);
+      }
+
+      if (avatarUrl) {
+        setResolvedAvatarUrl(avatarUrl);
+      }
+
       setRemoveAvatar(false);
       toast.success("Izmaiņas saglabātas");
     } catch (error) {
