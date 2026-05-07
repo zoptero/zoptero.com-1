@@ -333,7 +333,7 @@ export default function DashboardPageClient() {
   useEffect(() => {
     form.reset({
       displayName: profile?.displayName ?? user?.fullName ?? "",
-      email: profile?.email ?? user?.primaryEmailAddress?.emailAddress ?? "",
+      email: profile?.email || user?.primaryEmailAddress?.emailAddress || "",
       phone: profile?.phone ?? "",
       city: profile?.city ?? "",
       aboutMe: profile?.aboutMe ?? "",
@@ -551,6 +551,10 @@ export default function DashboardPageClient() {
     const currentStartDate = profile?.startDate ?? "";
     const currentWorkingEnvironment = profile?.workingEnvironment ?? "";
     const currentBio = profile?.bio ?? "";
+    const currentCity = profile?.city ?? "";
+    const clerkEmail = user.primaryEmailAddress?.emailAddress ?? "";
+    const currentEmail = profile?.email || clerkEmail;
+    const currentMediaUrl = profile?.mediaUrl ?? "";
     const currentHourPrice = profile?.hourPrice ?? "";
     const currentProfileVideoUrl = profile?.profileVideoUrl ?? "";
     const currentSeoTitle = profile?.seoTitle ?? "";
@@ -561,9 +565,9 @@ export default function DashboardPageClient() {
       clerkId: user.id,
       ...avatarDeletePayload,
       displayName: values.displayName,
-      email: values.email || undefined,
+      ...(values.email !== currentEmail ? { email: values.email || clerkEmail } : {}),
       phone: values.phone || undefined,
-      city: values.city || undefined,
+      ...(values.city !== currentCity ? { city: values.city || "" } : {}),
       aboutMe: values.aboutMe || undefined,
       ...(values.bio !== currentBio ? { bio: values.bio || "" } : {}),
       accountType: values.accountType || undefined,
@@ -577,7 +581,7 @@ export default function DashboardPageClient() {
       strongKeywords: values.strongKeywords,
       ...(values.hourPrice !== currentHourPrice ? { hourPrice: values.hourPrice || "" } : {}),
       MyServices: parseCsv(values.myServicesText),
-      mediaUrl: values.mediaUrl || undefined,
+      ...(values.mediaUrl !== currentMediaUrl ? { mediaUrl: values.mediaUrl || "" } : {}),
       ...(values.profileVideoUrl !== currentProfileVideoUrl
         ? { profileVideoUrl: values.profileVideoUrl || "" }
         : {}),
