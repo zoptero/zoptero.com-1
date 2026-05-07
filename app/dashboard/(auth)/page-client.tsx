@@ -180,6 +180,29 @@ const defaultValues: ProfileFormValues = {
   paymentCard: false,
 };
 
+const TAB_VALIDATION_FIELDS: Partial<Record<string, Array<keyof ProfileFormValues>>> = {
+  profile: ["displayName", "bio"],
+  business: ["searchTriggersText", "workingEnvironment", "startDate", "strongKeywords", "sector"],
+  contact: [
+    "phone",
+    "email",
+    "mediaUrl",
+    "city",
+    "whatsapp",
+    "instagram",
+    "facebook",
+    "tiktok",
+    "telegram",
+    "threads",
+    "youtube",
+    "linktree",
+    "etsy",
+  ],
+  video: ["profileVideoUrl"],
+  seo: ["seoTitle", "seoDescription"],
+  payments: ["paymentCash", "paymentBankTransfer", "paymentCard"],
+};
+
 function DashboardProfileSkeleton() {
   return (
     <div className="space-y-4 lg:pl-2.5">
@@ -251,6 +274,7 @@ export default function DashboardPageClient() {
   const generateUploadUrl = useAction(api.media.generateUploadUrl);
   const generateViewUrl = useAction(api.media.generateViewUrl);
   const [uploadingAvatar, setUploadingAvatar] = useState(false);
+  const [savingProfile, setSavingProfile] = useState(false);
   const lastResolvedAvatarKeyRef = useRef<string | null>(null);
   const [activeTab, setActiveTab] = useState("profile");
   const [underlinePosition, setUnderlinePosition] = useState({ left: 0, width: 0 });
@@ -435,7 +459,7 @@ export default function DashboardPageClient() {
     };
   }, []);
 
-  const onSubmit = async (values: ProfileFormValues) => {
+  const saveProfile = async (values: ProfileFormValues) => {
     if (!user?.id) {
       toast.error("You must be signed in to update your profile.");
       return;
@@ -529,6 +553,7 @@ export default function DashboardPageClient() {
     };
 
     try {
+      setSavingProfile(true);
       await updateProfile(payload);
 
       setRemoveAvatar(false);
@@ -536,7 +561,23 @@ export default function DashboardPageClient() {
     } catch (error) {
       console.error("Profile update failed", error);
       toast.error("Neizdevās saglabāt izmaiņas.");
+    } finally {
+      setSavingProfile(false);
     }
+  };
+
+  const handleSaveCurrentTab = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    const fieldsToValidate = TAB_VALIDATION_FIELDS[activeTab] ?? [];
+    const isValid = fieldsToValidate.length === 0 ? true : await form.trigger(fieldsToValidate);
+
+    if (!isValid) {
+      toast.error("Pārbaudi laukus aktīvajā sadaļā.");
+      return;
+    }
+
+    await saveProfile(form.getValues());
   };
 
   if (profile === undefined) {
@@ -613,7 +654,7 @@ export default function DashboardPageClient() {
           <Card>
             <CardContent className="pt-6">
               <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                <form onSubmit={handleSaveCurrentTab} className="space-y-6">
                   <TabsContent value="profile" className="space-y-4">
                     <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                       <FormField
@@ -1220,8 +1261,8 @@ export default function DashboardPageClient() {
                   </TabsContent>
 
                   <div className="flex justify-end">
-                    <Button type="submit" disabled={(!form.formState.isDirty && !previewFile && !removeAvatar) || form.formState.isSubmitting || uploadingAvatar}>
-                      {uploadingAvatar ? "Augšupielādē attēlu..." : form.formState.isSubmitting ? "Saglabā..." : "Saglabāt"}
+                    <Button type="submit" disabled={(!form.formState.isDirty && !previewFile && !removeAvatar) || savingProfile || uploadingAvatar}>
+                      {uploadingAvatar ? "Augšupielādē attēlu..." : savingProfile ? "Saglabā..." : "Saglabāt"}
                     </Button>
                   </div>
                 </form>
