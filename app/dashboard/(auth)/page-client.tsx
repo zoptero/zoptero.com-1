@@ -1535,9 +1535,9 @@ export default function DashboardPageClient() {
                     />
 
                     <div className="space-y-2">
-                      <FormLabel>SEO attēls (1200 x 600 px)</FormLabel>
-                      <div className="flex flex-col gap-3 rounded-md border p-3 md:flex-row md:items-start md:justify-between">
-                        <div className="w-full md:max-w-[280px]">
+                      <FormLabel>SEO attēls</FormLabel>
+                      <div className="flex flex-col gap-3 rounded-md md:max-w-[360px]">
+                        <div className="w-full max-w-[280px]">
                           <div className="bg-muted flex aspect-[2/1] w-full items-center justify-center overflow-hidden rounded-md border">
                             {seoImagePreviewUrl ? (
                               <img
@@ -1546,64 +1546,56 @@ export default function DashboardPageClient() {
                                 className="h-full w-full object-cover"
                               />
                             ) : (
-                              <span className="text-muted-foreground px-3 text-center text-xs">
-                                Nav izvēlēts SEO attēls
+                              <span className="text-muted-foreground px-3 text-xs w-full flex items-center justify-center h-full">
+                                1200 x 630 px
                               </span>
                             )}
                           </div>
                         </div>
-
-                        <div className="flex w-full flex-col gap-2 md:max-w-[360px]">
-                          <label className="flex cursor-pointer items-center gap-2 rounded-md border px-3 py-2 text-sm transition-colors hover:bg-accent">
-                            <Upload className="size-4" />
-                            Pievienot SEO attēlu
-                            <input
-                              type="file"
-                              accept="image/jpeg,image/png,image/webp,image/avif"
-                              className="sr-only"
-                              onChange={(event) => {
-                                if (!event.target.files) {
-                                  return;
-                                }
-                                setRemoveSeoImage(false);
-                                addSeoImageFiles(event.target.files);
-                              }}
-                            />
-                          </label>
-
-                          {seoImagePreviewFile ? (
-                            <button
-                              type="button"
-                              onClick={() => removeSeoImageFile(seoImagePreviewFile.id)}
-                              className="flex items-center gap-1 text-xs text-muted-foreground hover:text-destructive"
-                            >
-                              <X className="size-3" /> Noņemt jauno SEO attēlu
-                            </button>
-                          ) : removeSeoImage ? (
-                            <button
-                              type="button"
-                              onClick={() => setRemoveSeoImage(false)}
-                              className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground"
-                            >
-                              <X className="size-3" /> Atcelt SEO attēla dzēšanu
-                            </button>
-                          ) : profile?.seoImageKey ? (
-                            <button
-                              type="button"
-                              onClick={() => setRemoveSeoImage(true)}
-                              className="flex items-center gap-1 text-xs text-muted-foreground hover:text-destructive"
-                            >
-                              <X className="size-3" /> Dzēst SEO attēlu
-                            </button>
-                          ) : null}
-
-                          <FormDescription className="text-xs">
-                            Šis attēls tiks izmantots kā kopīgošanas priekšskatījums publiskajā profilā.
-                          </FormDescription>
-                          <FormDescription className="text-xs">
-                            Atbalstītie formāti: JPG, PNG, WebP, AVIF. Maksimālais izmērs: 5 MB.
-                          </FormDescription>
-                        </div>
+                        <label className="flex cursor-pointer items-center justify-center gap-2 rounded-md border px-3 py-2 text-sm transition-colors hover:bg-accent w-full max-w-[280px] text-center" style={{ width: '100%' }}>
+                          <Upload className="size-4" />
+                          Pievienot
+                          <input
+                            type="file"
+                            accept="image/jpeg,image/png,image/webp,image/avif"
+                            className="sr-only"
+                            onChange={(event) => {
+                              if (!event.target.files) {
+                                return;
+                              }
+                              setRemoveSeoImage(false);
+                              addSeoImageFiles(event.target.files);
+                            }}
+                          />
+                        </label>
+                        {seoImagePreviewFile ? (
+                          <button
+                            type="button"
+                            onClick={() => removeSeoImageFile(seoImagePreviewFile.id)}
+                            className="flex items-center gap-1 text-xs text-muted-foreground hover:text-destructive w-full max-w-[280px]"
+                          >
+                            <X className="size-3" /> Noņemt jauno SEO attēlu
+                          </button>
+                        ) : removeSeoImage ? (
+                          <button
+                            type="button"
+                            onClick={() => setRemoveSeoImage(false)}
+                            className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground w-full max-w-[280px]"
+                          >
+                            <X className="size-3" /> Atcelt SEO attēla dzēšanu
+                          </button>
+                        ) : profile?.seoImageKey ? (
+                          <button
+                            type="button"
+                            onClick={() => setRemoveSeoImage(true)}
+                            className="flex items-center gap-1 text-xs text-muted-foreground hover:text-destructive w-full max-w-[280px]"
+                          >
+                            <X className="size-3" /> Dzēst SEO attēlu
+                          </button>
+                        ) : null}
+                        <FormDescription className="text-xs">
+                          Profila saites priekšskatījuma attēls līdz 5 MB.
+                        </FormDescription>
                       </div>
                     </div>
                   </TabsContent>
