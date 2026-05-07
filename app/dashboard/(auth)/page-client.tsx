@@ -38,6 +38,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Skeleton } from "@/components/ui/skeleton";
 import ProfileAssistantChat from "@/components/ProfileAssistantChat";
+import { KeywordsInput } from "@/components/keywords-input";
 
 function isValidUrl(value: string): boolean {
   try {
@@ -77,7 +78,7 @@ const profileFormSchema = z.object({
     .regex(/^[a-z0-9-]*$/, "Use lowercase letters, numbers, and hyphens only."),
   workingEnvironment: z.string().trim().max(120),
   onlineStatus: z.boolean(),
-  strongKeywordsText: z.string().trim().max(500),
+  strongKeywords: z.array(z.string().min(2, "Vismaz 2 simboli.").max(24, "Maksimāli 24 simboli.")).max(5, "Maksimāli 5 atslēgvārdi."),
   searchTriggersText: z.string().trim().max(500),
   mediaUrl: urlOrEmptySchema,
   profileVideoUrl: urlOrEmptySchema,
@@ -111,7 +112,7 @@ const defaultValues: ProfileFormValues = {
   slug: "",
   workingEnvironment: "",
   onlineStatus: true,
-  strongKeywordsText: "",
+  strongKeywords: [],
   searchTriggersText: "",
   mediaUrl: "",
   profileVideoUrl: "",
@@ -252,7 +253,7 @@ export default function DashboardPageClient() {
       slug: profile?.slug ?? "",
       workingEnvironment: profile?.workingEnvironment ?? "",
       onlineStatus: profile?.onlineStatus ?? true,
-      strongKeywordsText: (profile?.strongKeywords ?? []).join(", "),
+      strongKeywords: profile?.strongKeywords ?? [],
       searchTriggersText: (profile?.searchTriggers ?? []).join(", "),
       mediaUrl: profile?.mediaUrl ?? "",
       profileVideoUrl: profile?.profileVideoUrl ?? "",
@@ -466,7 +467,7 @@ export default function DashboardPageClient() {
       slug: values.slug || undefined,
       workingEnvironment: values.workingEnvironment || undefined,
       onlineStatus: values.onlineStatus,
-      strongKeywords: parseCsv(values.strongKeywordsText),
+      strongKeywords: values.strongKeywords,
       searchTriggers: parseCsv(values.searchTriggersText),
       mediaUrl: values.mediaUrl || undefined,
       profileVideoUrl: values.profileVideoUrl || undefined,
@@ -943,14 +944,21 @@ export default function DashboardPageClient() {
 
                     <FormField
                       control={form.control}
-                      name="strongKeywordsText"
+                      name="strongKeywords"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Galvenās priekšrocības</FormLabel>
+                          <div className="flex items-center justify-between">
+                            <FormLabel>Galvenās priekšrocības</FormLabel>
+                            <span className={`text-xs tabular-nums ${field.value.length >= 5 ? "text-destructive font-medium" : "text-muted-foreground"}`}>{field.value.length}/5</span>
+                          </div>
                           <FormControl>
-                            <Textarea placeholder="dizains, foto, video, mārketings..." {...field} />
+                            <KeywordsInput
+                              value={field.value}
+                              onChange={field.onChange}
+                              placeholder="Pievieno prasmi un spied Enter..."
+                            />
                           </FormControl>
-                          <FormDescription className="text-xs">Atslēgvārdi, kas labi raksturo tavu darbu. Ieraksti ar komatu atdalītus.</FormDescription>
+                          <FormDescription className="text-xs">Atslēgvārdi, kas labi raksturo tavu darbu. Spied Enter vai komatu, lai pievienotu.</FormDescription>
                           <FormMessage />
                         </FormItem>
                       )}
@@ -989,24 +997,27 @@ export default function DashboardPageClient() {
                           </FormItem>
                         )}
                       />
-                      <FormField
-                        control={form.control}
-                        name="profileVideoUrl"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Video prezentācija</FormLabel>
-                            <FormControl>
-                              <Input3
-                                placeholder="https://..."
-                                helperText="Saite uz video, kas prezentē tevi vai darbu."
-                                {...field}
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
                     </div>
+                  </TabsContent>
+
+                  <TabsContent value="video" className="space-y-4">
+                    <FormField
+                      control={form.control}
+                      name="profileVideoUrl"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Video</FormLabel>
+                          <FormControl>
+                            <Input3
+                              placeholder="https://..."
+                              helperText="Norādi saiti uz Youtube vai citu video resursu."
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
                   </TabsContent>
 
                   <TabsContent value="seo" className="space-y-4">
