@@ -603,6 +603,7 @@ export default function DashboardPageClient() {
     const currentSeoTitle = profile?.seoTitle ?? "";
     const currentSeoDescription = profile?.seoDescription ?? "";
     const currentYoutube = profile?.youtube ?? "";
+    const currentWhatsapp = profile?.whatsapp ?? "";
 
     const payload = {
       clerkId: user.id,
@@ -632,7 +633,7 @@ export default function DashboardPageClient() {
       ...(values.seoDescription !== currentSeoDescription
         ? { seoDescription: values.seoDescription || "" }
         : {}),
-      whatsapp: values.whatsapp || undefined,
+      ...(values.whatsapp !== currentWhatsapp ? { whatsapp: values.whatsapp || "" } : {}),
       instagram: values.instagram || undefined,
       tiktok: values.tiktok || undefined,
       telegram: values.telegram || undefined,
