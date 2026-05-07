@@ -676,14 +676,9 @@ export default function DashboardPageClient() {
         toast.error("Neatbalstīts SEO attēla formāts. Izmantojiet JPG, PNG, WebP vai AVIF.");
         return;
       }
+
       if (file.size > 5 * 1024 * 1024) {
         toast.error("SEO attēls ir pārāk liels. Maksimālais izmērs ir 5 MB.");
-        return;
-      }
-
-      const hasRequiredDimensions = await hasExactImageDimensions(file, 1200, 600);
-      if (!hasRequiredDimensions) {
-        toast.error("SEO attēlam jābūt tieši 1200 x 600 px.");
         return;
       }
 
