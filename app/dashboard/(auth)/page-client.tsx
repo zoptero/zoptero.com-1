@@ -316,7 +316,6 @@ export default function DashboardPageClient() {
   const generateViewUrl = useAction(api.media.generateViewUrl);
   const [uploadingAvatar, setUploadingAvatar] = useState(false);
   const [savingProfile, setSavingProfile] = useState(false);
-  const [normalizedSlug, setNormalizedSlug] = useState("");
   const lastResolvedAvatarKeyRef = useRef<string | null>(null);
   const [activeTab, setActiveTab] = useState("profile");
   const [underlinePosition, setUnderlinePosition] = useState({ left: 0, width: 0 });
@@ -1312,19 +1311,11 @@ export default function DashboardPageClient() {
                                   .replace(/^https?:\/\/zoptero\.com\//i, "")
                                   .trim();
                                 field.onChange(normalized);
-                                // Update preview with normalized slug
-                                setNormalizedSlug(normalizeSlug(normalized));
                               }}
                               placeholder="mans-profils"
                               baseUrl="https://zoptero.com/"
                             />
                           </FormControl>
-                          {normalizedSlug && (
-                            <div className="mt-2 text-xs text-muted-foreground">
-                              <span className="block">Preview:</span>
-                              <span className="block font-mono text-sm">zoptero.com/p/{normalizedSlug}</span>
-                            </div>
-                          )}
                           <FormDescription
                             className={cn(
                               "text-xs",
