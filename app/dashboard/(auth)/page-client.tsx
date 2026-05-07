@@ -1609,7 +1609,7 @@ export default function DashboardPageClient() {
                           includeMargin={false}
                         />
                         <div className="mt-3 text-xs text-muted-foreground text-center">
-                          Noskenē mani, lai atvērtu manu profilu!
+                          Noskenē mani un uzzini vairāk!
                         </div>
                       </div>
                     </div>
