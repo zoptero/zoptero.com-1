@@ -468,6 +468,8 @@ export default function DashboardPageClient() {
           ? { avatarKey: "", avatarUrl: "" }
           : {};
 
+    const currentStartDate = profile?.startDate ?? "";
+
     const payload = {
       clerkId: user.id,
       ...avatarDeletePayload,
@@ -481,6 +483,7 @@ export default function DashboardPageClient() {
       sector: values.sector || undefined,
       slug: values.slug || undefined,
       workingEnvironment: values.workingEnvironment || undefined,
+      ...(values.startDate !== currentStartDate ? { startDate: values.startDate || "" } : {}),
       onlineStatus: values.onlineStatus,
       strongKeywords: values.strongKeywords,
       searchTriggers: parseCsv(values.searchTriggersText),
@@ -1030,6 +1033,25 @@ export default function DashboardPageClient() {
                                 </PopoverContent>
                               </Popover>
                             </FormControl>
+                            {field.value && (
+                              <div className="mt-2 flex justify-end">
+                                <Button
+                                  type="button"
+                                  variant="ghost"
+                                  size="sm"
+                                  className="h-7 px-2 text-xs"
+                                  onClick={() =>
+                                    form.setValue("startDate", "", {
+                                      shouldDirty: true,
+                                      shouldTouch: true,
+                                      shouldValidate: true,
+                                    })
+                                  }
+                                >
+                                  Notīrīt datumu
+                                </Button>
+                              </div>
+                            )}
                             <FormDescription className="text-xs">No kura datuma varat sniegt pakalpojumus. Neobligāti.</FormDescription>
                             <FormMessage />
                           </FormItem>
