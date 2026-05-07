@@ -7,7 +7,8 @@ import { useAction, useMutation, useQuery } from "convex/react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { toast } from "sonner";
-import { Upload, X } from "lucide-react";
+import { format } from "date-fns";
+import { CalendarIcon, Upload, X } from "lucide-react";
 import { useFileUpload } from "@/hooks/use-file-upload";
 
 import { api } from "@/convex/_generated/api";
@@ -39,6 +40,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { Skeleton } from "@/components/ui/skeleton";
 import ProfileAssistantChat from "@/components/ProfileAssistantChat";
 import { KeywordsInput } from "@/components/keywords-input";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { cn } from "@/lib/utils";
 
 function isValidUrl(value: string): boolean {
   try {
@@ -54,6 +58,25 @@ function parseCsv(input: string): string[] {
     .split(",")
     .map((item) => item.trim())
     .filter(Boolean);
+}
+
+function parseDateFromInput(value: string | undefined): Date | undefined {
+  if (!value) {
+    return undefined;
+  }
+
+  const [year, month, day] = value.split("-").map(Number);
+  if (!year || !month || !day) {
+    return undefined;
+  }
+
+  return new Date(year, month - 1, day);
+}
+
+function getTodayStart(): Date {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  return today;
 }
 
 const urlOrEmptySchema = z
@@ -77,6 +100,7 @@ const profileFormSchema = z.object({
     .max(80)
     .regex(/^[a-z0-9-]*$/, "Use lowercase letters, numbers, and hyphens only."),
   workingEnvironment: z.string().trim().max(120),
+  startDate: z.string().optional(),
   onlineStatus: z.boolean(),
   strongKeywords: z.array(z.string().min(2, "Vismaz 2 simboli.").max(24, "Maksimāli 24 simboli.")).max(5, "Maksimāli 5 atslēgvārdi."),
   searchTriggersText: z.string().trim().max(500),
@@ -111,6 +135,7 @@ const defaultValues: ProfileFormValues = {
   sector: "",
   slug: "",
   workingEnvironment: "",
+  startDate: "",
   onlineStatus: true,
   strongKeywords: [],
   searchTriggersText: "",
@@ -164,17 +189,6 @@ function DashboardProfileSkeleton() {
                 </div>
                 <Skeleton className="h-24 w-full" />
                 <Skeleton className="h-3 w-80" />
-              </div>
-
-              <div className="space-y-2">
-                <Skeleton className="h-4 w-24" />
-                <div className="flex items-center gap-4">
-                  <Skeleton className="size-20 rounded-full" />
-                  <div className="flex flex-col gap-2">
-                    <Skeleton className="h-9 w-44" />
-                    <Skeleton className="h-3 w-56" />
-                  </div>
-                </div>
               </div>
 
               <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
@@ -252,6 +266,7 @@ export default function DashboardPageClient() {
       sector: profile?.sector ?? "",
       slug: profile?.slug ?? "",
       workingEnvironment: profile?.workingEnvironment ?? "",
+      startDate: profile?.startDate ?? "",
       onlineStatus: profile?.onlineStatus ?? true,
       strongKeywords: profile?.strongKeywords ?? [],
       searchTriggersText: (profile?.searchTriggers ?? []).join(", "),
@@ -466,6 +481,7 @@ export default function DashboardPageClient() {
       sector: values.sector || undefined,
       slug: values.slug || undefined,
       workingEnvironment: values.workingEnvironment || undefined,
+      startDate: values.startDate || undefined,
       onlineStatus: values.onlineStatus,
       strongKeywords: values.strongKeywords,
       searchTriggers: parseCsv(values.searchTriggersText),
@@ -488,7 +504,7 @@ export default function DashboardPageClient() {
     });
 
     setRemoveAvatar(false);
-    toast.success("Profils saglabāts");
+    toast.success("Izmaiņas saglabātas");
   };
 
   if (profile === undefined) {
@@ -919,17 +935,32 @@ export default function DashboardPageClient() {
                   </TabsContent>
 
                   <TabsContent value="business" className="space-y-4">
+                    <FormField
+                      control={form.control}
+                      name="searchTriggersText"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Pakalpojumu veidi</FormLabel>
+                          <FormControl>
+                            <Textarea placeholder="Norādi galvenos darbu veidus un specializāciju." {...field} />
+                          </FormControl>
+                          <FormDescription className="text-xs">Pievieno aprakstu brīvā formā, kādus pakalpojumus piedāvā un ko klients var sagaidīt</FormDescription>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
                     <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                       <FormField
                         control={form.control}
-                        name="sector"
+                        name="workingEnvironment"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Nozare</FormLabel>
+                            <FormLabel>Pakalpojumu specifika</FormLabel>
                             <FormControl>
                               <Input3
-                                placeholder="Piem., IT, Būvniecība, Tīrradne..."
-                                helperText="Nozare, kurā darbojas vai piedāvā pakalpojumus."
+                                placeholder="Attālināti, klātienē, hibrīds..."
+                                helperText="Kāds šobrīd ir vēlamais veicamo pakalpojumu formāts."
                                 {...field}
                               />
                             </FormControl>
@@ -939,17 +970,53 @@ export default function DashboardPageClient() {
                       />
                       <FormField
                         control={form.control}
-                        name="workingEnvironment"
+                        name="startDate"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Darba vide</FormLabel>
+                            <FormLabel>Pakalpojumu sniegšanas datums</FormLabel>
                             <FormControl>
-                              <Input3
-                                placeholder="Attālināti, klātienē, hibrīds..."
-                                helperText="Kā tu parasti strādā ar klientiem."
-                                {...field}
-                              />
+                              <Popover>
+                                <PopoverTrigger asChild>
+                                  <Button
+                                    type="button"
+                                    variant="outline"
+                                    className={cn(
+                                      "w-full justify-between text-left font-normal",
+                                      !field.value && "text-muted-foreground",
+                                    )}
+                                  >
+                                    {field.value ? format(parseDateFromInput(field.value) ?? new Date(field.value), "PPP") : "Izvēlies datumu"}
+                                    <CalendarIcon className="ml-2 size-4 opacity-60" />
+                                  </Button>
+                                </PopoverTrigger>
+                                <PopoverContent className="w-auto p-2" align="start">
+                                  {(() => {
+                                    const todayStart = getTodayStart();
+                                    return (
+                                  <Calendar
+                                    mode="single"
+                                    selected={parseDateFromInput(field.value)}
+                                    onSelect={(date) => {
+                                      if (!date) {
+                                        field.onChange("");
+                                        return;
+                                      }
+
+                                      if (date < todayStart) {
+                                        return;
+                                      }
+
+                                      field.onChange(format(date, "yyyy-MM-dd"));
+                                    }}
+                                    disabled={(date) => date < todayStart}
+                                    captionLayout="dropdown"
+                                  />
+                                    );
+                                  })()}
+                                </PopoverContent>
+                              </Popover>
                             </FormControl>
+                            <FormDescription className="text-xs">No kura datuma varat sniegt pakalpojumus. Neobligāti.</FormDescription>
                             <FormMessage />
                           </FormItem>
                         )}
@@ -980,18 +1047,22 @@ export default function DashboardPageClient() {
 
                     <FormField
                       control={form.control}
-                      name="searchTriggersText"
+                      name="sector"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Meklēšanas trigerji</FormLabel>
+                          <FormLabel>Nozare</FormLabel>
                           <FormControl>
-                            <Textarea placeholder="logotips, brand book, reklāma..." {...field} />
+                            <Input3
+                              placeholder="Piem., IT, Būvniecība, Tīrradne..."
+                              helperText="Nozare, kurā darbojas vai piedāvā pakalpojumus."
+                              {...field}
+                            />
                           </FormControl>
-                          <FormDescription className="text-xs">Frāzes vai prasības, pēc kurām klienti var tevi atrast. Ieraksti ar komatu atdalītus.</FormDescription>
                           <FormMessage />
                         </FormItem>
                       )}
                     />
+
                   </TabsContent>
 
                   <TabsContent value="video" className="space-y-4">
