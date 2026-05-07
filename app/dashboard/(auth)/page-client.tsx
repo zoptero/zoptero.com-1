@@ -468,45 +468,57 @@ export default function DashboardPageClient() {
           ? { avatarKey: "", avatarUrl: "" }
           : {};
 
+    const payload = {
+      clerkId: user.id,
+      ...avatarDeletePayload,
+      displayName: values.displayName,
+      email: values.email || undefined,
+      phone: values.phone || undefined,
+      city: values.city || undefined,
+      aboutMe: values.aboutMe || undefined,
+      bio: values.bio || undefined,
+      accountType: values.accountType || undefined,
+      sector: values.sector || undefined,
+      slug: values.slug || undefined,
+      workingEnvironment: values.workingEnvironment || undefined,
+      ...(values.startDate ? { startDate: values.startDate } : {}),
+      onlineStatus: values.onlineStatus,
+      strongKeywords: values.strongKeywords,
+      searchTriggers: parseCsv(values.searchTriggersText),
+      mediaUrl: values.mediaUrl || undefined,
+      profileVideoUrl: values.profileVideoUrl || undefined,
+      seoTitle: values.seoTitle || undefined,
+      seoDescription: values.seoDescription || undefined,
+      whatsapp: values.whatsapp || undefined,
+      instagram: values.instagram || undefined,
+      tiktok: values.tiktok || undefined,
+      telegram: values.telegram || undefined,
+      facebook: values.facebook || undefined,
+      threads: values.threads || undefined,
+      youtube: values.youtube || undefined,
+      linktree: values.linktree || undefined,
+      etsy: values.etsy || undefined,
+      paymentCash: values.paymentCash,
+      paymentBankTransfer: values.paymentBankTransfer,
+      paymentCard: values.paymentCard,
+    };
+
     try {
-      await updateProfile({
-        clerkId: user.id,
-        ...avatarDeletePayload,
-        displayName: values.displayName,
-        email: values.email || undefined,
-        phone: values.phone || undefined,
-        city: values.city || undefined,
-        aboutMe: values.aboutMe || undefined,
-        bio: values.bio || undefined,
-        accountType: values.accountType || undefined,
-        sector: values.sector || undefined,
-        slug: values.slug || undefined,
-        workingEnvironment: values.workingEnvironment || undefined,
-        startDate: values.startDate || undefined,
-        onlineStatus: values.onlineStatus,
-        strongKeywords: values.strongKeywords,
-        searchTriggers: parseCsv(values.searchTriggersText),
-        mediaUrl: values.mediaUrl || undefined,
-        profileVideoUrl: values.profileVideoUrl || undefined,
-        seoTitle: values.seoTitle || undefined,
-        seoDescription: values.seoDescription || undefined,
-        whatsapp: values.whatsapp || undefined,
-        instagram: values.instagram || undefined,
-        tiktok: values.tiktok || undefined,
-        telegram: values.telegram || undefined,
-        facebook: values.facebook || undefined,
-        threads: values.threads || undefined,
-        youtube: values.youtube || undefined,
-        linktree: values.linktree || undefined,
-        etsy: values.etsy || undefined,
-        paymentCash: values.paymentCash,
-        paymentBankTransfer: values.paymentBankTransfer,
-        paymentCard: values.paymentCard,
-      });
+      await updateProfile(payload);
 
       setRemoveAvatar(false);
       toast.success("Izmaiņas saglabātas");
     } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      // Backward compatibility: older deployed Convex functions may not accept startDate yet.
+      if (message.toLowerCase().includes("startdate") && "startDate" in payload) {
+        const { startDate: _ignored, ...fallbackPayload } = payload;
+        await updateProfile(fallbackPayload);
+        setRemoveAvatar(false);
+        toast.success("Izmaiņas saglabātas");
+        return;
+      }
+
       console.error("Profile update failed", error);
       toast.error("Neizdevās saglabāt izmaiņas.");
     }
