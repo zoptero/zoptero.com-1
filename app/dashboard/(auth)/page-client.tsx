@@ -137,6 +137,7 @@ const profileFormSchema = z.object({
   telegram: z.string().trim().max(120),
   facebook: httpsUrlOrEmptySchema,
   threads: httpsUrlOrEmptySchema,
+  youtube: httpsUrlOrEmptySchema,
   linktree: httpsUrlOrEmptySchema,
   etsy: httpsUrlOrEmptySchema,
   paymentCash: z.boolean(),
@@ -171,6 +172,7 @@ const defaultValues: ProfileFormValues = {
   telegram: "",
   facebook: "",
   threads: "",
+  youtube: "",
   linktree: "",
   etsy: "",
   paymentCash: false,
@@ -192,6 +194,7 @@ const TAB_VALIDATION_FIELDS: Partial<Record<string, Array<keyof ProfileFormValue
     "tiktok",
     "telegram",
     "threads",
+    "youtube",
     "linktree",
     "etsy",
   ],
@@ -327,6 +330,7 @@ export default function DashboardPageClient() {
       telegram: profile?.telegram ?? "",
       facebook: profile?.facebook ?? "",
       threads: profile?.threads ?? "",
+      youtube: profile?.youtube ?? "",
       linktree: profile?.linktree ?? "",
       etsy: profile?.etsy ?? "",
       paymentCash: profile?.paymentCash ?? false,
@@ -519,6 +523,7 @@ export default function DashboardPageClient() {
     const currentProfileVideoUrl = profile?.profileVideoUrl ?? "";
     const currentSeoTitle = profile?.seoTitle ?? "";
     const currentSeoDescription = profile?.seoDescription ?? "";
+    const currentYoutube = profile?.youtube ?? "";
 
     const payload = {
       clerkId: user.id,
@@ -553,6 +558,7 @@ export default function DashboardPageClient() {
       telegram: values.telegram || undefined,
       facebook: values.facebook || undefined,
       threads: values.threads || undefined,
+      ...(values.youtube !== currentYoutube ? { youtube: values.youtube || "" } : {}),
       linktree: values.linktree || undefined,
       etsy: values.etsy || undefined,
       paymentCash: values.paymentCash,
@@ -951,6 +957,23 @@ export default function DashboardPageClient() {
                               <Input3
                                 placeholder="https://"
                                 helperText="Tavs Threads lietotājvārds."
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name="youtube"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>YouTube</FormLabel>
+                            <FormControl>
+                              <Input3
+                                placeholder="https://"
+                                helperText="Saite uz savu YouTube kanālu."
                                 {...field}
                               />
                             </FormControl>

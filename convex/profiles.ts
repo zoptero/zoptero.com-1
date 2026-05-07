@@ -228,6 +228,7 @@ export const update = mutation({
     telegram: v.optional(v.string()),
     facebook: v.optional(v.string()),
     threads: v.optional(v.string()),
+    youtube: v.optional(v.string()),
     onlineStatus: v.optional(v.boolean()),
     strongKeywords: v.optional(v.array(v.string())),
     profileVideoUrl: v.optional(v.string()),
@@ -1013,4 +1014,5 @@ export const backfillMissingSlugs = internalMutation({
     };
   },
 });
+
 
