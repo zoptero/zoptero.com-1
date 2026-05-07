@@ -520,6 +520,7 @@ export default function DashboardPageClient() {
 
     const currentStartDate = profile?.startDate ?? "";
     const currentWorkingEnvironment = profile?.workingEnvironment ?? "";
+    const currentBio = profile?.bio ?? "";
     const currentProfileVideoUrl = profile?.profileVideoUrl ?? "";
     const currentSeoTitle = profile?.seoTitle ?? "";
     const currentSeoDescription = profile?.seoDescription ?? "";
@@ -533,7 +534,7 @@ export default function DashboardPageClient() {
       phone: values.phone || undefined,
       city: values.city || undefined,
       aboutMe: values.aboutMe || undefined,
-      bio: values.bio || undefined,
+      ...(values.bio !== currentBio ? { bio: values.bio || "" } : {}),
       accountType: values.accountType || undefined,
       sector: values.sector || undefined,
       slug: values.slug || undefined,
