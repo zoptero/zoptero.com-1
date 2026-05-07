@@ -39,7 +39,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Skeleton } from "@/components/ui/skeleton";
 import ProfileAssistantChat from "@/components/ProfileAssistantChat";
-import { KeywordsInput } from "@/components/keywords-input";
+import { Input25 } from "@/components/input25";
 import { Select14 } from "@/components/select14";
 import { Input7 } from "@/components/input7";
 import { Calendar } from "@/components/ui/calendar";
@@ -1219,7 +1219,7 @@ export default function DashboardPageClient() {
                               <span className={`text-xs tabular-nums ${field.value.length >= 5 ? "text-destructive font-medium" : "text-muted-foreground"}`}>{field.value.length}/5</span>
                             </div>
                             <FormControl>
-                              <KeywordsInput
+                              <Input25
                                 value={field.value}
                                 onChange={field.onChange}
                                 placeholder="Piem., elektriķis, seo, galdnieks"

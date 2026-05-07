@@ -85,6 +85,7 @@
     "date-fns": "^4.1.0",
     "dotenv": "^16.6.1",
     "embla-carousel-react": "^8.6.0",
+    "emblor": "^1.4.8",
     "framer-motion": "^12.38.0",
     "input-otp": "^1.4.2",
     "lottie-react": "^2.4.1",
