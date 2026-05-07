@@ -1328,7 +1328,7 @@ export default function DashboardPageClient() {
                               ? fieldState.error.message
                               : slugValue && slugValue.length >= 3 && slugCheckResult
                                 ? slugCheckResult.available
-                                  ? "Varat izmantot šo saiti."
+                                  ? "Saite saglabāta un varat to lietot."
                                   : "Nevarat izmantot šo saiti."
                                 : "Izvēlies savu publiskā profila adresi platformā."}
                           </FormDescription>
