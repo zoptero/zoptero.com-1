@@ -523,6 +523,7 @@ export default function DashboardPageClient() {
     const currentProfileVideoUrl = profile?.profileVideoUrl ?? "";
     const currentSeoTitle = profile?.seoTitle ?? "";
     const currentSeoDescription = profile?.seoDescription ?? "";
+    const currentYoutube = profile?.youtube ?? "";
 
     const payload = {
       clerkId: user.id,
@@ -557,7 +558,7 @@ export default function DashboardPageClient() {
       telegram: values.telegram || undefined,
       facebook: values.facebook || undefined,
       threads: values.threads || undefined,
-      youtube: values.youtube || undefined,
+      ...(values.youtube !== currentYoutube ? { youtube: values.youtube || "" } : {}),
       linktree: values.linktree || undefined,
       etsy: values.etsy || undefined,
       paymentCash: values.paymentCash,
