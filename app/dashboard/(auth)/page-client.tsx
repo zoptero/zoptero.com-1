@@ -85,6 +85,31 @@ function parseDateFromInput(value: string | undefined): Date | undefined {
   return new Date(year, month - 1, day);
 }
 
+async function hasExactImageDimensions(
+  file: File,
+  expectedWidth: number,
+  expectedHeight: number,
+): Promise<boolean> {
+  const objectUrl = URL.createObjectURL(file);
+
+  try {
+    const dimensions = await new Promise<{ width: number; height: number }>((resolve, reject) => {
+      const image = new Image();
+      image.onload = () => {
+        resolve({ width: image.width, height: image.height });
+      };
+      image.onerror = () => {
+        reject(new Error("Unable to read image dimensions"));
+      };
+      image.src = objectUrl;
+    });
+
+    return dimensions.width === expectedWidth && dimensions.height === expectedHeight;
+  } finally {
+    URL.revokeObjectURL(objectUrl);
+  }
+}
+
 function getTodayStart(): Date {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
@@ -315,8 +340,10 @@ export default function DashboardPageClient() {
   const generateUploadUrl = useAction(api.media.generateUploadUrl);
   const generateViewUrl = useAction(api.media.generateViewUrl);
   const [uploadingAvatar, setUploadingAvatar] = useState(false);
+  const [uploadingSeoImage, setUploadingSeoImage] = useState(false);
   const [savingProfile, setSavingProfile] = useState(false);
   const lastResolvedAvatarKeyRef = useRef<string | null>(null);
+  const lastResolvedSeoImageKeyRef = useRef<string | null>(null);
   const [activeTab, setActiveTab] = useState("profile");
   const [underlinePosition, setUnderlinePosition] = useState({ left: 0, width: 0 });
   const [showLeftShadow, setShowLeftShadow] = useState(false);
@@ -330,12 +357,21 @@ export default function DashboardPageClient() {
     maxFiles: 1,
     maxSize: 5 * 1024 * 1024,
   });
+  const [{ files: seoImageFiles }, { addFiles: addSeoImageFiles, removeFile: removeSeoImageFile }] = useFileUpload({
+    accept: "image/jpeg,image/png,image/webp,image/avif",
+    maxFiles: 1,
+    maxSize: 5 * 1024 * 1024,
+  });
   const [removeAvatar, setRemoveAvatar] = useState(false);
+  const [removeSeoImage, setRemoveSeoImage] = useState(false);
   const [resolvedAvatarUrl, setResolvedAvatarUrl] = useState<string | undefined>(undefined);
+  const [resolvedSeoImageUrl, setResolvedSeoImageUrl] = useState<string | undefined>(undefined);
   const [focusedField, setFocusedField] = useState<string | undefined>(undefined);
   const [slugCheckResult, setSlugCheckResult] = useState<{ available: boolean; reserved?: boolean; normalizedSlug: string } | null>(null);
   const previewFile = files[0];
   const previewUrl = previewFile?.preview ?? (removeAvatar ? undefined : resolvedAvatarUrl);
+  const seoImagePreviewFile = seoImageFiles[0];
+  const seoImagePreviewUrl = seoImagePreviewFile?.preview ?? (removeSeoImage ? undefined : resolvedSeoImageUrl);
 
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(profileFormSchema),
@@ -434,6 +470,50 @@ export default function DashboardPageClient() {
       cancelled = true;
     };
   }, [previewFile, removeAvatar, profile?.avatarUrl, profile?.avatarKey, user?.id, resolvedAvatarUrl, generateViewUrl]);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    const resolveSeoImageUrl = async () => {
+      if (seoImagePreviewFile || removeSeoImage) {
+        setResolvedSeoImageUrl(undefined);
+        lastResolvedSeoImageKeyRef.current = null;
+        return;
+      }
+
+      if (!profile?.seoImageKey || !user?.id) {
+        setResolvedSeoImageUrl(undefined);
+        lastResolvedSeoImageKeyRef.current = null;
+        return;
+      }
+
+      if (lastResolvedSeoImageKeyRef.current === profile.seoImageKey && resolvedSeoImageUrl) {
+        return;
+      }
+
+      try {
+        const { viewUrl } = await generateViewUrl({
+          clerkId: user.id,
+          key: profile.seoImageKey,
+        });
+        if (!cancelled) {
+          setResolvedSeoImageUrl(viewUrl);
+          lastResolvedSeoImageKeyRef.current = profile.seoImageKey;
+        }
+      } catch (error) {
+        if (!cancelled) {
+          setResolvedSeoImageUrl(undefined);
+          lastResolvedSeoImageKeyRef.current = null;
+        }
+        console.error("Failed to resolve SEO image view URL", error);
+      }
+    };
+
+    void resolveSeoImageUrl();
+    return () => {
+      cancelled = true;
+    };
+  }, [seoImagePreviewFile, removeSeoImage, profile?.seoImageKey, user?.id, resolvedSeoImageUrl, generateViewUrl]);
 
   useEffect(() => {
     const updateUnderlineAndScroll = () => {
@@ -543,6 +623,8 @@ export default function DashboardPageClient() {
 
     let avatarKey: string | undefined;
     let avatarUrl: string | undefined;
+    let seoImageKey: string | undefined;
+    let seoImageUrl: string | undefined;
 
     // Upload new avatar to R2 if a file was selected
     if (previewFile && previewFile.file instanceof File) {
@@ -583,12 +665,73 @@ export default function DashboardPageClient() {
       }
     }
 
+    if (seoImagePreviewFile && seoImagePreviewFile.file instanceof File) {
+      const file = seoImagePreviewFile.file;
+      if (![
+        "image/jpeg",
+        "image/png",
+        "image/webp",
+        "image/avif",
+      ].includes(file.type)) {
+        toast.error("Neatbalstīts SEO attēla formāts. Izmantojiet JPG, PNG, WebP vai AVIF.");
+        return;
+      }
+      if (file.size > 5 * 1024 * 1024) {
+        toast.error("SEO attēls ir pārāk liels. Maksimālais izmērs ir 5 MB.");
+        return;
+      }
+
+      const hasRequiredDimensions = await hasExactImageDimensions(file, 1200, 600);
+      if (!hasRequiredDimensions) {
+        toast.error("SEO attēlam jābūt tieši 1200 x 600 px.");
+        return;
+      }
+
+      try {
+        setUploadingSeoImage(true);
+        const { fileKey, uploadUrl, publicUrl } = await generateUploadUrl({
+          clerkId: user.id,
+          fileType: file.type,
+          fileSize: file.size,
+          displayName: values.displayName,
+          title: "seo-image",
+          usage: "seo",
+        });
+
+        const uploadResponse = await fetch(uploadUrl, {
+          method: "PUT",
+          body: file,
+          headers: { "Content-Type": file.type },
+        });
+
+        if (!uploadResponse.ok) {
+          throw new Error(`Upload failed with status ${uploadResponse.status}`);
+        }
+
+        seoImageKey = fileKey;
+        seoImageUrl = publicUrl;
+      } catch (error) {
+        console.error("SEO image upload failed", error);
+        toast.error("Neizdevās augšupielādēt SEO attēlu. Lūdzu, mēģiniet vēlreiz.");
+        return;
+      } finally {
+        setUploadingSeoImage(false);
+      }
+    }
+
     // If user explicitly removed existing avatar, pass empty string to trigger R2 cleanup
     const avatarDeletePayload =
       avatarKey !== undefined
         ? { avatarKey, avatarUrl }
         : removeAvatar
           ? { avatarKey: "", avatarUrl: "" }
+          : {};
+
+    const seoImagePayload =
+      seoImageKey !== undefined
+        ? { seoImageKey }
+        : removeSeoImage
+          ? { seoImageKey: "" }
           : {};
 
     const currentStartDate = profile?.startDate ?? "";
@@ -604,10 +747,18 @@ export default function DashboardPageClient() {
     const currentSeoDescription = profile?.seoDescription ?? "";
     const currentYoutube = profile?.youtube ?? "";
     const currentWhatsapp = profile?.whatsapp ?? "";
+    const currentInstagram = profile?.instagram ?? "";
+    const currentFacebook = profile?.facebook ?? "";
+    const currentTiktok = profile?.tiktok ?? "";
+    const currentTelegram = profile?.telegram ?? "";
+    const currentThreads = profile?.threads ?? "";
+    const currentLinktree = profile?.linktree ?? "";
+    const currentEtsy = profile?.etsy ?? "";
 
     const payload = {
       clerkId: user.id,
       ...avatarDeletePayload,
+      ...seoImagePayload,
       displayName: values.displayName,
       ...(values.email !== currentEmail ? { email: values.email || clerkEmail } : {}),
       phone: values.phone || undefined,
@@ -634,14 +785,14 @@ export default function DashboardPageClient() {
         ? { seoDescription: values.seoDescription || "" }
         : {}),
       ...(values.whatsapp !== currentWhatsapp ? { whatsapp: values.whatsapp || "" } : {}),
-      instagram: values.instagram || undefined,
-      tiktok: values.tiktok || undefined,
-      telegram: values.telegram || undefined,
-      facebook: values.facebook || undefined,
-      threads: values.threads || undefined,
+      ...(values.instagram !== currentInstagram ? { instagram: values.instagram || "" } : {}),
+      ...(values.tiktok !== currentTiktok ? { tiktok: values.tiktok || "" } : {}),
+      ...(values.telegram !== currentTelegram ? { telegram: values.telegram || "" } : {}),
+      ...(values.facebook !== currentFacebook ? { facebook: values.facebook || "" } : {}),
+      ...(values.threads !== currentThreads ? { threads: values.threads || "" } : {}),
       ...(values.youtube !== currentYoutube ? { youtube: values.youtube || "" } : {}),
-      linktree: values.linktree || undefined,
-      etsy: values.etsy || undefined,
+      ...(values.linktree !== currentLinktree ? { linktree: values.linktree || "" } : {}),
+      ...(values.etsy !== currentEtsy ? { etsy: values.etsy || "" } : {}),
       paymentCash: values.paymentCash,
       paymentBankTransfer: values.paymentBankTransfer,
       paymentCard: values.paymentCard,
@@ -655,12 +806,19 @@ export default function DashboardPageClient() {
       if (previewFile) {
         removeFile(previewFile.id);
       }
+      if (seoImagePreviewFile) {
+        removeSeoImageFile(seoImagePreviewFile.id);
+      }
 
       if (avatarUrl) {
         setResolvedAvatarUrl(avatarUrl);
       }
+      if (seoImageUrl) {
+        setResolvedSeoImageUrl(seoImageUrl);
+      }
 
       setRemoveAvatar(false);
+      setRemoveSeoImage(false);
       toast.success("Izmaiņas saglabātas");
     } catch (error) {
       console.error("Profile update failed", error);
@@ -1375,6 +1533,79 @@ export default function DashboardPageClient() {
                         </FormItem>
                       )}
                     />
+
+                    <div className="space-y-2">
+                      <FormLabel>SEO attēls (1200 x 600 px)</FormLabel>
+                      <div className="flex flex-col gap-3 rounded-md border p-3 md:flex-row md:items-start md:justify-between">
+                        <div className="w-full md:max-w-[280px]">
+                          <div className="bg-muted flex aspect-[2/1] w-full items-center justify-center overflow-hidden rounded-md border">
+                            {seoImagePreviewUrl ? (
+                              <img
+                                src={seoImagePreviewUrl}
+                                alt="SEO attēla priekšskatījums"
+                                className="h-full w-full object-cover"
+                              />
+                            ) : (
+                              <span className="text-muted-foreground px-3 text-center text-xs">
+                                Nav izvēlēts SEO attēls
+                              </span>
+                            )}
+                          </div>
+                        </div>
+
+                        <div className="flex w-full flex-col gap-2 md:max-w-[360px]">
+                          <label className="flex cursor-pointer items-center gap-2 rounded-md border px-3 py-2 text-sm transition-colors hover:bg-accent">
+                            <Upload className="size-4" />
+                            Pievienot SEO attēlu
+                            <input
+                              type="file"
+                              accept="image/jpeg,image/png,image/webp,image/avif"
+                              className="sr-only"
+                              onChange={(event) => {
+                                if (!event.target.files) {
+                                  return;
+                                }
+                                setRemoveSeoImage(false);
+                                addSeoImageFiles(event.target.files);
+                              }}
+                            />
+                          </label>
+
+                          {seoImagePreviewFile ? (
+                            <button
+                              type="button"
+                              onClick={() => removeSeoImageFile(seoImagePreviewFile.id)}
+                              className="flex items-center gap-1 text-xs text-muted-foreground hover:text-destructive"
+                            >
+                              <X className="size-3" /> Noņemt jauno SEO attēlu
+                            </button>
+                          ) : removeSeoImage ? (
+                            <button
+                              type="button"
+                              onClick={() => setRemoveSeoImage(false)}
+                              className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground"
+                            >
+                              <X className="size-3" /> Atcelt SEO attēla dzēšanu
+                            </button>
+                          ) : profile?.seoImageKey ? (
+                            <button
+                              type="button"
+                              onClick={() => setRemoveSeoImage(true)}
+                              className="flex items-center gap-1 text-xs text-muted-foreground hover:text-destructive"
+                            >
+                              <X className="size-3" /> Dzēst SEO attēlu
+                            </button>
+                          ) : null}
+
+                          <FormDescription className="text-xs">
+                            Šis attēls tiks izmantots kā kopīgošanas priekšskatījums publiskajā profilā.
+                          </FormDescription>
+                          <FormDescription className="text-xs">
+                            Atbalstītie formāti: JPG, PNG, WebP, AVIF. Maksimālais izmērs: 5 MB.
+                          </FormDescription>
+                        </div>
+                      </div>
+                    </div>
                   </TabsContent>
 
                   <TabsContent value="payments" className="space-y-4">
@@ -1419,8 +1650,8 @@ export default function DashboardPageClient() {
                   </TabsContent>
 
                   <div className="flex justify-end">
-                    <Button type="submit" disabled={(!form.formState.isDirty && !previewFile && !removeAvatar) || savingProfile || uploadingAvatar}>
-                      {uploadingAvatar ? "Augšupielādē attēlu..." : savingProfile ? "Saglabā..." : "Saglabāt"}
+                    <Button type="submit" disabled={(!form.formState.isDirty && !previewFile && !removeAvatar && !seoImagePreviewFile && !removeSeoImage) || savingProfile || uploadingAvatar || uploadingSeoImage}>
+                      {uploadingAvatar || uploadingSeoImage ? "Augšupielādē attēlu..." : savingProfile ? "Saglabā..." : "Saglabāt"}
                     </Button>
                   </div>
                 </form>
