@@ -72,7 +72,8 @@ export function Input25({
           "focus-within:border-ring focus-within:ring-[3px] focus-within:ring-ring/50",
           disabled && "cursor-not-allowed opacity-50",
         ),
-        input: "h-7 min-w-[120px] w-full px-1 shadow-none focus-visible:ring-0",
+        input:
+          "h-7 min-w-[120px] w-full border-0 px-1 shadow-none outline-none ring-0 focus:outline-none focus:ring-0 focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-transparent focus-visible:ring-offset-0",
         tag: {
           body: "bg-primary/10 text-primary hover:bg-primary/10 relative h-7 rounded-md border border-transparent ps-2 pe-7 text-xs font-medium",
           closeButton:
