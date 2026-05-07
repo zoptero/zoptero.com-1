@@ -517,6 +517,9 @@ export default function DashboardPageClient() {
 
     const currentStartDate = profile?.startDate ?? "";
     const currentWorkingEnvironment = profile?.workingEnvironment ?? "";
+    const currentProfileVideoUrl = profile?.profileVideoUrl ?? "";
+    const currentSeoTitle = profile?.seoTitle ?? "";
+    const currentSeoDescription = profile?.seoDescription ?? "";
 
     const payload = {
       clerkId: user.id,
@@ -538,9 +541,13 @@ export default function DashboardPageClient() {
       strongKeywords: values.strongKeywords,
       searchTriggers: parseCsv(values.searchTriggersText),
       mediaUrl: values.mediaUrl || undefined,
-      profileVideoUrl: values.profileVideoUrl || undefined,
-      seoTitle: values.seoTitle || undefined,
-      seoDescription: values.seoDescription || undefined,
+      ...(values.profileVideoUrl !== currentProfileVideoUrl
+        ? { profileVideoUrl: values.profileVideoUrl || "" }
+        : {}),
+      ...(values.seoTitle !== currentSeoTitle ? { seoTitle: values.seoTitle || "" } : {}),
+      ...(values.seoDescription !== currentSeoDescription
+        ? { seoDescription: values.seoDescription || "" }
+        : {}),
       whatsapp: values.whatsapp || undefined,
       instagram: values.instagram || undefined,
       tiktok: values.tiktok || undefined,
