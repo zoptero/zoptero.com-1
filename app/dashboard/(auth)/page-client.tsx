@@ -41,6 +41,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import ProfileAssistantChat from "@/components/ProfileAssistantChat";
 import { KeywordsInput } from "@/components/keywords-input";
 import { Select14 } from "@/components/select14";
+import { Input7 } from "@/components/input7";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
@@ -144,7 +145,8 @@ const profileFormSchema = z.object({
     .string()
     .trim()
     .max(80)
-    .regex(/^[a-z0-9-]*$/, "Use lowercase letters, numbers, and hyphens only."),
+    .regex(/^[a-z0-9-]*$/, "Use lowercase letters, numbers, and hyphens only.")
+    .refine((value) => value === "" || value.length >= 3, "Vismaz 3 simboli."),
   workingEnvironment: z.string().trim().max(120),
   startDate: z.string().optional(),
   onlineStatus: z.boolean(),
@@ -156,7 +158,7 @@ const profileFormSchema = z.object({
     .refine((value) => /^\d*$/.test(value), "Atļauti tikai cipari."),
   myServicesText: z.string().trim().max(500),
   mediaUrl: httpsUrlOrEmptySchema,
-  profileVideoUrl: urlOrEmptySchema,
+  profileVideoUrl: httpsUrlOrEmptySchema,
   seoTitle: z.string().trim().max(120),
   seoDescription: z.string().trim().max(300),
   whatsapp: phoneOrEmptySchema,
@@ -329,6 +331,11 @@ export default function DashboardPageClient() {
     defaultValues,
     mode: "onChange",
   });
+  const slugValue = form.watch("slug");
+  const slugAvailability = useQuery(
+    api.profiles.checkSlugAvailability,
+    user?.id ? { slug: slugValue ?? "", clerkId: user.id } : "skip",
+  );
 
   useEffect(() => {
     form.reset({
@@ -1255,14 +1262,57 @@ export default function DashboardPageClient() {
                   <TabsContent value="seo" className="space-y-4">
                     <FormField
                       control={form.control}
+                      name="slug"
+                      render={({ field, fieldState }) => (
+                        <FormItem>
+                          <FormLabel>Saite uz profilu</FormLabel>
+                          <FormControl>
+                            <Input7
+                              value={field.value ?? ""}
+                              onChange={(nextValue) => {
+                                const normalized = nextValue
+                                  .replace(/^https?:\/\/zoptero\.com\//i, "")
+                                  .trim();
+                                field.onChange(normalized);
+                              }}
+                              placeholder="mans-profils"
+                              baseUrl="https://zoptero.com/"
+                            />
+                          </FormControl>
+                          <FormDescription
+                            className={cn(
+                              "text-xs",
+                              fieldState.error?.message && "text-destructive",
+                              !fieldState.error?.message && slugValue && slugValue.length >= 3 && slugAvailability && !slugAvailability.available && "text-destructive",
+                              !fieldState.error?.message && slugValue && slugValue.length >= 3 && slugAvailability?.available && "text-emerald-600",
+                            )}
+                          >
+                            {fieldState.error?.message
+                              ? fieldState.error.message
+                              : slugValue
+                                ? slugAvailability?.available
+                                  ? "Varat izmantot šo saiti."
+                                  : "Nevarat izmantot šo saiti."
+                                : "Izvēlies savu publiskā profila adresi platformā."}
+                          </FormDescription>
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
                       name="seoTitle"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>SEO nosaukums</FormLabel>
+                          <div className="flex items-center justify-between">
+                            <FormLabel>SEO virsraksts</FormLabel>
+                            <span className="text-muted-foreground text-xs">{(field.value ?? "").length}/60</span>
+                          </div>
                           <FormControl>
                             <Input3
                               placeholder="Piem., Grāmatvedis Rīgā | Jānis Bērziņš"
-                              helperText="Rādīsies meklēšanas rezultātos kā lapās nosaukums. Ieteicams līdz 60 rakstzīmēm."
+                              helperText="Virsraksts būs redzams meklēšanas rezultātos. Ieteicams līdz 60 simboliem."
+                              helperTextClassName={(field.value ?? "").length > 60 ? "text-destructive" : undefined}
                               {...field}
                             />
                           </FormControl>
@@ -1275,11 +1325,14 @@ export default function DashboardPageClient() {
                       name="seoDescription"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>SEO apraksts</FormLabel>
+                          <div className="flex items-center justify-between">
+                            <FormLabel>SEO apraksts</FormLabel>
+                            <span className="text-muted-foreground text-xs">{(field.value ?? "").length}/160</span>
+                          </div>
                           <FormControl>
                             <Textarea placeholder="Įss apraksts, ko redzēs Google meklēšanas rezultātos..." {...field} />
                           </FormControl>
-                          <FormDescription className="text-xs">Apraksts, kas rādīsies meklēšanas rezultātos zem nosaukuma. Ieteicams līdz 160 rakstzīmēm.</FormDescription>
+                          <FormDescription className={cn("text-xs", (field.value ?? "").length > 160 && "text-destructive")}>Apraksts būs redzams meklēšanas rezultātos. Ieteicams līdz 160 simboliem.</FormDescription>
                           <FormMessage />
                         </FormItem>
                       )}

@@ -38,15 +38,8 @@ function TooltipContent({
   className,
   sideOffset = 0,
   children,
-  arrowClassName,
   ...props
-}: React.ComponentProps<typeof TooltipPrimitive.Content> & { arrowClassName?: string }) {
-  // Extract background color from className for arrow
-  // If className contains bg-neutral-200 or dark:bg-neutral-50, use those for the arrow
-  // Otherwise, default to bg-foreground fill-foreground
-  let arrowBg = "bg-foreground fill-foreground";
-  if (className?.includes("bg-neutral-200")) arrowBg = "bg-neutral-200 fill-neutral-200";
-  if (className?.includes("dark:bg-neutral-50")) arrowBg += " dark:bg-neutral-50 dark:fill-neutral-50";
+}: React.ComponentProps<typeof TooltipPrimitive.Content>) {
   return (
     <TooltipPrimitive.Portal>
       <TooltipPrimitive.Content
@@ -59,7 +52,7 @@ function TooltipContent({
         {...props}
       >
         {children}
-        <TooltipPrimitive.Arrow className={cn(arrowBg, "z-50 size-2.5 translate-y-[calc(-50%_-_2px)] rotate-45 rounded-[2px]", arrowClassName)} />
+        <TooltipPrimitive.Arrow className="bg-foreground fill-foreground z-50 size-2.5 translate-y-[calc(-50%_-_2px)] rotate-45 rounded-[2px]" />
       </TooltipPrimitive.Content>
     </TooltipPrimitive.Portal>
   )
