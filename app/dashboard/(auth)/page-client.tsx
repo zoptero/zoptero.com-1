@@ -323,6 +323,7 @@ export default function DashboardPageClient() {
   const [removeAvatar, setRemoveAvatar] = useState(false);
   const [resolvedAvatarUrl, setResolvedAvatarUrl] = useState<string | undefined>(undefined);
   const [focusedField, setFocusedField] = useState<string | undefined>(undefined);
+  const [slugCheckResult, setSlugCheckResult] = useState<{ available: boolean; reserved?: boolean; normalizedSlug: string } | null>(null);
   const previewFile = files[0];
   const previewUrl = previewFile?.preview ?? (removeAvatar ? undefined : resolvedAvatarUrl);
 
@@ -332,10 +333,6 @@ export default function DashboardPageClient() {
     mode: "onChange",
   });
   const slugValue = form.watch("slug");
-  const slugAvailability = useQuery(
-    api.profiles.checkSlugAvailability,
-    user?.id ? { slug: slugValue ?? "", clerkId: user.id } : "skip",
-  );
 
   useEffect(() => {
     form.reset({
@@ -503,6 +500,35 @@ export default function DashboardPageClient() {
     if (!user?.id) {
       toast.error("You must be signed in to update your profile.");
       return;
+    }
+
+    // Check slug availability only on save (not on every keystroke)
+    if (values.slug && values.slug.length >= 3 && values.slug !== profile?.slug) {
+      try {
+        const response = await fetch("/api/check-slug", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ slug: values.slug, clerkId: user.id }),
+        });
+
+        if (!response.ok) {
+          throw new Error(`Check failed: ${response.statusText}`);
+        }
+
+        const result = await response.json();
+        setSlugCheckResult(result);
+
+        if (!result.available) {
+          toast.error("Šī saite jau tiek izmantota. Lūdzu, izvēlieties citu.");
+          return;
+        }
+      } catch (error) {
+        console.error("Failed to check slug availability", error);
+        toast.error("Neizdevās pārbaudīt saites pieejamību.");
+        return;
+      }
+    } else if (!values.slug) {
+      setSlugCheckResult(null);
     }
 
     let avatarKey: string | undefined;
@@ -1283,14 +1309,14 @@ export default function DashboardPageClient() {
                             className={cn(
                               "text-xs",
                               fieldState.error?.message && "text-destructive",
-                              !fieldState.error?.message && slugValue && slugValue.length >= 3 && slugAvailability && !slugAvailability.available && "text-destructive",
-                              !fieldState.error?.message && slugValue && slugValue.length >= 3 && slugAvailability?.available && "text-emerald-600",
+                              !fieldState.error?.message && slugValue && slugValue.length >= 3 && slugCheckResult && !slugCheckResult.available && "text-destructive",
+                              !fieldState.error?.message && slugValue && slugValue.length >= 3 && slugCheckResult?.available && "text-emerald-600",
                             )}
                           >
                             {fieldState.error?.message
                               ? fieldState.error.message
-                              : slugValue
-                                ? slugAvailability?.available
+                              : slugValue && slugValue.length >= 3 && slugCheckResult
+                                ? slugCheckResult.available
                                   ? "Varat izmantot šo saiti."
                                   : "Nevarat izmantot šo saiti."
                                 : "Izvēlies savu publiskā profila adresi platformā."}

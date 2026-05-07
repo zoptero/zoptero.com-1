@@ -12,7 +12,7 @@ import { v } from "convex/values";
 import type { Id } from "./_generated/dataModel";
 import { internal } from "./_generated/api";
 import type { QueryCtx } from "./_generated/server";
-import { internalMutation, internalQuery, mutation, query } from "./_generated/server";
+import { internalMutation, internalQuery, mutation, query, action } from "./_generated/server";
 import {
   getLegacyProfileSlugVariant,
   isReservedProfileSlug,
@@ -1015,5 +1015,3 @@ export const backfillMissingSlugs = internalMutation({
     };
   },
 });
-
-
