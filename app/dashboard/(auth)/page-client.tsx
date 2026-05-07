@@ -536,9 +536,8 @@ export default function DashboardPageClient() {
               <TabsList className="z-10">
                 <TabsTrigger value="profile">Profils</TabsTrigger>
                 <TabsTrigger value="business">Pakalpojumi</TabsTrigger>
-                <TabsTrigger value="uzdevumi">Uzdevumi</TabsTrigger>
                 <TabsTrigger value="contact">Kontakti</TabsTrigger>
-                <TabsTrigger value="social">Social</TabsTrigger>
+                <TabsTrigger value="uzdevumi">Uzdevumi</TabsTrigger>
                 <TabsTrigger value="foto">Foto</TabsTrigger>
                 <TabsTrigger value="video">Video</TabsTrigger>
                 <TabsTrigger value="blogs">Blogs</TabsTrigger>
@@ -681,6 +680,23 @@ export default function DashboardPageClient() {
                     <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                       <FormField
                         control={form.control}
+                        name="phone"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Tālrunis</FormLabel>
+                            <FormControl>
+                              <Input3
+                                placeholder="+371 ..."
+                                helperText="Pēc izvēles, lai klienti var ar tevi sazināties ātrāk."
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
                         name="email"
                         render={({ field }) => (
                           <FormItem>
@@ -699,14 +715,14 @@ export default function DashboardPageClient() {
                       />
                       <FormField
                         control={form.control}
-                        name="phone"
+                        name="mediaUrl"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Tālrunis</FormLabel>
+                            <FormLabel>Mājas lapa</FormLabel>
                             <FormControl>
                               <Input3
-                                placeholder="+371 ..."
-                                helperText="Pēc izvēles, lai klienti var ar tevi sazināties ātrāk."
+                                placeholder="https://..."
+                                helperText="Norādi saiti uz mājas lapu."
                                 {...field}
                               />
                             </FormControl>
@@ -752,9 +768,7 @@ export default function DashboardPageClient() {
                         )}
                       />
                     </div>
-                  </TabsContent>
 
-                  <TabsContent value="social" className="space-y-4">
                     <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                       <FormField
                         control={form.control}
@@ -764,7 +778,7 @@ export default function DashboardPageClient() {
                             <FormLabel>Instagram</FormLabel>
                             <FormControl>
                               <Input3
-                                placeholder="@tavs_profils"
+                                placeholder="https://"
                                 helperText="Tavs Instagram lietotājvārds."
                                 {...field}
                               />
@@ -781,7 +795,7 @@ export default function DashboardPageClient() {
                             <FormLabel>Facebook</FormLabel>
                             <FormControl>
                               <Input3
-                                placeholder="facebook.com/tavslapa"
+                                placeholder="https://"
                                 helperText="Saite uz Facebook lapu vai profilu."
                                 {...field}
                               />
@@ -801,7 +815,7 @@ export default function DashboardPageClient() {
                             <FormLabel>TikTok</FormLabel>
                             <FormControl>
                               <Input3
-                                placeholder="@tavs_profils"
+                                placeholder="https://"
                                 helperText="Tavs TikTok lietotājvārds."
                                 {...field}
                               />
@@ -838,7 +852,7 @@ export default function DashboardPageClient() {
                             <FormLabel>Threads</FormLabel>
                             <FormControl>
                               <Input3
-                                placeholder="@tavs_profils"
+                                placeholder="https://"
                                 helperText="Tavs Threads lietotājvārds."
                                 {...field}
                               />
@@ -855,7 +869,7 @@ export default function DashboardPageClient() {
                             <FormLabel>YouTube</FormLabel>
                             <FormControl>
                               <Input3
-                                placeholder="youtube.com/@tavs_kanāls"
+                                placeholder="https://"
                                 helperText="Saite uz savu YouTube kanālu."
                                 {...field}
                               />
@@ -875,7 +889,7 @@ export default function DashboardPageClient() {
                             <FormLabel>Linktree</FormLabel>
                             <FormControl>
                               <Input3
-                                placeholder="https://linktr.ee/..."
+                                placeholder="https://"
                                 helperText="Saite uz savu Linktree lapu."
                                 {...field}
                               />
@@ -892,7 +906,7 @@ export default function DashboardPageClient() {
                             <FormLabel>Etsy</FormLabel>
                             <FormControl>
                               <Input3
-                                placeholder="https://etsy.com/shop/..."
+                                placeholder="https://"
                                 helperText="Saite uz savu Etsy veikalu."
                                 {...field}
                               />
@@ -955,10 +969,10 @@ export default function DashboardPageClient() {
                             <KeywordsInput
                               value={field.value}
                               onChange={field.onChange}
-                              placeholder="Pievieno prasmi un spied Enter..."
+                              placeholder="Piem., elektriķis, seo, galdnieks"
                             />
                           </FormControl>
-                          <FormDescription className="text-xs">Atslēgvārdi, kas labi raksturo tavu darbu. Spied Enter vai komatu, lai pievienotu.</FormDescription>
+                          <FormDescription className="text-xs">Norādi atslēgvārdus, kuri palīdzētu MI atrast profilu. Spied Enter vai komatu, lai pievienotu piecus svarīgākos.</FormDescription>
                           <FormMessage />
                         </FormItem>
                       )}
@@ -978,26 +992,6 @@ export default function DashboardPageClient() {
                         </FormItem>
                       )}
                     />
-
-                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                      <FormField
-                        control={form.control}
-                        name="mediaUrl"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Portfōlija saite</FormLabel>
-                            <FormControl>
-                              <Input3
-                                placeholder="https://..."
-                                helperText="Saite uz savu portfōliju vai galeriju."
-                                {...field}
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </div>
                   </TabsContent>
 
                   <TabsContent value="video" className="space-y-4">
