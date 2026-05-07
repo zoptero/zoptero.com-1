@@ -516,6 +516,7 @@ export default function DashboardPageClient() {
           : {};
 
     const currentStartDate = profile?.startDate ?? "";
+    const currentWorkingEnvironment = profile?.workingEnvironment ?? "";
 
     const payload = {
       clerkId: user.id,
@@ -529,7 +530,9 @@ export default function DashboardPageClient() {
       accountType: values.accountType || undefined,
       sector: values.sector || undefined,
       slug: values.slug || undefined,
-      workingEnvironment: values.workingEnvironment || undefined,
+      ...(values.workingEnvironment !== currentWorkingEnvironment
+        ? { workingEnvironment: values.workingEnvironment || "" }
+        : {}),
       ...(values.startDate !== currentStartDate ? { startDate: values.startDate || "" } : {}),
       onlineStatus: values.onlineStatus,
       strongKeywords: values.strongKeywords,
