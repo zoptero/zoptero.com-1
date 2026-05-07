@@ -1,4 +1,6 @@
+
 "use client";
+import { QRCodeSVG } from "qrcode.react";
 
 import { useEffect, useRef, useState } from "react";
 import { useUser } from "@clerk/nextjs";
@@ -1591,6 +1593,24 @@ export default function DashboardPageClient() {
                         <FormDescription className="text-xs">
                           Profila saites priekšskatījuma attēls līdz 5 MB.
                         </FormDescription>
+                      </div>
+                    </div>
+                  </TabsContent>
+
+                  <TabsContent value="qr" className="space-y-4">
+                    <div className="flex flex-col items-center gap-4">
+                      <div className="rounded-md border bg-background p-6 flex flex-col items-center">
+                        <QRCodeSVG
+                          value={slugValue ? `https://zoptero.com/${slugValue}` : "https://zoptero.com/"}
+                          size={180}
+                          bgColor="#fff"
+                          fgColor="#000"
+                          level="H"
+                          includeMargin={false}
+                        />
+                        <div className="mt-3 text-xs text-muted-foreground text-center">
+                          Noskenē mani, lai atvērtu manu profilu!
+                        </div>
                       </div>
                     </div>
                   </TabsContent>
