@@ -1329,7 +1329,7 @@ export default function DashboardPageClient() {
                               : slugValue && slugValue.length >= 3 && slugCheckResult
                                 ? slugCheckResult.available
                                   ? "Saite saglabāta un varat to lietot."
-                                  : "Nevarat izmantot šo saiti."
+                                  : "Nevarat izmantot šo saiti. Izvēlies citu."
                                 : "Izvēlies savu publiskā profila adresi platformā."}
                           </FormDescription>
                         </FormItem>
