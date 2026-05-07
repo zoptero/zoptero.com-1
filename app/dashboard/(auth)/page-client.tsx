@@ -1542,7 +1542,7 @@ export default function DashboardPageClient() {
                               />
                             ) : (
                               <span className="text-muted-foreground px-3 text-xs w-full flex items-center justify-center h-full">
-                                1200 x 630 px
+                                Vēlamais izmērs 1200 x 630 px
                               </span>
                             )}
                           </div>
