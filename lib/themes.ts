@@ -1,8 +1,8 @@
 export const DEFAULT_THEME = {
   preset: "default",
-  radius: "default",
+  radius: "none", // non-rounded corners
   scale: "none",
-  contentLayout: "full"
+  contentLayout: "full" // full width content
 } as const;
 
 export type ThemeType = typeof DEFAULT_THEME;
