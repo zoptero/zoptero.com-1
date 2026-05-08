@@ -44,6 +44,7 @@ export default defineSchema({
     whatsapp: v.optional(v.string()),
     instagram: v.optional(v.string()),
     tiktok: v.optional(v.string()),
+    pinterest: v.optional(v.string()),
     telegram: v.optional(v.string()),
     facebook: v.optional(v.string()),
     threads: v.optional(v.string()),

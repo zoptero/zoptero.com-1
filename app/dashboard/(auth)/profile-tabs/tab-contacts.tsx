@@ -101,8 +101,15 @@ export default function TabContacts({ form }: any) {
             <FormItem>
               <FormLabel>TikTok</FormLabel>
               <FormControl>
-                <Input3 placeholder="https://" helperText="Saite uz TikTok." {...field} />
+                <WebsiteInput
+                  value={field.value}
+                  onChange={field.onChange}
+                  placeholder="tiktok.com/@lietotajvards"
+                  id="_r_12_-tiktok"
+                  prefix="https://"
+                />
               </FormControl>
+              <p className="text-muted-foreground text-xs">Saite uz TikTok.</p>
               <FormMessage />
             </FormItem>
           )}
@@ -153,13 +160,20 @@ export default function TabContacts({ form }: any) {
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <FormField
           control={form.control}
-          name="tiktok"
+          name="pinterest"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>TikTok</FormLabel>
+              <FormLabel>Pinterest</FormLabel>
               <FormControl>
-                <Input3 placeholder="https://" helperText="Saite uz TikTok." {...field} />
+                <WebsiteInput
+                  value={field.value}
+                  onChange={field.onChange}
+                  placeholder="pinterest.com/lietotajvards"
+                  id="_r_12_-pinterest"
+                  prefix="https://"
+                />
               </FormControl>
+              <p className="text-muted-foreground text-xs">Saite uz Pinterest.</p>
               <FormMessage />
             </FormItem>
           )}
