@@ -97,15 +97,30 @@ export const navItems: NavGroup[] = [
         href: "/dashboard",
         icon: FolderDotIcon,
       },
-      {
-        title: "Statistika",
-        href: "/dashboard/website-analytics",
-        icon: GaugeIcon
-      },
+      // Statistika moved as locked, gray, standalone item after Settings
       {
         title: "Publiskais profils",
         href: "/dashboard/pages/user-profile",
         icon: UserIcon
+      },
+      {
+        title: "Settings",
+        href: "/dashboard/pages/settings",
+        icon: SettingsIcon,
+        items: [
+          { title: "Profile", href: "/dashboard/pages/settings" },
+          { title: "Account", href: "/dashboard/pages/settings/account" },
+          { title: "Billing", href: "/dashboard/pages/settings/billing" },
+          { title: "Appearance", href: "/dashboard/pages/settings/appearance" },
+          { title: "Notifications", href: "/dashboard/pages/settings/notifications" },
+          { title: "Display", href: "/dashboard/pages/settings/display" },
+          { title: "Pricing", href: "http://localhost:3000/dashboard/pages/pricing/column", icon: BadgeDollarSignIcon, isComing: true }
+        ]
+      },
+      {
+        title: "Statistika",
+        icon: GaugeIcon,
+        lock: true
       },
       // Real Estate removed
       // Sales removed
@@ -148,27 +163,7 @@ export const navItems: NavGroup[] = [
       }
     ]
   },
-  {
-    title: "Pages",
-    items: [
-      // Empty States removed
-      {
-        title: "Settings",
-        href: "/dashboard/pages/settings",
-        icon: SettingsIcon,
-        items: [
-          { title: "Profile", href: "/dashboard/pages/settings" },
-          { title: "Account", href: "/dashboard/pages/settings/account" },
-          { title: "Billing", href: "/dashboard/pages/settings/billing" },
-          { title: "Appearance", href: "/dashboard/pages/settings/appearance" },
-          { title: "Notifications", href: "/dashboard/pages/settings/notifications" },
-          { title: "Display", href: "/dashboard/pages/settings/display" },
-          { title: "Pricing", href: "http://localhost:3000/dashboard/pages/pricing/column", icon: BadgeDollarSignIcon, isComing: true }
-        ]
-      },
-      // Authentication, Notifications Page, and Error Pages removed
-    ]
-  },
+  // Removed Settings from Pages and moved under Publiskais profils
   // Others section removed
 ];
 

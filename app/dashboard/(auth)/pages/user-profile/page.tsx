@@ -74,9 +74,9 @@ export default function Page() {
       
       {/* --- VIRSRAKSTS UN APAKŠVIRSRAKSTS --- */}
       <div className="mb-4 flex flex-col space-y-1">
-        <h1 className="text-2xl font-bold tracking-tight">User Profile</h1>
+        <h1 className="text-2xl font-bold tracking-tight">Publiskais profils</h1>
         <p className="text-muted-foreground text-sm">
-          Manage detailed user profiles, activity streams, and projects.
+          Šādi profilu redz citi cilvēki.
         </p>
       </div>
 
