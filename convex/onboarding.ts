@@ -100,6 +100,9 @@ export const setAccountTypeForUserAndProfile = mutation({
       await ctx.db.patch(profile._id, {
         accountType: args.accountType,
       });
+      await ctx.scheduler.runAfter(0, internal.ai.generateProfileEmbedding, {
+        profileId: profile._id,
+      });
     }
 
     // Sync to Clerk metadata to ensure middleware can check status

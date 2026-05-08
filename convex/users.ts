@@ -124,6 +124,9 @@ async function syncByEmail(
 
   if (primaryProfile && primaryProfile.clerkId !== input.clerkId) {
     await ctx.db.patch(primaryProfile._id, { clerkId: input.clerkId });
+    await ctx.scheduler.runAfter(0, internal.ai.generateProfileEmbedding, {
+      profileId: primaryProfile._id,
+    });
   }
 
   // Find and delete duplicates

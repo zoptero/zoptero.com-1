@@ -10,6 +10,10 @@ export const patchProfilesRequiredFields = mutation(async ({ db }) => {
     if (!Array.isArray(profile.strongKeywords)) patch.strongKeywords = [];
     if (Object.keys(patch).length > 0) {
       await db.patch(profile._id, patch);
+      // Schedule embedding recalculation
+      await db.scheduler.runAfter(0, internal.ai.generateProfileEmbedding, {
+        profileId: profile._id,
+      });
       updated++;
     }
   }
