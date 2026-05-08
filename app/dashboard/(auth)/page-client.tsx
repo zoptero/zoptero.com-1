@@ -19,7 +19,7 @@ import {
   getTodayStart,
   isValidPhoneNumber,
 } from "./profile-utils";
-import { CalendarIcon, Upload, X } from "lucide-react";
+import { CalendarIcon, Upload, X, ArrowRight } from "lucide-react";
 import { useFileUpload } from "@/hooks/use-file-upload";
 
 import { api } from "@/convex/_generated/api";
@@ -884,8 +884,24 @@ export default function DashboardPageClient() {
                       <TabQr slugValue={slugValue} />
                     </TabsContent>
                     <div className="flex justify-end mt-6">
-                      <Button type="submit" size="lg" className="min-w-[160px]" disabled={savingProfile || uploadingAvatar || uploadingSeoImage}>
-                        {uploadingAvatar || uploadingSeoImage ? "Augšupielādē attēlu..." : savingProfile ? "Saglabā..." : "Saglabāt"}
+                      <Button
+                        type="submit"
+                        size="lg"
+                        className="min-w-[160px]"
+                        disabled={
+                          (!form.formState.isDirty && !previewFile && !removeAvatar && !seoImagePreviewFile && !removeSeoImage) || savingProfile || uploadingAvatar || uploadingSeoImage
+                        }
+                      >
+                        {uploadingAvatar || uploadingSeoImage
+                          ? "Augšupielādē attēlu..."
+                          : savingProfile
+                          ? "Saglabā..."
+                          : (
+                              <>
+                                Saglabāt
+                                <ArrowRight className="ms-2 h-4 w-4 inline" />
+                              </>
+                            )}
                       </Button>
                     </div>
                   </form>
