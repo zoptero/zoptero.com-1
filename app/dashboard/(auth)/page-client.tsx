@@ -885,7 +885,7 @@ export default function DashboardPageClient() {
                     <TabsContent value="qr" className="space-y-4">
                       <TabQr slugValue={slugValue} />
                     </TabsContent>
-                    <div className="flex justify-end mt-6">
+                    <div className="flex justify-center md:justify-end mt-6">
                       <Button
                         type="submit"
                         size="lg"

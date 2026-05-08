@@ -29,8 +29,15 @@ export default function TabContacts({ form }: any) {
             <FormItem>
               <FormLabel>WhatsApp</FormLabel>
               <FormControl>
-                <Input3 placeholder="+371 ..." helperText="Tālruņa numurs saziņai WhatsApp" {...field} />
+                <WebsiteInput
+                  value={field.value}
+                  onChange={field.onChange}
+                  placeholder="37123456789"
+                  id="_r_12_-whatsapp"
+                  prefix="https://wa.me/"
+                />
               </FormControl>
+              <p className="text-muted-foreground text-xs">Saite uz WhatsApp.</p>
               <FormMessage />
             </FormItem>
           )}
@@ -208,8 +215,15 @@ export default function TabContacts({ form }: any) {
             <FormItem>
               <FormLabel>Threads</FormLabel>
               <FormControl>
-                <Input3 placeholder="https://" helperText="Saite uz Threads." {...field} />
+                <WebsiteInput
+                  value={field.value}
+                  onChange={field.onChange}
+                  placeholder="threads.net/lietotajvards"
+                  id="_r_12_-threads"
+                  prefix="https://"
+                />
               </FormControl>
+              <p className="text-muted-foreground text-xs">Saite uz Threads.</p>
               <FormMessage />
             </FormItem>
           )}
@@ -221,8 +235,15 @@ export default function TabContacts({ form }: any) {
             <FormItem>
               <FormLabel>YouTube</FormLabel>
               <FormControl>
-                <Input3 placeholder="https://" helperText="Saite uz YouTube." {...field} />
+                <WebsiteInput
+                  value={field.value}
+                  onChange={field.onChange}
+                  placeholder="youtube.com/@lietotajvards"
+                  id="_r_12_-youtube"
+                  prefix="https://"
+                />
               </FormControl>
+              <p className="text-muted-foreground text-xs">Saite uz YouTube.</p>
               <FormMessage />
             </FormItem>
           )}
@@ -237,8 +258,15 @@ export default function TabContacts({ form }: any) {
             <FormItem>
               <FormLabel>Linktree</FormLabel>
               <FormControl>
-                <Input3 placeholder="https://" helperText="Saite uz Linktree." {...field} />
+                <WebsiteInput
+                  value={field.value}
+                  onChange={field.onChange}
+                  placeholder="linktr.ee/lietotajvards"
+                  id="_r_12_-linktree"
+                  prefix="https://"
+                />
               </FormControl>
+              <p className="text-muted-foreground text-xs">Saite uz Linktree.</p>
               <FormMessage />
             </FormItem>
           )}
@@ -250,8 +278,15 @@ export default function TabContacts({ form }: any) {
             <FormItem>
               <FormLabel>Etsy</FormLabel>
               <FormControl>
-                <Input3 placeholder="https://" helperText="Saite uz Etsy." {...field} />
+                <WebsiteInput
+                  value={field.value}
+                  onChange={field.onChange}
+                  placeholder="etsy.com/shop/lietotajvards"
+                  id="_r_12_-etsy"
+                  prefix="https://"
+                />
               </FormControl>
+              <p className="text-muted-foreground text-xs">Saite uz Etsy.</p>
               <FormMessage />
             </FormItem>
           )}
