@@ -31,6 +31,14 @@ export default function Page() {
   return (
     <div className="mx-auto min-h-screen lg:max-w-7xl xl:pt-6">
       <div className="space-y-4">
+        {/* Subtitle from dashboard */}
+        <div className="mb-4 flex flex-row items-center justify-between space-y-2 lg:pl-2.5">
+          <div className="space-y-1">
+            <h1 className="text-2xl font-bold tracking-tight">Mana informācija</h1>
+            <p className="text-muted-foreground text-sm">Pārvaldi savus datus un savu redzamību.</p>
+          </div>
+        </div>
+
         <div className="bg-card overflow-hidden rounded-md border">
           <ProfileHeader />
 
