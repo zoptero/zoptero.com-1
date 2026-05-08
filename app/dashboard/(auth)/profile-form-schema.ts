@@ -48,6 +48,7 @@ export const profileFormSchema = z.object({
   seoDescription: z.string().trim().max(300),
   whatsapp: z.string().trim().max(30),
   instagram: z.string().trim().max(250),
+  linkedin: z.string().trim().max(250),
   tiktok: z.string().trim().max(250),
   telegram: z.string().trim().max(120),
   facebook: z.string().trim().max(250),
