@@ -24,7 +24,7 @@ export async function measure<T>(
   try {
     const result = await fn();
     const duration = Date.now() - startTime;
-    console.log(`[PERF] ${label}: ${duration}ms`);
+    // console.log(`[PERF] ${label}: ${duration}ms`);
     return result;
   } catch (error) {
     const duration = Date.now() - startTime;
@@ -45,7 +45,7 @@ export function measureSync<T>(
   try {
     const result = fn();
     const duration = Date.now() - startTime;
-    console.log(`[PERF] ${label}: ${duration}ms`);
+    // console.log(`[PERF] ${label}: ${duration}ms`);
     return result;
   } catch (error) {
     const duration = Date.now() - startTime;
@@ -67,7 +67,7 @@ export async function measureBatch<T, R>(
   try {
     const results = await Promise.all(items.map(fn));
     const duration = Date.now() - startTime;
-    console.log(`[PERF] ${label} (${items.length} items): ${duration}ms (${(duration / items.length).toFixed(2)}ms/item)`);
+    // console.log(`[PERF] ${label} (${items.length} items): ${duration}ms (${(duration / items.length).toFixed(2)}ms/item)`);
     return results;
   } catch (error) {
     const duration = Date.now() - startTime;
