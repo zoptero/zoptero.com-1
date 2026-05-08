@@ -1,0 +1,178 @@
+// Services tab content component
+
+import { FormField, FormItem, FormLabel, FormControl, FormDescription, FormMessage } from "@/components/ui/form";
+import { Input3 } from "@/components/input3";
+import { Input25 } from "@/components/input25";
+import { Select14 } from "@/components/select14";
+import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { CalendarIcon } from "lucide-react";
+import { cn } from "@/lib/utils";
+import React from "react";
+
+export default function TabServices({ form, SECTOR_OPTIONS, parseDateFromInput, getTodayStart, format }: any) {
+  return (
+    <>
+      <FormField
+        control={form.control}
+        name="myServicesText"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>Pakalpojumu veidi</FormLabel>
+            <FormControl>
+              <Textarea placeholder="Norādi galvenos darbu veidus un specializāciju." {...field} />
+            </FormControl>
+            <FormDescription className="text-xs">Pievieno aprakstu brīvā formā, kādus pakalpojumus piedāvā un ko klients var sagaidīt</FormDescription>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+        <FormField
+          control={form.control}
+          name="workingEnvironment"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Pakalpojumu specifika</FormLabel>
+              <FormControl>
+                <Input3
+                  placeholder="Attālināti, klātienē, hibrīds..."
+                  helperText="Kāds šobrīd ir vēlamais veicamo pakalpojumu formāts."
+                  {...field}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="startDate"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Pakalpojumu sniegšanas datums</FormLabel>
+              <FormControl>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      className={cn(
+                        "w-full justify-between text-left font-normal",
+                        !field.value && "text-muted-foreground",
+                      )}
+                    >
+                      {field.value ? format(parseDateFromInput(field.value) ?? new Date(field.value), "PPP") : "Izvēlies datumu"}
+                      <CalendarIcon className="ml-2 size-4 opacity-60" />
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-2" align="start">
+                    {(() => {
+                      const todayStart = getTodayStart();
+                      return (
+                        <Calendar
+                          mode="single"
+                          selected={parseDateFromInput(field.value)}
+                          onSelect={(date) => {
+                            if (!date) {
+                              form.setValue("startDate", "", {
+                                shouldDirty: true,
+                                shouldTouch: true,
+                                shouldValidate: true,
+                              });
+                              return;
+                            }
+                            if (date < todayStart) {
+                              return;
+                            }
+                            form.setValue("startDate", format(date, "yyyy-MM-dd"), {
+                              shouldDirty: true,
+                              shouldTouch: true,
+                              shouldValidate: true,
+                            });
+                          }}
+                          disabled={(date) => date < todayStart}
+                          captionLayout="dropdown"
+                        />
+                      );
+                    })()}
+                  </PopoverContent>
+                </Popover>
+              </FormControl>
+              <FormDescription className="text-xs">No kura datuma varat sniegt pakalpojumus. Neobligāti.</FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+      </div>
+
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+        <FormField
+          control={form.control}
+          name="strongKeywords"
+          render={({ field }) => (
+            <FormItem>
+              <div className="flex items-center justify-between">
+                <FormLabel>Atslēgvārdi</FormLabel>
+                <span className={`text-xs tabular-nums ${field.value.length >= 5 ? "text-destructive font-medium" : "text-muted-foreground"}`}>{field.value.length}/5</span>
+              </div>
+              <FormControl>
+                <Input25
+                  value={field.value}
+                  onChange={field.onChange}
+                  placeholder="Piem., elektriķis, seo, galdnieks"
+                />
+              </FormControl>
+              <FormDescription className="text-xs">Norādi atslēgvārdus, kuri palīdzētu MI atrast profilu. Spied Enter vai komatu, lai pievienotu piecus svarīgākos.</FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="hourPrice"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Stundas likme</FormLabel>
+              <FormControl>
+                <Input3
+                  placeholder="Piem., 35"
+                  helperText="Norādiet stundas likmi. Neobligāti."
+                  inputMode="numeric"
+                  maxLength={3}
+                  {...field}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+      </div>
+
+      <FormField
+        control={form.control}
+        name="sector"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>Nozare</FormLabel>
+            <FormControl>
+              <Select14
+                options={SECTOR_OPTIONS}
+                value={field.value ?? ""}
+                onChange={field.onChange}
+                placeholder="Izvēlies nozari"
+                searchPlaceholder="Meklē nozari..."
+                emptyLabel="Nozare nav atrasta"
+              />
+            </FormControl>
+            <FormDescription className="text-xs">Norādi pakalpojumu nozari, lai vieglāk MI būtu atrast informāciju.</FormDescription>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+    </>
+  );
+}

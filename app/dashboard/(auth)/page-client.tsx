@@ -1,4 +1,3 @@
-
 "use client";
 import { QRCodeSVG } from "qrcode.react";
 
@@ -8,8 +7,18 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useAction, useMutation, useQuery } from "convex/react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { profileFormSchema, ProfileFormValues } from "./profile-form-schema";
 import { toast } from "sonner";
 import { format } from "date-fns";
+import {
+  isValidUrl,
+  normalizeSlug,
+  parseCsv,
+  parseDateFromInput,
+  hasExactImageDimensions,
+  getTodayStart,
+  isValidPhoneNumber,
+} from "./profile-utils";
 import { CalendarIcon, Upload, X } from "lucide-react";
 import { useFileUpload } from "@/hooks/use-file-upload";
 
@@ -48,80 +57,21 @@ import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 
-function isValidUrl(value: string): boolean {
-  try {
-    const url = new URL(value);
-    return url.protocol === "http:" || url.protocol === "https:";
-  } catch {
-    return false;
-  }
-}
+import TabProfile from "./profile-tabs/tab-profile";
+import TabContacts from "./profile-tabs/tab-contacts";
+import TabServices from "./profile-tabs/tab-services";
+import TabTasks from "./profile-tabs/tab-tasks";
+import TabPhoto from "./profile-tabs/tab-photo";
+import TabVideo from "./profile-tabs/tab-video";
+import TabSeo from "./profile-tabs/tab-seo";
+import TabQr from "./profile-tabs/tab-qr";
+import TabPayments from "./profile-tabs/tab-payments";
+import TabFaq from "./profile-tabs/tab-faq";
+import TabReviews from "./profile-tabs/tab-reviews";
+import TabClassfields from "./profile-tabs/tab-classfields";
+import TabShop from "./profile-tabs/tab-shop";
+import TabBlog from "./profile-tabs/tab-blog";
 
-function normalizeSlug(input: string): string {
-  return input
-    .toLowerCase()
-    .trim()
-    .replace(/[^a-z0-9\s-]/g, "") // Remove special characters
-    .replace(/\s+/g, "-") // Replace spaces with hyphens
-    .replace(/-+/g, "-") // Replace multiple hyphens with single hyphen
-    .replace(/^-+|-+$/g, ""); // Remove leading/trailing hyphens
-}
-
-function parseCsv(input: string): string[] {
-  return input
-    .split(",")
-    .map((item) => item.trim())
-    .filter(Boolean);
-}
-
-function parseDateFromInput(value: string | undefined): Date | undefined {
-  if (!value) {
-    return undefined;
-  }
-
-  const [year, month, day] = value.split("-").map(Number);
-  if (!year || !month || !day) {
-    return undefined;
-  }
-
-  return new Date(year, month - 1, day);
-}
-
-async function hasExactImageDimensions(
-  file: File,
-  expectedWidth: number,
-  expectedHeight: number,
-): Promise<boolean> {
-  const objectUrl = URL.createObjectURL(file);
-
-  try {
-    const dimensions = await new Promise<{ width: number; height: number }>((resolve, reject) => {
-      const image = new Image();
-      image.onload = () => {
-        resolve({ width: image.width, height: image.height });
-      };
-      image.onerror = () => {
-        reject(new Error("Unable to read image dimensions"));
-      };
-      image.src = objectUrl;
-    });
-
-    return dimensions.width === expectedWidth && dimensions.height === expectedHeight;
-  } finally {
-    URL.revokeObjectURL(objectUrl);
-  }
-}
-
-function getTodayStart(): Date {
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  return today;
-}
-
-function isValidPhoneNumber(value: string): boolean {
-  const normalized = value.replace(/[\s()-]/g, "");
-  return /^\+[1-9]\d{7,14}$/.test(normalized);
-}
 
 const urlOrEmptySchema = z
   .string()
@@ -169,50 +119,6 @@ const SECTOR_OPTIONS = [
   value: option,
 }));
 
-const profileFormSchema = z.object({
-  displayName: z.string().trim().min(3, "Vārdam nepieciešams vismaz 3 simboli.").max(80),
-  email: z.string().trim().email("Enter a valid email.").or(z.literal("")),
-  phone: phoneOrEmptySchema,
-  city: z.string().trim().max(80),
-  aboutMe: z.string().trim().max(2000),
-  bio: z.string().trim().max(140),
-  accountType: z.union([z.literal(""), z.literal("b2b"), z.literal("b2c")]),
-  sector: z.string().trim().max(120),
-  slug: z
-    .string()
-    .trim()
-    .max(80)
-    .regex(/^[a-z0-9-]*$/, "Use lowercase letters, numbers, and hyphens only.")
-    .refine((value) => value === "" || value.length >= 3, "Vismaz 3 simboli."),
-  workingEnvironment: z.string().trim().max(120),
-  startDate: z.string().optional(),
-  onlineStatus: z.boolean(),
-  strongKeywords: z.array(z.string().min(2, "Vismaz 2 simboli.").max(24, "Maksimāli 24 simboli.")).max(5, "Maksimāli 5 atslēgvārdi."),
-  hourPrice: z
-    .string()
-    .trim()
-    .max(3, "Maksimāli 3 cipari.")
-    .refine((value) => /^\d*$/.test(value), "Atļauti tikai cipari."),
-  myServicesText: z.string().trim().max(500),
-  mediaUrl: httpsUrlOrEmptySchema,
-  profileVideoUrl: httpsUrlOrEmptySchema,
-  seoTitle: z.string().trim().max(120),
-  seoDescription: z.string().trim().max(300),
-  whatsapp: phoneOrEmptySchema,
-  instagram: httpsUrlOrEmptySchema,
-  tiktok: httpsUrlOrEmptySchema,
-  telegram: z.string().trim().max(120),
-  facebook: httpsUrlOrEmptySchema,
-  threads: httpsUrlOrEmptySchema,
-  youtube: httpsUrlOrEmptySchema,
-  linktree: httpsUrlOrEmptySchema,
-  etsy: httpsUrlOrEmptySchema,
-  paymentCash: z.boolean(),
-  paymentBankTransfer: z.boolean(),
-  paymentCard: z.boolean(),
-});
-
-type ProfileFormValues = z.infer<typeof profileFormSchema>;
 
 const defaultValues: ProfileFormValues = {
   displayName: "",
@@ -276,47 +182,40 @@ function DashboardProfileSkeleton() {
     <div className="space-y-4 lg:pl-2.5">
       <div className="mb-4">
         <div className="flex w-max items-center gap-2 rounded-lg border p-1">
-          <Skeleton className="h-8 w-16" />
           <Skeleton className="h-8 w-24" />
-          <Skeleton className="h-8 w-20" />
-          <Skeleton className="h-8 w-18" />
-          <Skeleton className="h-8 w-14" />
-          <Skeleton className="h-8 w-16" />
-          <Skeleton className="h-8 w-16" />
         </div>
       </div>
-
       <div className="flex w-full items-stretch gap-4">
         <div className="min-w-0 flex-1">
           <Card>
             <CardContent className="space-y-6 pt-6">
-              <div className="space-y-2">
-                <Skeleton className="h-4 w-28" />
-                <Skeleton className="h-10 w-full" />
-                <Skeleton className="h-3 w-72" />
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                <div className="flex flex-col gap-2">
+                  <Skeleton className="h-4 w-28 mb-2" />
+                  <Skeleton className="h-10 w-full" />
+                </div>
               </div>
-
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
-                  <Skeleton className="h-4 w-24" />
+                  <Skeleton className="h-4 w-36" />
                   <Skeleton className="h-3 w-12" />
                 </div>
                 <Skeleton className="h-24 w-full" />
                 <Skeleton className="h-3 w-80" />
               </div>
-
-              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                <Skeleton className="h-16 w-full" />
-                <Skeleton className="h-16 w-full" />
+              <div className="flex items-center gap-4 mt-4">
+                <Skeleton className="size-20 rounded-full" />
+                <div className="flex flex-col gap-2">
+                  <Skeleton className="h-8 w-32" />
+                  <Skeleton className="h-4 w-40" />
+                </div>
               </div>
-
-              <div className="flex justify-end">
+              <div className="flex justify-end mt-6">
                 <Skeleton className="h-10 w-40" />
               </div>
             </CardContent>
           </Card>
         </div>
-
         <div className="hidden shrink-0 xl:flex xl:w-80">
           <Card className="w-full">
             <CardContent className="space-y-4 pt-6">
@@ -916,751 +815,74 @@ export default function DashboardPageClient() {
               <Form {...form}>
                 <form onSubmit={handleSaveCurrentTab} className="space-y-6">
                   <TabsContent value="profile" className="space-y-4">
-                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                      <FormField
-                        control={form.control}
-                        name="displayName"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Vārds Uzvārds</FormLabel>
-                            <FormControl>
-                              <Input3
-                                placeholder="Piem., Jānis Bērziņš"
-                                helperText="Vārds būs redzams profilā."
-                                onFocus={() => setFocusedField("Vārds Uzvārds")}
-                                {...field}
-                                onBlur={() => { field.onBlur(); setFocusedField(undefined); }}
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </div>
-
-                    <FormField
-                      control={form.control}
-                      name="bio"
-                      render={({ field }) => (
-                        <FormItem>
-                          <div className="flex items-center justify-between">
-                            <FormLabel>Īss apraksts par mani</FormLabel>
-                            <span className="text-muted-foreground text-xs">{(field.value ?? "").length}/140</span>
-                          </div>
-                          <FormControl>
-                            <Textarea
-                              placeholder="Dažos vārdos pastāsti par sevi..."
-                              className="min-h-24 resize-y"
-                              maxLength={140}
-                              onFocus={() => setFocusedField("Īss apraksts par mani")}
-                              {...field}
-                              onBlur={() => { field.onBlur(); setFocusedField(undefined); }}
-                            />
-                          </FormControl>
-                          <FormDescription className="text-xs">Apraksts būs redzams profilā.</FormDescription>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    <FormField
-                      control={form.control}
-                      name="aboutMe"
-                      render={() => (
-                        <FormItem>
-                          <FormLabel>Profila attēls</FormLabel>
-                          <FormControl>
-                            <div className="flex items-center gap-4">
-                              <Avatar className="size-20 shrink-0">
-                                <AvatarImage src={previewUrl} alt="Profila attēls" />
-                                <AvatarFallback className="text-lg">
-                                  {(form.watch("displayName")?.[0] ?? "?").toUpperCase()}
-                                </AvatarFallback>
-                              </Avatar>
-                              <div className="flex flex-col gap-2">
-                                <label className="flex cursor-pointer items-center gap-2 rounded-md border px-3 py-2 text-sm transition-colors hover:bg-accent">
-                                  <Upload className="size-4" />
-                                  Pievienot attēlu
-                                  <input
-                                    type="file"
-                                    accept="image/jpeg,image/png,image/webp,image/avif"
-                                    className="sr-only"
-                                    onChange={(e) => {
-                                      if (e.target.files) addFiles(e.target.files);
-                                    }}
-                                  />
-                                </label>
-                                {previewFile ? (
-                                  <button
-                                    type="button"
-                                    onClick={() => removeFile(previewFile.id)}
-                                    className="flex items-center gap-1 text-xs text-muted-foreground hover:text-destructive"
-                                  >
-                                    <X className="size-3" /> Noņemt jauno attēlu
-                                  </button>
-                                ) : removeAvatar ? (
-                                  <button
-                                    type="button"
-                                    onClick={() => setRemoveAvatar(false)}
-                                    className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground"
-                                  >
-                                    <X className="size-3" /> Atcelt dzēšanu
-                                  </button>
-                                ) : profile?.avatarKey ? (
-                                  <button
-                                    type="button"
-                                    onClick={() => setRemoveAvatar(true)}
-                                    className="flex items-center gap-1 text-xs text-muted-foreground hover:text-destructive"
-                                  >
-                                    <X className="size-3" /> Dzēst attēlu
-                                  </button>
-                                ) : null}
-                                <p className="text-xs text-muted-foreground">Izvēlies savu attēlu vai logo līdz 5MB.</p>
-                              </div>
-                            </div>
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
+                    <TabProfile
+                      form={form}
+                      previewUrl={previewUrl}
+                      previewFile={previewFile}
+                      removeAvatar={removeAvatar}
+                      profile={profile}
+                      addFiles={addFiles}
+                      removeFile={removeFile}
+                      setRemoveAvatar={setRemoveAvatar}
+                      setFocusedField={setFocusedField}
                     />
                   </TabsContent>
-
                   <TabsContent value="contact" className="space-y-4">
-                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                      <FormField
-                        control={form.control}
-                        name="phone"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Tālrunis</FormLabel>
-                            <FormControl>
-                              <Input3
-                                placeholder="+371 ..."
-                                helperText="Pēc izvēles, lai klienti var ar tevi sazināties ātrāk."
-                                {...field}
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={form.control}
-                        name="email"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>E-pasts</FormLabel>
-                            <FormControl>
-                              <Input3
-                                type="email"
-                                placeholder="you@example.com"
-                                helperText="Izmantosim saziņai un svarīgiem paziņojumiem."
-                                {...field}
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={form.control}
-                        name="mediaUrl"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Mājas lapa</FormLabel>
-                            <FormControl>
-                              <Input3
-                                placeholder="https://..."
-                                helperText="Norādi saiti uz mājas lapu."
-                                {...field}
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </div>
-
-                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                      <FormField
-                        control={form.control}
-                        name="city"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Pilsēta</FormLabel>
-                            <FormControl>
-                              <Input3
-                                placeholder="Rīga"
-                                helperText="Norādi pilsētu, kurā strādā vai esi pieejams."
-                                {...field}
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={form.control}
-                        name="whatsapp"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>WhatsApp</FormLabel>
-                            <FormControl>
-                              <Input3
-                                placeholder="+371 ..."
-                                helperText="Numurs, uz kuru klienti var rakstīt WhatsApp."
-                                {...field}
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </div>
-
-                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                      <FormField
-                        control={form.control}
-                        name="instagram"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Instagram</FormLabel>
-                            <FormControl>
-                              <Input3
-                                placeholder="https://"
-                                helperText="Tavs Instagram lietotājvārds."
-                                {...field}
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={form.control}
-                        name="facebook"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Facebook</FormLabel>
-                            <FormControl>
-                              <Input3
-                                placeholder="https://"
-                                helperText="Saite uz Facebook lapu vai profilu."
-                                {...field}
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </div>
-
-                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                      <FormField
-                        control={form.control}
-                        name="tiktok"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>TikTok</FormLabel>
-                            <FormControl>
-                              <Input3
-                                placeholder="https://"
-                                helperText="Tavs TikTok lietotājvārds."
-                                {...field}
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={form.control}
-                        name="telegram"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Telegram</FormLabel>
-                            <FormControl>
-                              <Input3
-                                placeholder="@tavs_profils"
-                                helperText="Tavs Telegram lietotājvārds."
-                                {...field}
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </div>
-
-                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                      <FormField
-                        control={form.control}
-                        name="threads"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Threads</FormLabel>
-                            <FormControl>
-                              <Input3
-                                placeholder="https://"
-                                helperText="Tavs Threads lietotājvārds."
-                                {...field}
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={form.control}
-                        name="youtube"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>YouTube</FormLabel>
-                            <FormControl>
-                              <Input3
-                                placeholder="https://"
-                                helperText="Saite uz savu YouTube kanālu."
-                                {...field}
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </div>
-
-                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                      <FormField
-                        control={form.control}
-                        name="linktree"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Linktree</FormLabel>
-                            <FormControl>
-                              <Input3
-                                placeholder="https://"
-                                helperText="Saite uz savu Linktree lapu."
-                                {...field}
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={form.control}
-                        name="etsy"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Etsy</FormLabel>
-                            <FormControl>
-                              <Input3
-                                placeholder="https://"
-                                helperText="Saite uz savu Etsy veikalu."
-                                {...field}
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </div>
+                    <TabContacts form={form} />
                   </TabsContent>
-
                   <TabsContent value="business" className="space-y-4">
-                    <FormField
-                      control={form.control}
-                      name="myServicesText"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Pakalpojumu veidi</FormLabel>
-                          <FormControl>
-                            <Textarea placeholder="Norādi galvenos darbu veidus un specializāciju." {...field} />
-                          </FormControl>
-                          <FormDescription className="text-xs">Pievieno aprakstu brīvā formā, kādus pakalpojumus piedāvā un ko klients var sagaidīt</FormDescription>
-                          <FormMessage />
-                        </FormItem>
-                      )}
+                    <TabServices
+                      form={form}
+                      SECTOR_OPTIONS={SECTOR_OPTIONS}
+                      parseDateFromInput={parseDateFromInput}
+                      getTodayStart={getTodayStart}
+                      format={format}
                     />
-
-                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                      <FormField
-                        control={form.control}
-                        name="workingEnvironment"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Pakalpojumu specifika</FormLabel>
-                            <FormControl>
-                              <Input3
-                                placeholder="Attālināti, klātienē, hibrīds..."
-                                helperText="Kāds šobrīd ir vēlamais veicamo pakalpojumu formāts."
-                                {...field}
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={form.control}
-                        name="startDate"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Pakalpojumu sniegšanas datums</FormLabel>
-                            <FormControl>
-                              <Popover>
-                                <PopoverTrigger asChild>
-                                  <Button
-                                    type="button"
-                                    variant="outline"
-                                    className={cn(
-                                      "w-full justify-between text-left font-normal",
-                                      !field.value && "text-muted-foreground",
-                                    )}
-                                  >
-                                    {field.value ? format(parseDateFromInput(field.value) ?? new Date(field.value), "PPP") : "Izvēlies datumu"}
-                                    <CalendarIcon className="ml-2 size-4 opacity-60" />
-                                  </Button>
-                                </PopoverTrigger>
-                                <PopoverContent className="w-auto p-2" align="start">
-                                  {(() => {
-                                    const todayStart = getTodayStart();
-                                    return (
-                                  <Calendar
-                                    mode="single"
-                                    selected={parseDateFromInput(field.value)}
-                                    onSelect={(date) => {
-                                      if (!date) {
-                                        form.setValue("startDate", "", {
-                                          shouldDirty: true,
-                                          shouldTouch: true,
-                                          shouldValidate: true,
-                                        });
-                                        return;
-                                      }
-
-                                      if (date < todayStart) {
-                                        return;
-                                      }
-
-                                      form.setValue("startDate", format(date, "yyyy-MM-dd"), {
-                                        shouldDirty: true,
-                                        shouldTouch: true,
-                                        shouldValidate: true,
-                                      });
-                                    }}
-                                    disabled={(date) => date < todayStart}
-                                    captionLayout="dropdown"
-                                  />
-                                    );
-                                  })()}
-                                </PopoverContent>
-                              </Popover>
-                            </FormControl>
-                            <FormDescription className="text-xs">No kura datuma varat sniegt pakalpojumus. Neobligāti.</FormDescription>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </div>
-
-                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                      <FormField
-                        control={form.control}
-                        name="strongKeywords"
-                        render={({ field }) => (
-                          <FormItem>
-                            <div className="flex items-center justify-between">
-                              <FormLabel>Atslēgvārdi</FormLabel>
-                              <span className={`text-xs tabular-nums ${field.value.length >= 5 ? "text-destructive font-medium" : "text-muted-foreground"}`}>{field.value.length}/5</span>
-                            </div>
-                            <FormControl>
-                              <Input25
-                                value={field.value}
-                                onChange={field.onChange}
-                                placeholder="Piem., elektriķis, seo, galdnieks"
-                              />
-                            </FormControl>
-                            <FormDescription className="text-xs">Norādi atslēgvārdus, kuri palīdzētu MI atrast profilu. Spied Enter vai komatu, lai pievienotu piecus svarīgākos.</FormDescription>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-
-                      <FormField
-                        control={form.control}
-                        name="hourPrice"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Stundas likme</FormLabel>
-                            <FormControl>
-                              <Input3
-                                placeholder="Piem., 35"
-                                helperText="Norādiet stundas likmi. Neobligāti."
-                                inputMode="numeric"
-                                maxLength={3}
-                                {...field}
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </div>
-
-                    <FormField
-                      control={form.control}
-                      name="sector"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Nozare</FormLabel>
-                          <FormControl>
-                            <Select14
-                              options={SECTOR_OPTIONS}
-                              value={field.value ?? ""}
-                              onChange={field.onChange}
-                              placeholder="Izvēlies nozari"
-                              searchPlaceholder="Meklē nozari..."
-                              emptyLabel="Nozare nav atrasta"
-                            />
-                          </FormControl>
-                          <FormDescription className="text-xs">Norādi pakalpojumu nozari, lai vieglāk MI būtu atrast informāciju.</FormDescription>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
                   </TabsContent>
-
+                  <TabsContent value="uzdevumi" className="space-y-4">
+                    <TabTasks />
+                  </TabsContent>
+                  <TabsContent value="foto" className="space-y-4">
+                    <TabPhoto form={form} />
+                  </TabsContent>
                   <TabsContent value="video" className="space-y-4">
-                    <FormField
-                      control={form.control}
-                      name="profileVideoUrl"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Video</FormLabel>
-                          <FormControl>
-                            <Input3
-                              placeholder="https://..."
-                                helperText="Norādi saiti uz video resursu."
-                              {...field}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                    <TabVideo form={form} />
                   </TabsContent>
-
+                  <TabsContent value="blogs" className="space-y-4">
+                    <TabBlog />
+                  </TabsContent>
+                  <TabsContent value="veikals" className="space-y-4">
+                    <TabShop />
+                  </TabsContent>
+                  <TabsContent value="sludinajumi" className="space-y-4">
+                    <TabClassfields />
+                  </TabsContent>
+                  <TabsContent value="buj" className="space-y-4">
+                    <TabFaq />
+                  </TabsContent>
                   <TabsContent value="seo" className="space-y-4">
-                    <FormField
-                      control={form.control}
-                      name="slug"
-                      render={({ field, fieldState }) => (
-                        <FormItem>
-                          <FormLabel>Saite uz profilu</FormLabel>
-                          <FormControl>
-                            <Input7
-                              value={field.value ?? ""}
-                              onChange={(nextValue) => {
-                                const normalized = nextValue
-                                  .replace(/^https?:\/\/zoptero\.com\//i, "")
-                                  .trim();
-                                field.onChange(normalized);
-                              }}
-                              placeholder="mans-profils"
-                              baseUrl="https://zoptero.com/"
-                            />
-                          </FormControl>
-                          <FormDescription
-                            className={cn(
-                              "text-xs",
-                              fieldState.error?.message && "text-destructive",
-                              !fieldState.error?.message && slugValue && slugValue.length >= 3 && slugCheckResult && !slugCheckResult.available && "text-destructive",
-                              !fieldState.error?.message && slugValue && slugValue.length >= 3 && slugCheckResult?.available && "text-emerald-600",
-                            )}
-                          >
-                            {fieldState.error?.message
-                              ? fieldState.error.message
-                              : slugValue && slugValue.length >= 3 && slugCheckResult
-                                ? slugCheckResult.available
-                                  ? "Saite saglabāta un varat to lietot."
-                                  : "Nevarat izmantot šo saiti. Izvēlies citu."
-                                : "Izvēlies savu publiskā profila adresi platformā."}
-                          </FormDescription>
-                        </FormItem>
-                      )}
+                    <TabSeo
+                      form={form}
+                      slugValue={slugValue}
+                      slugCheckResult={slugCheckResult}
+                      profile={profile}
+                      seoImagePreviewUrl={seoImagePreviewUrl}
+                      seoImagePreviewFile={seoImagePreviewFile}
+                      removeSeoImage={removeSeoImage}
+                      setRemoveSeoImage={setRemoveSeoImage}
+                      addSeoImageFiles={addSeoImageFiles}
+                      removeSeoImageFile={removeSeoImageFile}
                     />
-
-                    <FormField
-                      control={form.control}
-                      name="seoTitle"
-                      render={({ field }) => (
-                        <FormItem>
-                          <div className="flex items-center justify-between">
-                            <FormLabel>SEO virsraksts</FormLabel>
-                            <span className="text-muted-foreground text-xs">{(field.value ?? "").length}/60</span>
-                          </div>
-                          <FormControl>
-                            <Input3
-                              placeholder="Piem., Grāmatvedis Rīgā | Jānis Bērziņš"
-                              helperText="Virsraksts būs redzams meklēšanas rezultātos. Ieteicams līdz 60 simboliem."
-                              helperTextClassName={(field.value ?? "").length > 60 ? "text-destructive" : undefined}
-                              {...field}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name="seoDescription"
-                      render={({ field }) => (
-                        <FormItem>
-                          <div className="flex items-center justify-between">
-                            <FormLabel>SEO apraksts</FormLabel>
-                            <span className="text-muted-foreground text-xs">{(field.value ?? "").length}/160</span>
-                          </div>
-                          <FormControl>
-                            <Textarea placeholder="Įss apraksts, ko redzēs Google meklēšanas rezultātos..." {...field} />
-                          </FormControl>
-                          <FormDescription className={cn("text-xs", (field.value ?? "").length > 160 && "text-destructive")}>Apraksts būs redzams meklēšanas rezultātos. Ieteicams līdz 160 simboliem.</FormDescription>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    <div className="space-y-2">
-                      <FormLabel>SEO attēls</FormLabel>
-                      <div className="flex flex-col gap-3 rounded-md md:max-w-[360px]">
-                        <div className="w-full max-w-[280px]">
-                          <div className="bg-muted flex aspect-[2/1] w-full items-center justify-center overflow-hidden rounded-md border">
-                            {seoImagePreviewUrl ? (
-                              <img
-                                src={seoImagePreviewUrl}
-                                alt="SEO attēla priekšskatījums"
-                                className="h-full w-full object-cover"
-                              />
-                            ) : (
-                              <span className="text-muted-foreground px-3 text-xs w-full flex items-center justify-center h-full">
-                                Vēlamais izmērs 1200 x 630 px
-                              </span>
-                            )}
-                          </div>
-                        </div>
-                        <label className="flex cursor-pointer items-center justify-center gap-2 rounded-md border px-3 py-2 text-sm transition-colors hover:bg-accent w-full max-w-[280px] text-center" style={{ width: '100%' }}>
-                          <Upload className="size-4" />
-                          Pievienot
-                          <input
-                            type="file"
-                            accept="image/jpeg,image/png,image/webp,image/avif"
-                            className="sr-only"
-                            onChange={(event) => {
-                              if (!event.target.files) {
-                                return;
-                              }
-                              setRemoveSeoImage(false);
-                              addSeoImageFiles(event.target.files);
-                            }}
-                          />
-                        </label>
-                        {seoImagePreviewFile ? (
-                          <button
-                            type="button"
-                            onClick={() => removeSeoImageFile(seoImagePreviewFile.id)}
-                            className="flex items-center gap-1 text-xs text-muted-foreground hover:text-destructive w-full max-w-[280px]"
-                          >
-                            <X className="size-3" /> Noņemt jauno SEO attēlu
-                          </button>
-                        ) : removeSeoImage ? (
-                          <button
-                            type="button"
-                            onClick={() => setRemoveSeoImage(false)}
-                            className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground w-full max-w-[280px]"
-                          >
-                            <X className="size-3" /> Atcelt SEO attēla dzēšanu
-                          </button>
-                        ) : profile?.seoImageKey ? (
-                          <button
-                            type="button"
-                            onClick={() => setRemoveSeoImage(true)}
-                            className="flex items-center gap-1 text-xs text-muted-foreground hover:text-destructive w-full max-w-[280px]"
-                          >
-                            <X className="size-3" /> Dzēst SEO attēlu
-                          </button>
-                        ) : null}
-                        <FormDescription className="text-xs">
-                          Profila saites priekšskatījuma attēls līdz 5 MB.
-                        </FormDescription>
-                      </div>
-                    </div>
                   </TabsContent>
-
-                  <TabsContent value="qr" className="space-y-4">
-                    <div className="flex flex-col items-center gap-4">
-                      <div className="rounded-md border bg-background p-6 flex flex-col items-center">
-                        <QRCodeSVG
-                          value={slugValue ? `https://zoptero.com/${slugValue}` : "https://zoptero.com/"}
-                          size={180}
-                          bgColor="#fff"
-                          fgColor="#000"
-                          level="H"
-                          includeMargin={false}
-                        />
-                        <div className="mt-3 text-xs text-muted-foreground text-center">
-                          Noskenē mani un uzzini vairāk!
-                        </div>
-                      </div>
-                    </div>
-                  </TabsContent>
-
                   <TabsContent value="payments" className="space-y-4">
-                    <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-                      <FormField
-                        control={form.control}
-                        name="paymentCash"
-                        render={({ field }) => (
-                          <FormItem className="flex items-center justify-between rounded-md border p-3">
-                            <FormLabel>Skaidra nauda</FormLabel>
-                            <FormControl>
-                              <Switch checked={field.value} onCheckedChange={field.onChange} />
-                            </FormControl>
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={form.control}
-                        name="paymentBankTransfer"
-                        render={({ field }) => (
-                          <FormItem className="flex items-center justify-between rounded-md border p-3">
-                            <FormLabel>Bankas pārskaitījums</FormLabel>
-                            <FormControl>
-                              <Switch checked={field.value} onCheckedChange={field.onChange} />
-                            </FormControl>
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={form.control}
-                        name="paymentCard"
-                        render={({ field }) => (
-                          <FormItem className="flex items-center justify-between rounded-md border p-3">
-                            <FormLabel>Bankas karte</FormLabel>
-                            <FormControl>
-                              <Switch checked={field.value} onCheckedChange={field.onChange} />
-                            </FormControl>
-                          </FormItem>
-                        )}
-                      />
-                    </div>
+                    <TabPayments form={form} />
                   </TabsContent>
-
-                  <div className="flex justify-end">
-                    <Button type="submit" disabled={(!form.formState.isDirty && !previewFile && !removeAvatar && !seoImagePreviewFile && !removeSeoImage) || savingProfile || uploadingAvatar || uploadingSeoImage}>
-                      {uploadingAvatar || uploadingSeoImage ? "Augšupielādē attēlu..." : savingProfile ? "Saglabā..." : "Saglabāt"}
-                    </Button>
-                  </div>
+                  <TabsContent value="atsauksmes" className="space-y-4">
+                    <TabReviews />
+                  </TabsContent>
+                  <TabsContent value="qr" className="space-y-4">
+                    <TabQr slugValue={slugValue} />
+                  </TabsContent>
                 </form>
               </Form>
             </CardContent>
