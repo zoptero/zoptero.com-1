@@ -1,7 +1,9 @@
 import { mutation } from "./_generated/server";
 
+import { internal } from "./_generated/api";
+
 // One-time migration: Ensure all profiles have required fields
-export const patchProfilesRequiredFields = mutation(async ({ db }) => {
+export const patchProfilesRequiredFields = mutation(async ({ db, scheduler }) => {
   const profiles = await db.query("profiles").collect();
   let updated = 0;
   for (const profile of profiles) {
@@ -11,7 +13,7 @@ export const patchProfilesRequiredFields = mutation(async ({ db }) => {
     if (Object.keys(patch).length > 0) {
       await db.patch(profile._id, patch);
       // Schedule embedding recalculation
-      await ctx.scheduler.runAfter(0, internal.ai.generateProfileEmbedding, {
+      await scheduler.runAfter(0, internal.ai.generateProfileEmbedding, {
         profileId: profile._id,
       });
       updated++;

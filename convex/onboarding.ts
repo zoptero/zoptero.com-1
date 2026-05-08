@@ -1,6 +1,7 @@
 import { v } from "convex/values";
 import { mutation, action } from "./_generated/server";
 import { api } from "./_generated/api";
+import { internal } from "./_generated/api";
 import { createClerkClient } from "@clerk/backend";
 
 // Initialize Clerk client for backend operations
