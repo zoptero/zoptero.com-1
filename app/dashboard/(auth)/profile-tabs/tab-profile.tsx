@@ -56,6 +56,21 @@ export default function TabProfile({ form, previewUrl, previewFile, removeAvatar
         )}
       />
 
+      {/* Pilsēta field moved from Contacts tab */}
+      <FormField
+        control={form.control}
+        name="city"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>Pilsēta</FormLabel>
+            <FormControl>
+              <Input3 placeholder="Rīga" helperText="Norādi pilsētu, kurā piedāvā savus pakalpojumus." {...field} />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+
       <FormField
         control={form.control}
         name="aboutMe"

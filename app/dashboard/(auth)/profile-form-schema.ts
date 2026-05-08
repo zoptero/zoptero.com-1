@@ -1,6 +1,15 @@
 // Profile form schema and types for dashboard/profile page
 import { z } from "zod";
 
+const httpsUrlOrEmptySchema = z
+  .string()
+  .trim()
+  .max(250)
+  .refine(
+    (value) => value === "" || (value.startsWith("https://") && /^https:\/\/.+\..+/.test(value)),
+    "Norādi derīgu saiti ar https://",
+  );
+
 export const profileFormSchema = z.object({
   displayName: z.string().trim().min(3, "Vārdam nepieciešams vismaz 3 simboli.").max(80),
   email: z.string().trim().email("Enter a valid email.").or(z.literal("")),
@@ -33,7 +42,7 @@ export const profileFormSchema = z.object({
     .max(3, "Maksimāli 3 cipari.")
     .refine((value) => /^\d*$/.test(value), "Atļauti tikai cipari."),
   myServicesText: z.string().trim().max(500),
-  mediaUrl: z.string().trim().max(250),
+  mediaUrl: httpsUrlOrEmptySchema,
   profileVideoUrl: z.string().trim().max(250),
   seoTitle: z.string().trim().max(120),
   seoDescription: z.string().trim().max(300),
