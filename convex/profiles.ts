@@ -230,6 +230,7 @@ export const update = mutation({
     facebook: v.optional(v.string()),
     threads: v.optional(v.string()),
     youtube: v.optional(v.string()),
+    pinterest: v.optional(v.string()),
     onlineStatus: v.optional(v.boolean()),
     strongKeywords: v.optional(v.array(v.string())),
     profileVideoUrl: v.optional(v.string()),
