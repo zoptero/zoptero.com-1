@@ -54,6 +54,7 @@ export const profileFormSchema = z.object({
   threads: z.string().trim().max(250),
   youtube: z.string().trim().max(250),
   linktree: z.string().trim().max(250),
+  pinterest: z.string().trim().max(250),
   etsy: z.string().trim().max(250),
   paymentCash: z.boolean(),
   paymentBankTransfer: z.boolean(),
