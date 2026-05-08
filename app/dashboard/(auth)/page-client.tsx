@@ -148,6 +148,7 @@ const defaultValues: ProfileFormValues = {
   threads: "",
   youtube: "",
   linktree: "",
+  pinterest: "",
   etsy: "",
   paymentCash: false,
   paymentBankTransfer: false,
