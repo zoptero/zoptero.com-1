@@ -688,6 +688,7 @@ export default function DashboardPageClient() {
       ...(values.facebook !== currentFacebook ? { facebook: values.facebook || "" } : {}),
       ...(values.threads !== currentThreads ? { threads: values.threads || "" } : {}),
       ...(values.youtube !== currentYoutube ? { youtube: values.youtube || "" } : {}),
+      ...(values.pinterest !== profile?.pinterest ? { pinterest: values.pinterest || "" } : {}),
       ...(values.linktree !== currentLinktree ? { linktree: values.linktree || "" } : {}),
       ...(values.etsy !== currentEtsy ? { etsy: values.etsy || "" } : {}),
       paymentCash: values.paymentCash,
