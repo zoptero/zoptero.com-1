@@ -1,6 +1,7 @@
 "use client";
 
 import ThemeSwitch from "@/components/layout/header/theme-switch";
+import { HeroUserMenu } from "@/components/HeroUserMenu";
 import { GlobalFooter } from "@/components/layout/global-footer";
 import { HeroTitleRotator } from "@/components/hero-title-rotator";
 import { Badge } from "@/components/ui/badge";
@@ -26,12 +27,8 @@ export default function HeroSection() {
           {/* Navigation links removed as requested */}
         </NavigationMenu>
 
-        <div className="flex items-center gap-2 w-full justify-end md:w-auto md:justify-start">
-          <ThemeSwitch />
-          <Button variant="outline" className="rounded-full" size="sm" asChild>
-            <Link href="/sign-in">Ienākt</Link>
-          </Button>
-        </div>
+        {/* User menu: shows UserButton if signed in, sign-in button if not */}
+        <HeroUserMenu />
       </nav>
 
       <div className="flex w-full flex-1 items-center justify-center py-3 md:py-4 lg:py-6">

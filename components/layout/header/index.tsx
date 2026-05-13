@@ -21,7 +21,6 @@ export function SiteHeader() {
         <Search />
 
         <div className="ml-auto flex items-center gap-2">
-          <ThemeSwitch />
           <UserButton
             appearance={{
               elements: {
