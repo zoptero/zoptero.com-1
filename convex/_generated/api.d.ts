@@ -22,6 +22,7 @@ import type * as payments from "../payments.js";
 import type * as profiles from "../profiles.js";
 import type * as publicActions from "../publicActions.js";
 import type * as ragChat from "../ragChat.js";
+import type * as rateLimiter from "../rateLimiter.js";
 import type * as users from "../users.js";
 import type * as utils from "../utils.js";
 
@@ -46,6 +47,7 @@ declare const fullApi: ApiFromModules<{
   profiles: typeof profiles;
   publicActions: typeof publicActions;
   ragChat: typeof ragChat;
+  rateLimiter: typeof rateLimiter;
   users: typeof users;
   utils: typeof utils;
 }>;

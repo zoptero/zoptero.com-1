@@ -2,6 +2,7 @@ import { ConvexError, v } from "convex/values";
 import { internal } from "./_generated/api";
 import type { Id } from "./_generated/dataModel";
 import { action, internalMutation, internalQuery, mutation, query, type MutationCtx } from "./_generated/server";
+import { checkChatRateLimit, sanitizeUserInput, MAX_MESSAGE_LENGTH } from "./rateLimiter";
 
 const DEFAULT_MAX_CONTEXT_CHARS = 8000;
 const MAX_ALLOWED_CONTEXT_CHARS = 20000;
@@ -272,23 +273,48 @@ export const getRagChatDocumentMarkdownBySlug = internalQuery({
 });
 
 export const getActiveRagChatContext = internalQuery({
-  args: { maxChars: v.optional(v.number()), slugPrefix: v.optional(v.string()) },
+  args: {
+    maxChars: v.optional(v.number()),
+    slugPrefix: v.optional(v.string()),
+    // Tenancy: optional clerkId to filter documents by owner or account type
+    clerkId: v.optional(v.string()),
+    accountType: v.optional(v.union(v.literal("b2c"), v.literal("b2b"))),
+  },
   returns: v.string(),
   handler: async (ctx, args) => {
     const maxCharsRaw = args.maxChars ?? DEFAULT_MAX_CONTEXT_CHARS;
     const maxChars = Math.max(500, Math.min(maxCharsRaw, MAX_ALLOWED_CONTEXT_CHARS));
     const slugPrefix = args.slugPrefix?.trim().toLowerCase();
+    const clerkId = args.clerkId?.trim().toLowerCase();
 
     const docs = await ctx.db
       .query("ragChatDocuments")
       .withIndex("by_is_active", (q) => q.eq("isActive", true))
       .collect();
 
-    const scopedDocs = slugPrefix
+    // Apply slug prefix filter
+    const slugFiltered = slugPrefix
       ? docs.filter((doc) => doc.slug.startsWith(slugPrefix))
       : docs;
 
-    const sortedDocs = scopedDocs.sort((a, b) => b.updatedAt - a.updatedAt);
+    // Apply identity-based tenancy filtering:
+    // - If ownerClerkId is set, the document is private to that user.
+    // - If allowedAccountType is set, only users with matching accountType can access it.
+    // - Documents without ownerClerkId or allowedAccountType are public.
+    const tenancyFiltered = slugFiltered.filter((doc) => {
+      // Private document: only the owning user can access
+      if (doc.ownerClerkId) {
+        return clerkId === doc.ownerClerkId.trim().toLowerCase();
+      }
+      // Account-type-scoped document: only users with matching account type
+      if (doc.allowedAccountType) {
+        return args.accountType === doc.allowedAccountType;
+      }
+      // Public document: accessible to all authenticated users
+      return true;
+    });
+
+    const sortedDocs = tenancyFiltered.sort((a, b) => b.updatedAt - a.updatedAt);
     return buildKnowledgeContext(sortedDocs, maxChars);
   },
 });

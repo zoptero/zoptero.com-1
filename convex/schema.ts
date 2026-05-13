@@ -7,10 +7,13 @@ export default defineSchema({
     email: v.string(),
     name: v.optional(v.string()),
     avatarUrl: v.optional(v.string()),
-  accountType: v.optional(v.union(v.literal("b2c"), v.literal("b2b"))),
+    accountType: v.optional(v.union(v.literal("b2c"), v.literal("b2b"))),
     onboardingComplete: v.optional(v.boolean()),
     isPro: v.optional(v.boolean()),
     createdAt: v.number(),
+    // Rate-limiting fields for abuse prevention
+    lastMessageTimestamp: v.optional(v.number()),
+    messageCount: v.optional(v.number()),
   })
     .index("by_clerk_id", ["clerkId"])
     .index("by_email", ["email"]),
@@ -76,6 +79,10 @@ export default defineSchema({
     isActive: v.boolean(),
     updatedAt: v.number(),
     updatedByClerkId: v.optional(v.string()),
+    // Access control: if set, only users with matching accountType can access
+    allowedAccountType: v.optional(v.union(v.literal("b2c"), v.literal("b2b"))),
+    // If set, only the user who owns this document can access it
+    ownerClerkId: v.optional(v.string()),
   })
     .index("by_slug", ["slug"])
     .index("by_is_active", ["isActive"]),

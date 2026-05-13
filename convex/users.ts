@@ -2,7 +2,7 @@
 import { createClerkClient } from "@clerk/backend";
 import { ConvexError, v } from "convex/values";
 import { internal } from "./_generated/api";
-import { action, internalAction, internalMutation, mutation, query, type MutationCtx } from "./_generated/server";
+import { action, internalAction, internalMutation, internalQuery, mutation, query, type MutationCtx } from "./_generated/server";
 import { deleteUserCascadePublic, syncUserPublic } from "./publicActions";
 
 // Initialize Clerk client for backend operations
@@ -294,6 +294,22 @@ export const getOnboardingStatus = query({
     }
 
     return { status: "incomplete" } as const;
+  },
+});
+
+/**
+ * Internal query to fetch a user's account type for RAG tenancy filtering.
+ */
+export const getUserAccountType = internalQuery({
+  args: { clerkId: v.string() },
+  returns: v.union(v.null(), v.object({ accountType: v.optional(v.union(v.literal("b2c"), v.literal("b2b"))) })),
+  handler: async (ctx, args) => {
+    const user = await ctx.db
+      .query("users")
+      .withIndex("by_clerk_id", (q) => q.eq("clerkId", args.clerkId))
+      .first();
+    if (!user) return null;
+    return { accountType: user.accountType };
   },
 });
 
