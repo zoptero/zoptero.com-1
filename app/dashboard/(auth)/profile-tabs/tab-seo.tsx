@@ -158,9 +158,6 @@ export default function TabSeo({ form, slugValue, slugCheckResult, profile, seoI
         render={({ field }) => (
           <FormItem>
             <FormLabel>Profila galvene</FormLabel>
-            <FormDescription>
-              Šis attēls tiks rādīts profila augšpusē. Ieteicamais izmērs: 1000x333px vai proporcija 3:1. Maks. 5MB.
-            </FormDescription>
             <div className="flex flex-col gap-2 md:max-w-[360px]">
               <div className="relative aspect-[3/1] w-full rounded-t-md bg-cover bg-center border md:max-h-[240px]">
                 {headerImagePreviewUrl ? (
@@ -175,6 +172,9 @@ export default function TabSeo({ form, slugValue, slugCheckResult, profile, seoI
                   </span>
                 )}
               </div>
+              <FormDescription>
+                Šis attēls tiks rādīts profila augšpusē. Ieteicamais izmērs: 1000x333px vai proporcija 3:1. Maks. 5MB.
+              </FormDescription>
               <label className="flex cursor-pointer items-center justify-center gap-2 rounded-md border px-3 py-2 text-sm transition-colors hover:bg-accent w-full max-w-[280px] text-center">
                 <Upload className="size-4" />
                 Pievienot galvenes attēlu
