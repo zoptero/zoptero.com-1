@@ -931,114 +931,119 @@ export default function DashboardPageClient() {
         </div>
 
         <div className="w-full">
-          <div ref={profileCardWrapRef} className="min-w-0">
-            <Card>
-              <CardContent className="pt-6">
-                <Form {...form}>
-                  <form onSubmit={handleSaveCurrentTab} className="space-y-6">
-                    <TabsContent value="profile" className="space-y-4">
-                      <TabProfile
-                        form={form}
-                        previewUrl={previewUrl}
-                        previewFile={previewFile}
-                        removeAvatar={removeAvatar}
-                        profile={profile}
-                        addFiles={addFiles}
-                        removeFile={removeFile}
-                        setRemoveAvatar={setRemoveAvatar}
-                        setFocusedField={setFocusedField}
-                      />
-                    </TabsContent>
-                    <TabsContent value="contact" className="space-y-4">
-                      <TabContacts form={form} />
-                    </TabsContent>
-                    <TabsContent value="business" className="space-y-4">
-                      <TabServices
-                        form={form}
-                        SECTOR_OPTIONS={SECTOR_OPTIONS}
-                        parseDateFromInput={parseDateFromInput}
-                        getTodayStart={getTodayStart}
-                        format={format}
-                      />
-                    </TabsContent>
-                    <TabsContent value="uzdevumi" className="space-y-4">
-                      <TabTasks />
-                    </TabsContent>
-                    <TabsContent value="foto" className="space-y-4">
-                      <TabPhoto form={form} />
-                    </TabsContent>
-                    <TabsContent value="video" className="space-y-4">
-                      <TabVideo form={form} />
-                    </TabsContent>
-                    <TabsContent value="blogs" className="space-y-4">
-                      <TabBlog />
-                    </TabsContent>
-                    <TabsContent value="veikals" className="space-y-4">
-                      <TabShop />
-                    </TabsContent>
-                    <TabsContent value="sludinajumi" className="space-y-4">
-                      <TabClassfields />
-                    </TabsContent>
-                    <TabsContent value="buj" className="space-y-4">
-                      <TabFaq />
-                    </TabsContent>
-                    <TabsContent value="seo" className="space-y-4">
-                      <TabSeo
-                        form={form}
-                        slugValue={slugValue}
-                        slugCheckResult={slugCheckResult}
-                        profile={profile}
-                        seoImagePreviewUrl={seoImagePreviewUrl}
-                        seoImagePreviewFile={seoImagePreviewFile}
-                        removeSeoImage={removeSeoImage}
-                        setRemoveSeoImage={setRemoveSeoImage}
-                        addSeoImageFiles={addSeoImageFiles}
-                        removeSeoImageFile={removeSeoImageFile}
-                        headerImagePreviewUrl={headerImagePreviewUrl}
-                        headerImagePreviewFile={headerImagePreviewFile}
-                        removeHeaderImage={removeHeaderImage}
-                        setRemoveHeaderImage={setRemoveHeaderImage}
-                        addHeaderImageFiles={addHeaderImageFiles}
-                        removeHeaderImageFile={removeHeaderImageFile}
-                      />
-                    </TabsContent>
-                    <TabsContent value="payments" className="space-y-4">
-                      <TabPayments form={form} />
-                    </TabsContent>
-                    <TabsContent value="delivery" className="space-y-4">
-                      <TabDelivery form={form} />
-                    </TabsContent>
-                    <TabsContent value="atsauksmes" className="space-y-4">
-                      <TabReviews />
-                    </TabsContent>
-                    <TabsContent value="qr" className="space-y-4">
-                      <TabQr slugValue={slugValue} />
-                    </TabsContent>
-                    <div className="flex justify-center md:justify-end mt-6">
-                      <Button
-                        type="submit"
-                        size="sm"
-                        className="btn-cta"
-                        disabled={
-                          (!form.formState.isDirty && !previewFile && !removeAvatar && !seoImagePreviewFile && !removeSeoImage && !headerImagePreviewFile && !removeHeaderImage) || savingProfile || uploadingAvatar || uploadingSeoImage
-                        }
-                      >
-                        {uploadingAvatar || uploadingSeoImage
-                          ? "Augšupielādē attēlu..."
-                          : savingProfile
-                          ? "Saglabā..."
-                          : (
-                              <>
-                                Saglabāt
-                                <ArrowRight className="ms-2 h-4 w-4 inline" />
-                              </>
-                            )}
-                      </Button>
-                    </div>
-                  </form>
-                </Form>
-              </CardContent>
-            </Card>
+          <div ref={profileCardWrapRef} className="flex w-full items-stretch gap-4">
+            <div className="min-w-0 flex-1">
+              <Card>
+                <CardContent className="pt-6">
+                  <Form {...form}>
+                    <form onSubmit={handleSaveCurrentTab} className="space-y-6">
+                      <TabsContent value="profile" className="space-y-4">
+                        <TabProfile
+                          form={form}
+                          previewUrl={previewUrl}
+                          previewFile={previewFile}
+                          removeAvatar={removeAvatar}
+                          profile={profile}
+                          addFiles={addFiles}
+                          removeFile={removeFile}
+                          setRemoveAvatar={setRemoveAvatar}
+                          setFocusedField={setFocusedField}
+                        />
+                      </TabsContent>
+                      <TabsContent value="contact" className="space-y-4">
+                        <TabContacts form={form} />
+                      </TabsContent>
+                      <TabsContent value="business" className="space-y-4">
+                        <TabServices
+                          form={form}
+                          SECTOR_OPTIONS={SECTOR_OPTIONS}
+                          parseDateFromInput={parseDateFromInput}
+                          getTodayStart={getTodayStart}
+                          format={format}
+                        />
+                      </TabsContent>
+                      <TabsContent value="uzdevumi" className="space-y-4">
+                        <TabTasks />
+                      </TabsContent>
+                      <TabsContent value="foto" className="space-y-4">
+                        <TabPhoto form={form} />
+                      </TabsContent>
+                      <TabsContent value="video" className="space-y-4">
+                        <TabVideo form={form} />
+                      </TabsContent>
+                      <TabsContent value="blogs" className="space-y-4">
+                        <TabBlog />
+                      </TabsContent>
+                      <TabsContent value="veikals" className="space-y-4">
+                        <TabShop />
+                      </TabsContent>
+                      <TabsContent value="sludinajumi" className="space-y-4">
+                        <TabClassfields />
+                      </TabsContent>
+                      <TabsContent value="buj" className="space-y-4">
+                        <TabFaq />
+                      </TabsContent>
+                      <TabsContent value="seo" className="space-y-4">
+                        <TabSeo
+                          form={form}
+                          slugValue={slugValue}
+                          slugCheckResult={slugCheckResult}
+                          profile={profile}
+                          seoImagePreviewUrl={seoImagePreviewUrl}
+                          seoImagePreviewFile={seoImagePreviewFile}
+                          removeSeoImage={removeSeoImage}
+                          setRemoveSeoImage={setRemoveSeoImage}
+                          addSeoImageFiles={addSeoImageFiles}
+                          removeSeoImageFile={removeSeoImageFile}
+                          headerImagePreviewUrl={headerImagePreviewUrl}
+                          headerImagePreviewFile={headerImagePreviewFile}
+                          removeHeaderImage={removeHeaderImage}
+                          setRemoveHeaderImage={setRemoveHeaderImage}
+                          addHeaderImageFiles={addHeaderImageFiles}
+                          removeHeaderImageFile={removeHeaderImageFile}
+                        />
+                      </TabsContent>
+                      <TabsContent value="payments" className="space-y-4">
+                        <TabPayments form={form} />
+                      </TabsContent>
+                      <TabsContent value="delivery" className="space-y-4">
+                        <TabDelivery form={form} />
+                      </TabsContent>
+                      <TabsContent value="atsauksmes" className="space-y-4">
+                        <TabReviews />
+                      </TabsContent>
+                      <TabsContent value="qr" className="space-y-4">
+                        <TabQr slugValue={slugValue} />
+                      </TabsContent>
+                      <div className="flex justify-center md:justify-end mt-6">
+                        <Button
+                          type="submit"
+                          size="sm"
+                          className="btn-cta"
+                          disabled={
+                            (!form.formState.isDirty && !previewFile && !removeAvatar && !seoImagePreviewFile && !removeSeoImage && !headerImagePreviewFile && !removeHeaderImage) || savingProfile || uploadingAvatar || uploadingSeoImage
+                          }
+                        >
+                          {uploadingAvatar || uploadingSeoImage
+                            ? "Augšupielādē attēlu..."
+                            : savingProfile
+                            ? "Saglabā..."
+                            : (
+                                <>
+                                  Saglabāt
+                                  <ArrowRight className="ms-2 h-4 w-4 inline" />
+                                </>
+                              )}
+                        </Button>
+                      </div>
+                    </form>
+                  </Form>
+                </CardContent>
+              </Card>
+            </div>
+            <div className="hidden shrink-0 xl:flex xl:w-80">
+              <ProfileAssistantChat focusedField={focusedField} />
+            </div>
           </div>
         </div>
       </Tabs>
