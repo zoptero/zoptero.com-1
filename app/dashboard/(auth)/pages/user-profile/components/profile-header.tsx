@@ -14,6 +14,7 @@ import { useUser } from "@clerk/nextjs";
 import { useQuery, useAction } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -289,9 +290,10 @@ export function ProfileHeader() {
     return () => { cancelled = true; };
   }, [profile?.avatarKey, profile?.avatarUrl, clerkUser?.id, generateViewUrl, resolvedAvatarUrl]);
 
-  const displayName = profile?.displayName || clerkUser?.fullName || user.name;
+  const loading = !profile && !clerkUser;
+  const displayName = profile?.displayName || clerkUser?.fullName || "";
   const avatarSrc = resolvedAvatarUrl || undefined;
-  const fallback = displayName.charAt(0);
+  const fallback = displayName ? displayName.charAt(0) : "";
 
   return (
     <div className="relative">
@@ -311,24 +313,34 @@ export function ProfileHeader() {
       </div>
 
       <div className="-mt-10 px-4 pb-4 text-center lg:-mt-14">
-        <Avatar className="border-background mx-auto size-20 border-4 lg:size-28">
-          <AvatarImage src={avatarSrc} alt={displayName} />
-          <AvatarFallback>{fallback}</AvatarFallback>
-        </Avatar>
-        <div className="flex items-center justify-center gap-2">
-          <h4 className="text-lg font-semibold lg:text-2xl">{displayName}</h4>
-        </div>
-
-        <div className="text-muted-foreground mt-3 flex items-center justify-center gap-6 text-sm">
-          <div className="flex items-center gap-1.5">
-            <TrendingUp className="h-4 w-4" />
-            <span>{user.role}</span>
-          </div>
-          <div className="flex items-center gap-1.5">
-            <MapPin className="h-4 w-4" />
-            <span className="text-blue-500">{user.location}</span>
-          </div>
-        </div>
+        {loading ? (
+          <>
+            <div className="mx-auto mb-2 flex flex-col items-center">
+              <Skeleton className="size-20 lg:size-28 rounded-full border-4 border-background mb-2" />
+            </div>
+            <Skeleton className="mx-auto mb-2 h-6 w-32 rounded lg:h-8 lg:w-48" />
+          </>
+        ) : (
+          <>
+            <Avatar className="border-background mx-auto size-20 border-4 lg:size-28">
+              <AvatarImage src={avatarSrc} alt={displayName} />
+              <AvatarFallback>{fallback}</AvatarFallback>
+            </Avatar>
+            <div className="flex items-center justify-center gap-2">
+              <h4 className="text-lg font-semibold lg:text-2xl">{displayName}</h4>
+            </div>
+            <div className="text-muted-foreground mt-3 flex items-center justify-center gap-6 text-sm">
+              <div className="flex items-center gap-1.5">
+                <TrendingUp className="h-4 w-4" />
+                <span>{user.role}</span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <MapPin className="h-4 w-4" />
+                <span className="text-blue-500">{user.location}</span>
+              </div>
+            </div>
+          </>
+        )}
       </div>
     </div>
   );
