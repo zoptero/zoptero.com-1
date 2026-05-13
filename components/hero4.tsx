@@ -16,8 +16,9 @@ import FadeInSlide from "@/components/FadeInSlide";
 
 export default function HeroSection() {
   return (
-    <section className="flex min-h-screen min-h-[100svh] min-h-[100dvh] flex-col bg-background px-4 text-center text-sm md:px-8 lg:px-12 xl:px-16 max-[1024px]:overflow-hidden">
-      <nav className="flex w-full flex-none items-center justify-between py-2.5 md:px-8 md:py-3 lg:px-12 xl:px-16">
+    <section className="flex min-h-screen min-h-[100svh] min-h-[100dvh] flex-col bg-background text-center text-sm max-[1024px]:overflow-hidden">
+
+      <nav className="relative flex w-full flex-none items-center justify-center" style={{ minHeight: '6vw' }}>
         {/* Logo removed as requested */}
 
         <NavigationMenu
@@ -28,11 +29,15 @@ export default function HeroSection() {
         </NavigationMenu>
 
         {/* User menu: shows UserButton if signed in, sign-in button if not */}
-        <HeroUserMenu />
+        <div
+          style={{ position: 'absolute', top: '1vw', right: '1vw', aspectRatio: '1 / 1' }}
+        >
+          <HeroUserMenu />
+        </div>
       </nav>
 
       <div className="flex w-full flex-1 items-center justify-center py-3 md:py-4 lg:py-6">
-        <div className="flex w-full max-w-xl flex-col items-center justify-center gap-2.5 md:gap-3 lg:gap-4">
+        <div className="flex w-full max-w-3xl flex-col items-center justify-center gap-2.5 md:gap-3 lg:gap-4">
           <FadeInSlide delay={0} className="flex w-full justify-center">
             <Badge className="gap-1" variant="outline">
               <svg aria-hidden="true" className="text-emerald-600" width="12" height="12" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6.00016 11.1998L2.80016 7.99984L1.86683 8.93317L6.00016 13.0665L15.0002 4.0665L14.0668 3.13317L6.00016 11.1998Z" fill="currentColor"/></svg>
