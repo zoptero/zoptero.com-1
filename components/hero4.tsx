@@ -63,7 +63,7 @@ export default function HeroSection() {
           </FadeInSlide>
           <FadeInSlide delay={0.2} className="w-full">
             <div className="w-full flex justify-center">
-              <div className="bg-muted mt-2.5 w-full max-w-md mx-auto space-y-3 overflow-hidden rounded-xl focus-within:ring-2 focus-within:ring-white/40 md:mt-3 md:space-y-4 px-4 sm:px-0">
+              <div className="bg-muted mt-2.5 w-full max-w-md mx-auto space-y-3 overflow-hidden rounded-xl focus-within:ring-2 focus-within:ring-white/40 md:mt-3 md:space-y-4 px-4">
                 <Textarea
                   placeholder="Kas nepieciešams atrast?"
                   rows={3}

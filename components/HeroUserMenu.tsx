@@ -34,14 +34,16 @@ export function HeroUserMenu() {
         </>
       )}
       {!isSignedIn && (
-        <Button variant="default" className="btn-cta" asChild>
-          <Link href="/sign-in" className="flex items-center gap-2">
-            Ienākt
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2" className="inline ms-1 h-4 w-4">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14m-7-7 7 7-7 7" />
-            </svg>
-          </Link>
-        </Button>
+        <Link
+          href="/sign-in"
+          className="font-medium text-primary hover:underline focus-visible:underline transition-colors flex items-center gap-2 p-0 m-0 bg-transparent border-none shadow-none outline-none"
+          style={{ background: 'none', border: 'none', padding: 0, boxShadow: 'none' }}
+        >
+          Ienākt
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2" className="inline ms-1 h-4 w-4">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14m-7-7 7 7-7 7" />
+          </svg>
+        </Link>
       )}
     </div>
   );
