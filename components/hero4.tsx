@@ -30,7 +30,16 @@ export default function HeroSection() {
 
         {/* User menu: shows UserButton if signed in, sign-in button if not */}
         <div
-          style={{ position: 'absolute', top: '1vw', right: '1vw', aspectRatio: '1 / 1' }}
+          style={{
+            position: 'absolute',
+            top: '1vw',
+            right: '1vw',
+            aspectRatio: '1 / 1',
+            /* On mobile, increase spacing to 4vw */
+            ...(typeof window !== 'undefined' && window.innerWidth <= 640
+              ? { top: '4vw', right: '4vw' }
+              : {}),
+          }}
         >
           <HeroUserMenu />
         </div>
