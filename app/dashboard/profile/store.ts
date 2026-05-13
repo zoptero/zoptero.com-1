@@ -43,6 +43,7 @@ interface ProfileState {
     name: string;
     verified: boolean;
     avatar: string;
+    profileHeaderURL?: string;
     role: string;
     location: string;
     joinedDate: string;
