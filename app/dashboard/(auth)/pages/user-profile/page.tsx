@@ -70,7 +70,7 @@ export default function Page() {
   }, []);
 
   return (
-    <div className="min-h-full w-full space-y-4 lg:pl-2.5">
+    <div className="min-h-screen w-full space-y-4 lg:pl-2.5 bg-muted">
       
       {/* --- VIRSRAKSTS UN APAKŠVIRSRAKSTS --- */}
       <div className="mb-4 flex flex-col space-y-1">

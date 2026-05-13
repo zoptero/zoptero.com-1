@@ -30,7 +30,7 @@
   --primary-foreground: var(--color-white);
   --secondary: var(--base-300);
   --secondary-foreground: var(--base-800);
-  --muted: var(--color-neutral-100);
+  --muted: var(--color-white);
   --muted-foreground: var(--color-neutral-500);
   --accent: var(--base-200);
   --accent-foreground: var(--base-800);

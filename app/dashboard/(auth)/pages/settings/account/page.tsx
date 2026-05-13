@@ -88,12 +88,12 @@ export default function Page() {
     <Card>
       <CardContent>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 w-full max-w-full">
             <FormField
               control={form.control}
               name="name"
               render={({ field }) => (
-                <FormItem>
+                <FormItem className="w-full max-w-full">
                   <FormLabel>Name</FormLabel>
                   <FormControl>
                     <Input placeholder="Your name" {...field} />
@@ -109,7 +109,7 @@ export default function Page() {
               control={form.control}
               name="dob"
               render={({ field }) => (
-                <FormItem className="flex flex-col">
+                <FormItem className="flex flex-col w-full max-w-full">
                   <FormLabel>Date of birth</FormLabel>
                   <Popover>
                     <PopoverTrigger asChild>
@@ -148,7 +148,7 @@ export default function Page() {
               control={form.control}
               name="language"
               render={({ field }) => (
-                <FormItem className="flex flex-col">
+                <FormItem className="flex flex-col w-full max-w-full">
                   <FormLabel>Language</FormLabel>
                   <Popover>
                     <PopoverTrigger asChild>

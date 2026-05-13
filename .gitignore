@@ -50,3 +50,5 @@ next-env.d.ts
 /public/optero.lv-NEW/
 # clerk configuration (can include secrets)
 /.clerk/
+
+/shadcn-ui-kit-dashboard-main
