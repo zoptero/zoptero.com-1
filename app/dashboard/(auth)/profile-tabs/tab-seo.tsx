@@ -91,21 +91,22 @@ export default function TabSeo({ form, slugValue, slugCheckResult, profile, seoI
       <div className="space-y-2">
         <FormLabel>SEO attēls</FormLabel>
         <div className="flex flex-col gap-3 rounded-md md:max-w-[360px]">
-          <div className="w-full max-w-[280px]">
-            <div className="bg-muted flex aspect-[2/1] w-full items-center justify-center overflow-hidden rounded-md border">
-              {seoImagePreviewUrl ? (
-                <img
-                  src={seoImagePreviewUrl}
-                  alt="SEO attēla priekšskatījums"
-                  className="h-full w-full object-cover"
-                />
-              ) : (
-                <span className="text-muted-foreground px-3 text-xs w-full flex items-center justify-center h-full">
-                  Vēlamais izmērs 1200 x 630 px
-                </span>
-              )}
-            </div>
+          <div className="relative aspect-[3/1] w-full rounded-t-md bg-cover bg-center border max-h-[160px] md:max-h-[240px]">
+            {seoImagePreviewUrl ? (
+              <img
+                src={seoImagePreviewUrl}
+                alt="SEO attēla priekšskatījums"
+                className="h-full w-full object-cover rounded-t-md"
+              />
+            ) : (
+              <span className="text-muted-foreground px-3 text-xs w-full flex items-center justify-center h-full">
+                Vēlamais izmērs 1200 x 630 px
+              </span>
+            )}
           </div>
+          <FormDescription className="text-xs">
+            Profila saites priekšskatījuma attēls līdz 5 MB.
+          </FormDescription>
           <label className="flex cursor-pointer items-center justify-center gap-2 rounded-md border px-3 py-2 text-sm transition-colors hover:bg-accent w-full max-w-[280px] text-center" style={{ width: '100%' }}>
             <Upload className="size-4" />
             Pievienot
@@ -162,15 +163,12 @@ export default function TabSeo({ form, slugValue, slugCheckResult, profile, seoI
               />
             ) : (
               <span className="text-muted-foreground px-3 text-xs w-full flex items-center justify-center h-full">
-                Nav izvēlēts attēls
+                Vēlamais izmērs 1600 x 350 px
               </span>
             )}
           </div>
           <FormDescription className="text-xs">
             Profila saites priekšskatījuma attēls līdz 5 MB.
-          </FormDescription>
-          <FormDescription>
-            Šis attēls tiks rādīts profila augšpusē. Ieteicamais izmērs: 1000x333px vai proporcija 3:1. Maks. 5MB.
           </FormDescription>
           <label className="flex cursor-pointer items-center justify-center gap-2 rounded-md border px-3 py-2 text-sm transition-colors hover:bg-accent w-full max-w-[280px] text-center">
             <Upload className="size-4" />
