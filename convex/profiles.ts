@@ -235,12 +235,13 @@ export const update = mutation({
     onlineStatus: v.optional(v.boolean()),
     strongKeywords: v.optional(v.array(v.string())),
     profileVideoUrl: v.optional(v.string()),
+    profileHeaderURL: v.optional(v.string()),
     linktree: v.optional(v.string()),
     etsy: v.optional(v.string()),
     paymentCash: v.optional(v.boolean()),
     paymentBankTransfer: v.optional(v.boolean()),
     paymentCard: v.optional(v.boolean()),
-    faqs: v.optional(v.array(v.object({ question: v.string(), answer: v.string() }))),
+    faqs: v.optional(v.array(v.object({ question: v.string(), answer: v.string() })) ),
   },
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
