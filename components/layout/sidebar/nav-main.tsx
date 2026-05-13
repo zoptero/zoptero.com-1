@@ -114,7 +114,7 @@ export const navItems: NavGroup[] = [
           { title: "Appearance", href: "/dashboard/pages/settings/appearance" },
           { title: "Notifications", href: "/dashboard/pages/settings/notifications" },
           { title: "Display", href: "/dashboard/pages/settings/display" },
-          { title: "Pricing", href: "http://localhost:3000/dashboard/pages/pricing/column", icon: BadgeDollarSignIcon, isComing: true }
+          { title: "Pricing", href: "/dashboard/pages/pricing/column", icon: BadgeDollarSignIcon, isComing: true }
         ]
       },
       {
