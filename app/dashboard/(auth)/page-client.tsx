@@ -282,6 +282,8 @@ export default function DashboardPageClient() {
   const [resolvedAvatarUrl, setResolvedAvatarUrl] = useState<string | undefined>(undefined);
 
   const [resolvedSeoImageUrl, setResolvedSeoImageUrl] = useState<string | undefined>(undefined);
+  const [resolvedHeaderUrl, setResolvedHeaderUrl] = useState<string | undefined>(undefined);
+  const lastResolvedHeaderKeyRef = useRef<string | null>(null);
   const [focusedField, setFocusedField] = useState<string | undefined>(undefined);
   const [slugCheckResult, setSlugCheckResult] = useState<{ available: boolean; reserved?: boolean; normalizedSlug: string } | null>(null);
   const previewFile = files[0];
@@ -296,7 +298,7 @@ export default function DashboardPageClient() {
   });
   const slugValue = form.watch("slug");
   // Now form is defined, so we can safely assign headerImagePreviewUrl
-  const headerImagePreviewUrl = headerImagePreviewFile?.preview ?? (removeHeaderImage ? undefined : form.watch("profileHeaderURL") || profile?.profileHeaderURL);
+  const headerImagePreviewUrl = headerImagePreviewFile?.preview ?? (removeHeaderImage ? undefined : resolvedHeaderUrl || form.watch("profileHeaderURL") || profile?.profileHeaderURL);
 
   useEffect(() => {
     form.reset({
@@ -433,6 +435,54 @@ export default function DashboardPageClient() {
       cancelled = true;
     };
   }, [seoImagePreviewFile, removeSeoImage, profile?.seoImageKey, user?.id, resolvedSeoImageUrl, generateViewUrl]);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    const resolveHeaderUrl = async () => {
+      if (headerImagePreviewFile || removeHeaderImage) {
+        setResolvedHeaderUrl(undefined);
+        lastResolvedHeaderKeyRef.current = null;
+        return;
+      }
+
+      const rawUrl = form.watch("profileHeaderURL") || profile?.profileHeaderURL;
+      if (!rawUrl || !user?.id) {
+        setResolvedHeaderUrl(undefined);
+        lastResolvedHeaderKeyRef.current = null;
+        return;
+      }
+
+      // If it's not an R2 URL, use it directly
+      if (!rawUrl.includes("r2") && !rawUrl.includes("cloudflare")) {
+        setResolvedHeaderUrl(rawUrl);
+        return;
+      }
+
+      // Extract key from the full URL (similar to extractR2Key in profile-header.tsx)
+      const idx = rawUrl.indexOf("uploads/");
+      if (idx === -1) {
+        setResolvedHeaderUrl(rawUrl);
+        return;
+      }
+      const key = rawUrl.slice(idx);
+
+      if (lastResolvedHeaderKeyRef.current === key && resolvedHeaderUrl) return;
+
+      try {
+        const { viewUrl } = await generateViewUrl({ clerkId: user.id, key });
+        if (!cancelled) {
+          setResolvedHeaderUrl(viewUrl);
+          lastResolvedHeaderKeyRef.current = key;
+        }
+      } catch {
+        if (!cancelled) setResolvedHeaderUrl(rawUrl);
+      }
+    };
+
+    void resolveHeaderUrl();
+    return () => { cancelled = true; };
+  }, [headerImagePreviewFile, removeHeaderImage, form.watch("profileHeaderURL"), profile?.profileHeaderURL, user?.id, resolvedHeaderUrl, generateViewUrl]);
 
   useEffect(() => {
     const updateUnderlineAndScroll = () => {
