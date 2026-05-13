@@ -19,30 +19,31 @@ export default async function AuthLayout({
   return (
     <SidebarProvider
       defaultOpen={defaultOpen}
-      style={
-        {
-          "--sidebar-width": "calc(var(--spacing) * 64)",
-          "--header-height": "calc(var(--spacing) * 14)",
-          "--content-padding": "calc(var(--spacing) * 4)",
-          "--content-margin": "calc(var(--spacing) * 1.5)",
-          "--content-full-height":
-            "calc(100vh - var(--header-height) - (var(--content-padding) * 2) - (var(--content-margin) * 2))"
-        } as React.CSSProperties
-      }>
-      <AppSidebar variant="inset" />
-      <SidebarInset>
-        <SiteHeader />
-        <div className="bg-muted/40 flex flex-1 flex-col">
-          <div className="@container/main flex flex-1 flex-col p-(--content-padding) pb-0 xl:group-data-[theme-content-layout=centered]/layout:container xl:group-data-[theme-content-layout=centered]/layout:mx-auto">
-            <div className="flex-1 pb-(--content-padding)">
-              {children}
+      style={{
+        "--sidebar-width": "calc(var(--spacing) * 64)",
+        "--header-height": "calc(var(--spacing) * 14)",
+        "--content-padding": "calc(var(--spacing) * 4)",
+        "--content-margin": "calc(var(--spacing) * 1.5)",
+        "--content-full-height":
+          "calc(100vh - var(--header-height) - (var(--content-padding) * 2) - (var(--content-margin) * 2))"
+      } as React.CSSProperties}
+    >
+      <div className="flex flex-row h-screen w-full">
+        <AppSidebar variant="inset" />
+        <SidebarInset className="flex-1 flex flex-col min-h-screen">
+          <SiteHeader />
+          <div className="bg-muted/40 flex flex-1 flex-col">
+            <div className="@container/main flex flex-1 flex-col p-(--content-padding) pb-0 xl:group-data-[theme-content-layout=centered]/layout:container xl:group-data-[theme-content-layout=centered]/layout:mx-auto">
+              <div className="flex-1 pb-(--content-padding)">
+                {children}
+              </div>
+            </div>
+            <div className="@container/main px-(--content-padding) xl:group-data-[theme-content-layout=centered]/layout:container xl:group-data-[theme-content-layout=centered]/layout:mx-auto">
+              <GlobalFooter />
             </div>
           </div>
-          <div className="@container/main px-(--content-padding) xl:group-data-[theme-content-layout=centered]/layout:container xl:group-data-[theme-content-layout=centered]/layout:mx-auto">
-            <GlobalFooter />
-          </div>
-        </div>
-      </SidebarInset>
+        </SidebarInset>
+      </div>
     </SidebarProvider>
   );
 }

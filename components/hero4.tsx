@@ -1,6 +1,7 @@
 "use client";
 
 import ThemeSwitch from "@/components/layout/header/theme-switch";
+import { HeroUserMenu } from "@/components/HeroUserMenu";
 import { GlobalFooter } from "@/components/layout/global-footer";
 import { HeroTitleRotator } from "@/components/hero-title-rotator";
 import { Badge } from "@/components/ui/badge";
@@ -15,7 +16,7 @@ import FadeInSlide from "@/components/FadeInSlide";
 
 export default function HeroSection() {
   return (
-    <section className="flex min-h-screen min-h-[100svh] min-h-[100dvh] flex-col bg-[radial-gradient(125%_125%_at_50%_90%,#ffffff_40%,var(--color-purple-200)_100%)] bg-cover bg-center px-4 text-center text-sm dark:bg-[radial-gradient(125%_125%_at_50%_90%,var(--color-background)_40%,var(--color-purple-800)_100%)] md:px-8 lg:px-12 xl:px-16 max-[1024px]:overflow-hidden">
+    <section className="flex min-h-screen min-h-[100svh] min-h-[100dvh] flex-col bg-background px-4 text-center text-sm md:px-8 lg:px-12 xl:px-16 max-[1024px]:overflow-hidden">
       <nav className="flex w-full flex-none items-center justify-between py-2.5 md:px-8 md:py-3 lg:px-12 xl:px-16">
         {/* Logo removed as requested */}
 
@@ -26,12 +27,8 @@ export default function HeroSection() {
           {/* Navigation links removed as requested */}
         </NavigationMenu>
 
-        <div className="flex items-center gap-2 w-full justify-end md:w-auto md:justify-start">
-          <ThemeSwitch />
-          <Button variant="outline" className="rounded-full" size="sm" asChild>
-            <Link href="/sign-in">Ienākt</Link>
-          </Button>
-        </div>
+        {/* User menu: shows UserButton if signed in, sign-in button if not */}
+        <HeroUserMenu />
       </nav>
 
       <div className="flex w-full flex-1 items-center justify-center py-3 md:py-4 lg:py-6">
