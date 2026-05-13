@@ -41,13 +41,14 @@ export default function OnboardingCards({ onContinue, error, isSubmitting }: { o
               key={option.value}
               type="button"
               onClick={() => setSelected(option.value)}
-              className="text-left"
+              className="text-left h-full"
+              style={{ minHeight: '220px' }}
             >
               <Card
-                className={["transition-all", selected === option.value ? "border-green-600" : "border-foreground/10"].join(" ")}
+                className={["transition-all h-full min-h-[220px] flex flex-col justify-between", selected === option.value ? "border-green-600" : "border-foreground/10"].join(" ")}
               >
-                <CardHeader>
-                  <div className="flex items-start justify-between">
+                <CardHeader className="flex-1 flex flex-col justify-center">
+                  <div className="flex items-start justify-between h-full">
                     <div className="flex-1">
                       <Badge className="mb-2" variant="outline">
                         {option.badge}
