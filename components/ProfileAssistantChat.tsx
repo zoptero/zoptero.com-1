@@ -144,15 +144,18 @@ export default function ProfileAssistantChat({
   return (
     <Card className="flex h-full min-h-0 flex-1 flex-col">
       <CardHeader className="shrink-0 pb-3">
-        <CardTitle className="flex items-center gap-2 text-sm font-semibold">
+        <div className="flex items-center gap-2">
           <div 
             className="size-8 shrink-0 rounded-full bg-cover bg-center"
             style={{ backgroundImage: "url(https://media.zoptero.com/img/chat-help-avatar.webp)" }}
             role="img"
             aria-label="Palīgs"
           />
-          Profila palīgs
-        </CardTitle>
+          <div className="flex flex-col">
+            <CardTitle className="text-sm font-semibold leading-tight">Ieva</CardTitle>
+            <span className="text-xs text-muted-foreground leading-tight">Profila palīgs</span>
+          </div>
+        </div>
       </CardHeader>
 
       <CardContent className="flex min-h-0 flex-1 flex-col gap-3 p-4 pt-0">
