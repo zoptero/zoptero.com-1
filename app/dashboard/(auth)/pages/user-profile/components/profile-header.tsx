@@ -328,10 +328,6 @@ export function ProfileHeader() {
             <MapPin className="h-4 w-4" />
             <span className="text-blue-500">{user.location}</span>
           </div>
-          <div className="hidden items-center gap-1.5 lg:flex">
-            <Calendar className="h-4 w-4" />
-            <span>Joined {user.joinedDate}</span>
-          </div>
         </div>
       </div>
     </div>
