@@ -79,15 +79,7 @@ export default function UnifiedAuthPage() {
                 </span>
               </FadeInSlide>
 
-              <FadeInSlide delay={0.3} className='text-xs leading-relaxed text-center'>
-                <span className='block font-medium text-zinc-600'>
-                  Pievienojies{' '}
-                  <span className='font-bold text-zinc-950'>
-                    {liveUserCount}
-                  </span>{' '}
-                  lietotājiem
-                </span>
-              </FadeInSlide>
+              {/* User counter removed and archived. */}
             </div>
           </div>
         </div>
