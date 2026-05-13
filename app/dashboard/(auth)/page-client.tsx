@@ -890,8 +890,8 @@ export default function DashboardPageClient() {
                     <div className="flex justify-center md:justify-end mt-6">
                       <Button
                         type="submit"
-                        size="lg"
-                        className="min-w-[160px]"
+                        size="sm"
+                        className="btn-cta"
                         disabled={
                           (!form.formState.isDirty && !previewFile && !removeAvatar && !seoImagePreviewFile && !removeSeoImage) || savingProfile || uploadingAvatar || uploadingSeoImage
                         }

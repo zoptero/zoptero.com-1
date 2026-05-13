@@ -36,6 +36,9 @@ export default async function AuthLayout({
             <div className="@container/main flex flex-1 flex-col min-h-screen p-(--content-padding) pb-0 xl:group-data-[theme-content-layout=centered]/layout:container xl:group-data-[theme-content-layout=centered]/layout:mx-auto">
               <div className="flex-1 pb-(--content-padding)">
                 {children}
+                <div className="pt-8 pb-2">
+                  <GlobalFooter />
+                </div>
               </div>
             </div>
           </div>

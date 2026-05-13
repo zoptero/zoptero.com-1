@@ -34,7 +34,7 @@ export function HeroUserMenu() {
         </>
       )}
       {!isSignedIn && (
-        <Button variant="default" size="sm" asChild>
+        <Button variant="default" className="btn-cta" asChild>
           <Link href="/sign-in" className="flex items-center gap-2">
             Ienākt
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2" className="inline ms-1 h-4 w-4">
