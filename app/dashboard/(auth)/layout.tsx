@@ -30,9 +30,9 @@ export default async function AuthLayout({
     >
       <div className="flex flex-row min-h-screen w-full bg-neutral-100">
         <AppSidebar variant="inset" />
-        <SidebarInset className="flex-1 flex flex-col min-h-screen bg-white">
+        <SidebarInset className="flex-1 flex flex-col min-h-screen">
           <SiteHeader />
-          <div className="flex flex-1 flex-col min-h-screen">
+          <div className="flex flex-1 flex-col min-h-screen bg-muted">
             <div className="@container/main flex flex-1 flex-col min-h-screen p-(--content-padding) pb-0 xl:group-data-[theme-content-layout=centered]/layout:container xl:group-data-[theme-content-layout=centered]/layout:mx-auto">
               <div className="flex-1 pb-(--content-padding)">
                 {children}

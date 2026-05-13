@@ -8,7 +8,7 @@ export function HeroUserMenu() {
   const { isSignedIn } = useAuth();
   return (
     <div className="flex items-center gap-2 w-full justify-end md:w-auto md:justify-start">
-      {isSignedIn ? (
+      {isSignedIn && (
         <>
           <Button
             variant="ghost"
@@ -32,9 +32,15 @@ export function HeroUserMenu() {
             }}
           />
         </>
-      ) : (
-        <Button variant="outline" className="rounded-full" size="sm" asChild>
-          <Link href="/sign-in">Ienākt</Link>
+      )}
+      {!isSignedIn && (
+        <Button variant="default" size="sm" asChild>
+          <Link href="/sign-in" className="flex items-center gap-2">
+            Ienākt
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2" className="inline ms-1 h-4 w-4">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14m-7-7 7 7-7 7" />
+            </svg>
+          </Link>
         </Button>
       )}
     </div>
