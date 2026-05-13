@@ -62,24 +62,26 @@ export default function HeroSection() {
             </header>
           </FadeInSlide>
           <FadeInSlide delay={0.2} className="w-full">
-            <div className="bg-muted mt-2.5 w-full space-y-3 overflow-hidden rounded-xl focus-within:ring-2 focus-within:ring-white/40 md:mt-3 md:space-y-4">
-              <Textarea
-                placeholder="Kas nepieciešams atrast?"
-                rows={3}
-                className="min-h-14 resize-none border-0 bg-transparent! px-4 pt-3 pb-0 shadow-none focus-visible:ring-0 text-[12px] placeholder:text-[12px] max-md:min-h-12 max-md:px-3.5 max-md:pt-2.5 md:min-h-16 md:p-4 md:pb-0"
-              />
-              <div className="flex items-center justify-between px-3 pb-2.5 md:pb-3">
-                <Button
-                  variant="outline"
-                  size="icon-sm"
-                  aria-label="Add"
-                  className="rounded-full"
-                >
-                  <Plus />
-                </Button>
-                <Button size="icon-sm" aria-label="Send" className="rounded-full">
-                  <ArrowRight />
-                </Button>
+            <div className="w-full flex justify-center">
+              <div className="bg-muted mt-2.5 w-full max-w-md mx-auto space-y-3 overflow-hidden rounded-xl focus-within:ring-2 focus-within:ring-white/40 md:mt-3 md:space-y-4 px-2 sm:px-0">
+                <Textarea
+                  placeholder="Kas nepieciešams atrast?"
+                  rows={3}
+                  className="min-h-14 resize-none border-0 bg-transparent! px-4 pt-3 pb-0 shadow-none focus-visible:ring-0 text-[12px] placeholder:text-[12px] max-md:min-h-12 max-md:px-3.5 max-md:pt-2.5 md:min-h-16 md:p-4 md:pb-0"
+                />
+                <div className="flex items-center justify-between px-3 pb-2.5 md:pb-3">
+                  <Button
+                    variant="outline"
+                    size="icon-sm"
+                    aria-label="Add"
+                    className="rounded-full"
+                  >
+                    <Plus />
+                  </Button>
+                  <Button size="icon-sm" aria-label="Send" className="rounded-full">
+                    <ArrowRight />
+                  </Button>
+                </div>
               </div>
             </div>
           </FadeInSlide>
