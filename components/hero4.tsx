@@ -16,7 +16,7 @@ import FadeInSlide from "@/components/FadeInSlide";
 
 export default function HeroSection() {
   return (
-    <section className="flex min-h-screen min-h-[100svh] min-h-[100dvh] flex-col bg-[radial-gradient(125%_125%_at_50%_90%,#ffffff_40%,var(--color-purple-200)_100%)] bg-cover bg-center px-4 text-center text-sm dark:bg-[radial-gradient(125%_125%_at_50%_90%,var(--color-background)_40%,var(--color-purple-800)_100%)] md:px-8 lg:px-12 xl:px-16 max-[1024px]:overflow-hidden">
+    <section className="flex min-h-screen min-h-[100svh] min-h-[100dvh] flex-col bg-background px-4 text-center text-sm md:px-8 lg:px-12 xl:px-16 max-[1024px]:overflow-hidden">
       <nav className="flex w-full flex-none items-center justify-between py-2.5 md:px-8 md:py-3 lg:px-12 xl:px-16">
         {/* Logo removed as requested */}
 
