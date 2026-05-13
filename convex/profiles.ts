@@ -285,11 +285,19 @@ export const update = mutation({
     }
 
     // Profile header image cleanup: if profileHeaderURL is being removed or replaced
+    // profileHeaderURL stores a full R2 URL (e.g. https://r2-endpoint/bucket/uploads/{clerkId}/header/{filename}.ext),
+    // so we must extract the R2 object key before passing it to deleteMediaByKey.
     if (existingProfile?.profileHeaderURL) {
       const isHeaderRemoved = args.profileHeaderURL === "" || (args.profileHeaderURL === undefined && args.hasOwnProperty("profileHeaderURL"));
       const isHeaderReplaced = args.profileHeaderURL && args.profileHeaderURL !== existingProfile.profileHeaderURL;
       if (isHeaderRemoved || isHeaderReplaced) {
-        mediaKeysToCleanup.push(existingProfile.profileHeaderURL);
+        const rawUrl = existingProfile.profileHeaderURL;
+        // Extract key from the full URL — everything after "uploads/"
+        const idx = rawUrl.indexOf("uploads/");
+        const headerKey = idx !== -1 ? rawUrl.slice(idx) : rawUrl;
+        if (userMediaKeyPattern.test(headerKey)) {
+          mediaKeysToCleanup.push(headerKey);
+        }
       }
     }
 
