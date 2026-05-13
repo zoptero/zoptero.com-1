@@ -7,6 +7,7 @@ import { Input3 } from "@/components/input3";
 import React from "react";
 
 export default function TabProfile({ form, previewUrl, previewFile, removeAvatar, profile, addFiles, removeFile, setRemoveAvatar, setFocusedField }: any) {
+
   return (
     <>
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
@@ -24,6 +25,19 @@ export default function TabProfile({ form, previewUrl, previewFile, removeAvatar
                   {...field}
                   onBlur={() => { field.onBlur(); setFocusedField(undefined); }}
                 />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="city"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Pilsēta</FormLabel>
+              <FormControl>
+                <Input3 placeholder="Rīga" helperText="Norādi pilsētu, kurā piedāvā savus pakalpojumus." {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>

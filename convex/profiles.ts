@@ -261,27 +261,35 @@ export const update = mutation({
       (profile) => profile._id !== existingProfile?._id
     );
 
-    // Cleanup old media (avatar or seoImage) if they are being replaced or removed
+
+    // Cleanup old media (avatar, seoImage, or profileHeaderURL) if they are being replaced or removed
     const mediaKeysToCleanup: string[] = [];
-    
+
     // Avatar cleanup: if new key provided and different, or if avatarKey is explicitly removed
     if (existingProfile?.avatarKey) {
-       const isAvatarReplaced = args.avatarKey && args.avatarKey !== existingProfile.avatarKey;
-       const isAvatarRemoved = args.avatarKey === "" || (args.avatarKey === undefined && args.hasOwnProperty("avatarKey"));
-       
-       if (isAvatarReplaced || isAvatarRemoved) {
-         mediaKeysToCleanup.push(existingProfile.avatarKey);
-       }
+      const isAvatarReplaced = args.avatarKey && args.avatarKey !== existingProfile.avatarKey;
+      const isAvatarRemoved = args.avatarKey === "" || (args.avatarKey === undefined && args.hasOwnProperty("avatarKey"));
+      if (isAvatarReplaced || isAvatarRemoved) {
+        mediaKeysToCleanup.push(existingProfile.avatarKey);
+      }
     }
-    
+
     // SEO Image cleanup: if new key provided and different, or if seoImageKey is explicitly removed
     if (existingProfile?.seoImageKey) {
-       const isSeoImageReplaced = args.seoImageKey && args.seoImageKey !== existingProfile.seoImageKey;
-       const isSeoImageRemoved = args.seoImageKey === "" || (args.seoImageKey === undefined && args.hasOwnProperty("seoImageKey"));
-       
-       if (isSeoImageReplaced || isSeoImageRemoved) {
-         mediaKeysToCleanup.push(existingProfile.seoImageKey);
-       }
+      const isSeoImageReplaced = args.seoImageKey && args.seoImageKey !== existingProfile.seoImageKey;
+      const isSeoImageRemoved = args.seoImageKey === "" || (args.seoImageKey === undefined && args.hasOwnProperty("seoImageKey"));
+      if (isSeoImageReplaced || isSeoImageRemoved) {
+        mediaKeysToCleanup.push(existingProfile.seoImageKey);
+      }
+    }
+
+    // Profile header image cleanup: if profileHeaderURL is being removed or replaced
+    if (existingProfile?.profileHeaderURL) {
+      const isHeaderRemoved = args.profileHeaderURL === "" || (args.profileHeaderURL === undefined && args.hasOwnProperty("profileHeaderURL"));
+      const isHeaderReplaced = args.profileHeaderURL && args.profileHeaderURL !== existingProfile.profileHeaderURL;
+      if (isHeaderRemoved || isHeaderReplaced) {
+        mediaKeysToCleanup.push(existingProfile.profileHeaderURL);
+      }
     }
 
     for (const key of mediaKeysToCleanup) {

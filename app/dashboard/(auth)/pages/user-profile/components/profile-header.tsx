@@ -295,21 +295,12 @@ export function ProfileHeader() {
   const avatarSrc = resolvedAvatarUrl || undefined;
   const fallback = displayName ? displayName.charAt(0) : "";
 
+  const headerUrl = profile?.profileHeaderURL || DEFAULT_COVER_URL;
   return (
     <div className="relative">
       <div
         className="relative aspect-3/1 w-full rounded-t-md bg-cover bg-center md:max-h-[240px]"
-        style={{ backgroundImage: `url('${DEFAULT_COVER_URL}')` }}>
-        <div className="absolute end-4 top-4">
-          <Dialog>
-            <DialogTrigger asChild>
-              <Button className="bg-background/50 rounded-full" size="icon-sm" variant="ghost">
-                <PencilIcon />
-              </Button>
-            </DialogTrigger>
-            <EditProfileModal />
-          </Dialog>
-        </div>
+        style={{ backgroundImage: `url('${headerUrl}')` }}>
       </div>
 
       <div className="-mt-10 px-4 pb-4 text-center lg:-mt-14">

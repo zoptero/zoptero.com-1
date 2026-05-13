@@ -152,6 +152,62 @@ export default function TabSeo({ form, slugValue, slugCheckResult, profile, seoI
           </FormDescription>
         </div>
       </div>
+      <FormField
+        control={form.control}
+        name="profileHeaderURL"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>Profila galvene</FormLabel>
+            <FormDescription>
+              Šis attēls tiks rādīts profila augšpusē. Ieteicamais izmērs: 1000x333px vai proporcija 3:1. Maks. 5MB.
+            </FormDescription>
+            <div className="flex flex-col gap-2 md:max-w-[360px]">
+              <div className="relative aspect-[3/1] w-full rounded-t-md bg-cover bg-center border md:max-h-[240px]">
+                {field.value ? (
+                  <img
+                    src={field.value}
+                    alt="Profila galvenes priekšskatījums"
+                    className="h-full w-full object-cover rounded-t-md"
+                  />
+                ) : (
+                  <span className="text-muted-foreground px-3 text-xs w-full flex items-center justify-center h-full">
+                    Nav izvēlēts attēls
+                  </span>
+                )}
+              </div>
+              <label className="flex cursor-pointer items-center justify-center gap-2 rounded-md border px-3 py-2 text-sm transition-colors hover:bg-accent w-full max-w-[280px] text-center">
+                <Upload className="size-4" />
+                Pievienot galvenes attēlu
+                <input
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp,image/avif"
+                  className="sr-only"
+                  onChange={async (event) => {
+                    const file = event.target.files?.[0];
+                    if (!file) return;
+                    // Simple direct upload to a public URL (replace with your upload logic)
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                      if (e.target?.result) field.onChange(e.target.result);
+                    };
+                    reader.readAsDataURL(file);
+                  }}
+                />
+              </label>
+              {field.value && (
+                <button
+                  type="button"
+                  onClick={() => field.onChange("")}
+                  className="flex items-center gap-1 text-xs text-muted-foreground hover:text-destructive w-full max-w-[280px]"
+                >
+                  <X className="size-3" /> Noņemt galvenes attēlu
+                </button>
+              )}
+            </div>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
     </>
   );
 }

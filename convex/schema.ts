@@ -52,6 +52,7 @@ export default defineSchema({
     // Legacy field kept temporarily for backward compatibility with existing documents.
     youtube: v.optional(v.string()),
     profileVideoUrl: v.optional(v.string()),
+    profileHeaderURL: v.optional(v.string()), // Profila galvenes attēla URL
     linktree: v.optional(v.string()),
     etsy: v.optional(v.string()),
     paymentCash: v.optional(v.boolean()),
