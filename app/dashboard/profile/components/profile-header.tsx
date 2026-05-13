@@ -262,7 +262,7 @@ export function ProfileHeader() {
     <div className="relative">
       <div
         className="relative aspect-3/1 w-full rounded-t-md bg-cover bg-center md:max-h-[240px]"
-        style={{ backgroundImage: `url('${DEFAULT_COVER_URL}')` }}>
+        style={{ backgroundImage: `url('${user.profileHeaderURL || DEFAULT_COVER_URL}')` }}>
         <div className="absolute end-4 top-4">
           <Dialog>
             <DialogTrigger asChild>
