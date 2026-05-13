@@ -147,84 +147,87 @@ export default function TabSeo({ form, slugValue, slugCheckResult, profile, seoI
               <X className="size-3" /> Dzēst SEO attēlu
             </button>
           ) : null}
+        </div>
+      </div>
+      {/* Profila galvene */}
+      <div className="space-y-2">
+        <FormLabel>Profila galvene</FormLabel>
+        <div className="flex flex-col gap-3 rounded-md md:max-w-[360px]">
+          <div className="relative aspect-[3/1] w-full rounded-t-md bg-cover bg-center border md:max-h-[240px]">
+            {headerImagePreviewUrl ? (
+              <img
+                src={headerImagePreviewUrl}
+                alt="Profila galvenes priekšskatījums"
+                className="h-full w-full object-cover rounded-t-md"
+              />
+            ) : (
+              <span className="text-muted-foreground px-3 text-xs w-full flex items-center justify-center h-full">
+                Nav izvēlēts attēls
+              </span>
+            )}
+          </div>
           <FormDescription className="text-xs">
             Profila saites priekšskatījuma attēls līdz 5 MB.
           </FormDescription>
+          <FormDescription>
+            Šis attēls tiks rādīts profila augšpusē. Ieteicamais izmērs: 1000x333px vai proporcija 3:1. Maks. 5MB.
+          </FormDescription>
+          <label className="flex cursor-pointer items-center justify-center gap-2 rounded-md border px-3 py-2 text-sm transition-colors hover:bg-accent w-full max-w-[280px] text-center">
+            <Upload className="size-4" />
+            Pievienot galvenes attēlu
+            <input
+              type="file"
+              accept="image/jpeg,image/png,image/webp,image/avif"
+              className="sr-only"
+              onChange={(event) => {
+                if (!event.target.files) return;
+                setRemoveHeaderImage(false);
+                addHeaderImageFiles(event.target.files);
+              }}
+            />
+          </label>
+          <FormField
+            control={form.control}
+            name="profileHeaderURL"
+            render={({ field }) => (
+              <>
+                {headerImagePreviewFile ? (
+                  <button
+                    type="button"
+                    onClick={() => removeHeaderImageFile(headerImagePreviewFile.id)}
+                    className="flex items-center gap-1 text-xs text-muted-foreground hover:text-destructive w-full max-w-[280px]"
+                  >
+                    <X className="size-3" /> Noņemt jauno galvenes attēlu
+                  </button>
+                ) : removeHeaderImage ? (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setRemoveHeaderImage(false);
+                      field.onChange(profile?.profileHeaderURL ?? "");
+                    }}
+                    className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground w-full max-w-[280px]"
+                  >
+                    <X className="size-3" /> Atcelt galvenes attēla dzēšanu
+                  </button>
+                ) : field.value ? (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setRemoveHeaderImage(true);
+                      field.onChange("");
+                    }}
+                    className="flex items-center gap-1 text-xs text-muted-foreground hover:text-destructive w-full max-w-[280px]"
+                  >
+                    <X className="size-3" /> Noņemt galvenes attēlu
+                  </button>
+                ) : null}
+                <FormMessage />
+              </>
+            )}
+          />
         </div>
       </div>
-      <FormField
-        control={form.control}
-        name="profileHeaderURL"
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>Profila galvene</FormLabel>
-            <div className="flex flex-col gap-2 md:max-w-[360px]">
-              <div className="relative aspect-[3/1] w-full rounded-t-md bg-cover bg-center border md:max-h-[240px]">
-                {headerImagePreviewUrl ? (
-                  <img
-                    src={headerImagePreviewUrl}
-                    alt="Profila galvenes priekšskatījums"
-                    className="h-full w-full object-cover rounded-t-md"
-                  />
-                ) : (
-                  <span className="text-muted-foreground px-3 text-xs w-full flex items-center justify-center h-full">
-                    Nav izvēlēts attēls
-                  </span>
-                )}
-              </div>
-              <FormDescription>
-                Šis attēls tiks rādīts profila augšpusē. Ieteicamais izmērs: 1000x333px vai proporcija 3:1. Maks. 5MB.
-              </FormDescription>
-              <label className="flex cursor-pointer items-center justify-center gap-2 rounded-md border px-3 py-2 text-sm transition-colors hover:bg-accent w-full max-w-[280px] text-center">
-                <Upload className="size-4" />
-                Pievienot galvenes attēlu
-                <input
-                  type="file"
-                  accept="image/jpeg,image/png,image/webp,image/avif"
-                  className="sr-only"
-                  onChange={(event) => {
-                    if (!event.target.files) return;
-                    setRemoveHeaderImage(false);
-                    addHeaderImageFiles(event.target.files);
-                  }}
-                />
-              </label>
-              {headerImagePreviewFile ? (
-                <button
-                  type="button"
-                  onClick={() => removeHeaderImageFile(headerImagePreviewFile.id)}
-                  className="flex items-center gap-1 text-xs text-muted-foreground hover:text-destructive w-full max-w-[280px]"
-                >
-                  <X className="size-3" /> Noņemt jauno galvenes attēlu
-                </button>
-              ) : removeHeaderImage ? (
-                <button
-                  type="button"
-                  onClick={() => {
-                    setRemoveHeaderImage(false);
-                    field.onChange(profile?.profileHeaderURL ?? "");
-                  }}
-                  className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground w-full max-w-[280px]"
-                >
-                  <X className="size-3" /> Atcelt galvenes attēla dzēšanu
-                </button>
-              ) : field.value ? (
-                <button
-                  type="button"
-                  onClick={() => {
-                    setRemoveHeaderImage(true);
-                    field.onChange("");
-                  }}
-                  className="flex items-center gap-1 text-xs text-muted-foreground hover:text-destructive w-full max-w-[280px]"
-                >
-                  <X className="size-3" /> Noņemt galvenes attēlu
-                </button>
-              ) : null}
-            </div>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
     </>
   );
 }
