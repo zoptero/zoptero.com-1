@@ -148,7 +148,7 @@ export default function ProfileAssistantChat({
           <img 
             src="https://media.zoptero.com/img/chat-help-avatar.webp" 
             alt="Palīgs" 
-            className="size-7 rounded-[4px] object-cover"
+            className="size-7 rounded-full object-cover"
             width={28}
             height={28}
           />
