@@ -17,8 +17,8 @@ export default function HeroSection() {
         <div
           style={{
             position: 'absolute',
-            top: '2vw',      // Liquid attālums no augšas
-            right: '2vw',    // Liquid attālums no labās malas (Symmetry)
+            top: '1vw',      // Šeit bija 2vw, tagad ir 1vw (samazināts 2x)
+            right: '2vw',    // Labo pusi atstājam 2vw, ja gribi saglabāt iepriekšējo attālumu no malas
             aspectRatio: '1 / 1',
           }}
         >
