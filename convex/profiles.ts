@@ -238,6 +238,7 @@ export const update = mutation({
     profileHeaderURL: v.optional(v.string()),
     linktree: v.optional(v.string()),
     etsy: v.optional(v.string()),
+    deliveryInfo: v.optional(v.string()),
     paymentCash: v.optional(v.boolean()),
     paymentBankTransfer: v.optional(v.boolean()),
     paymentCard: v.optional(v.boolean()),

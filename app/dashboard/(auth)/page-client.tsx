@@ -71,7 +71,7 @@ import TabReviews from "./profile-tabs/tab-reviews";
 import TabClassfields from "./profile-tabs/tab-classfields";
 import TabShop from "./profile-tabs/tab-shop";
 import TabBlog from "./profile-tabs/tab-blog";
-
+import TabDelivery from "./profile-tabs/tab-delivery";
 
 const urlOrEmptySchema = z
   .string()
@@ -155,6 +155,7 @@ const defaultValues: ProfileFormValues = {
   paymentCash: false,
   paymentBankTransfer: false,
   paymentCard: false,
+  deliveryInfo: "",
 };
 
 const TAB_VALIDATION_FIELDS: Partial<Record<string, Array<keyof ProfileFormValues>>> = {
@@ -178,6 +179,7 @@ const TAB_VALIDATION_FIELDS: Partial<Record<string, Array<keyof ProfileFormValue
   video: ["profileVideoUrl"],
   seo: ["seoTitle", "seoDescription"],
   payments: ["paymentCash", "paymentBankTransfer", "paymentCard"],
+  delivery: ["deliveryInfo"],
 };
 
 function DashboardProfileSkeleton() {
@@ -337,6 +339,7 @@ export default function DashboardPageClient() {
       paymentCash: profile?.paymentCash ?? false,
       paymentBankTransfer: profile?.paymentBankTransfer ?? false,
       paymentCard: profile?.paymentCard ?? false,
+      deliveryInfo: profile?.deliveryInfo ?? "",
     });
   }, [profile, user, form]);
 
@@ -806,6 +809,9 @@ export default function DashboardPageClient() {
       paymentCash: values.paymentCash,
       paymentBankTransfer: values.paymentBankTransfer,
       paymentCard: values.paymentCard,
+      ...(profile?.deliveryInfo !== undefined && values.deliveryInfo !== undefined
+        ? { deliveryInfo: values.deliveryInfo }
+        : {}),
     };
 
     try {
@@ -911,6 +917,7 @@ export default function DashboardPageClient() {
                 <TabsTrigger value="buj">BUJ</TabsTrigger>
                 <TabsTrigger value="seo">SEO</TabsTrigger>
                 <TabsTrigger value="payments">Apmaksa</TabsTrigger>
+                <TabsTrigger value="delivery">Piegāde</TabsTrigger>
                 <TabsTrigger value="atsauksmes">Atsauksmes</TabsTrigger>
                 <TabsTrigger value="qr">QR</TabsTrigger>
               </TabsList>
@@ -999,6 +1006,9 @@ export default function DashboardPageClient() {
                     </TabsContent>
                     <TabsContent value="payments" className="space-y-4">
                       <TabPayments form={form} />
+                    </TabsContent>
+                    <TabsContent value="delivery" className="space-y-4">
+                      <TabDelivery form={form} />
                     </TabsContent>
                     <TabsContent value="atsauksmes" className="space-y-4">
                       <TabReviews />
