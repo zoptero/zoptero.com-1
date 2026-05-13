@@ -41,10 +41,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
          <SidebarMenu>
            <SidebarMenuItem>
               <SidebarMenuButton asChild className="hover:text-foreground h-10 group-data-[collapsible=icon]:px-0!">
-                <Link href="/dashboard">
+                <Link href="https://zoptero.com" target="_self">
                   <img src="https://media.zoptero.com/img/zoptero-logo-32x32.svg" alt="Zoptero Logo" width={24} height={24} className="mr-2" />
                   <span className="text-foreground font-semibold">Zoptero</span>
-                  <ChevronsUpDown className="ml-auto group-data-[collapsible=icon]:hidden" />
                 </Link>
               </SidebarMenuButton>
            </SidebarMenuItem>
