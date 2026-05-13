@@ -36,6 +36,71 @@ import { useProfileStore } from "../store";
 const DEFAULT_COVER_URL =
   "https://images.unsplash.com/photo-1735926199195-85b726600751?ixlib=rb-4.1.0&auto=format&fit=crop&q=80&w=1000";
 
+/** Extract the R2 object key from a profileHeaderURL.
+ *  Profile header URLs are stored as:
+ *    {R2_PUBLIC_URL}/{key}  or  {R2_ENDPOINT}/{bucket}/{key}
+ *  where key = "uploads/{clerkId}/header/{filename}.ext"
+ *  We extract by finding "uploads/" — everything from there is the key. */
+function extractR2Key(url: string | undefined | null): string | null {
+  if (!url) return null;
+  const idx = url.indexOf("uploads/");
+  if (idx === -1) return null;
+  return url.slice(idx);
+}
+
+/** Hook that resolves a potentially-private R2 URL into a signed view URL. */
+function useResolvedMediaUrl(
+  rawUrl: string | undefined | null,
+  clerkId: string | undefined | null | undefined,
+  mediaKind: "header" | "seo",
+): string | undefined | null {
+  const generateViewUrl = useAction(api.media.generateViewUrl);
+  const [resolvedUrl, setResolvedUrl] = useState<string | undefined>(undefined);
+  const lastKeyRef = useRef<string | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    const resolve = async () => {
+      // If there's no raw URL, clear the resolved URL and bail
+      if (!rawUrl) {
+        setResolvedUrl(undefined);
+        return;
+      }
+
+      // If it doesn't look like an R2 URL (no "cloudflare" or "r2"), use it directly
+      if (!rawUrl.includes("r2") && !rawUrl.includes("cloudflare")) {
+        setResolvedUrl(rawUrl);
+        return;
+      }
+
+      const key = extractR2Key(rawUrl);
+      if (!key || !clerkId) {
+        setResolvedUrl(rawUrl);
+        return;
+      }
+
+      // Skip if we already resolved this key
+      if (lastKeyRef.current === key && resolvedUrl) return;
+
+      try {
+        const { viewUrl } = await generateViewUrl({ clerkId, key });
+        if (!cancelled) {
+          setResolvedUrl(viewUrl);
+          lastKeyRef.current = key;
+        }
+      } catch {
+        // Fall back to raw URL if signing fails
+        if (!cancelled) setResolvedUrl(rawUrl);
+      }
+    };
+    void resolve();
+    return () => { cancelled = true; };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [rawUrl, clerkId, generateViewUrl]);
+
+  return resolvedUrl;
+}
+
 function EditProfileModal() {
   const id = useId();
   const user = useProfileStore((state) => state.user);
@@ -267,6 +332,7 @@ export function ProfileHeader() {
   const [resolvedAvatarUrl, setResolvedAvatarUrl] = useState<string | undefined>(undefined);
   const lastResolvedKeyRef = useRef<string | null>(null);
 
+  // Resolve avatar URL (existing logic)
   useEffect(() => {
     let cancelled = false;
     const resolve = async () => {
@@ -290,12 +356,16 @@ export function ProfileHeader() {
     return () => { cancelled = true; };
   }, [profile?.avatarKey, profile?.avatarUrl, clerkUser?.id, generateViewUrl, resolvedAvatarUrl]);
 
+  // Resolve header URL — extract the R2 key and sign it, just like we do for the avatar
+  const resolvedHeaderUrl = useResolvedMediaUrl(profile?.profileHeaderURL, clerkUser?.id, "header");
+
   const loading = !profile && !clerkUser;
   const displayName = profile?.displayName || clerkUser?.fullName || "";
   const avatarSrc = resolvedAvatarUrl || undefined;
   const fallback = displayName ? displayName.charAt(0) : "";
 
-  const headerUrl = profile?.profileHeaderURL || DEFAULT_COVER_URL;
+  const headerUrl = resolvedHeaderUrl || profile?.profileHeaderURL || DEFAULT_COVER_URL;
+
   return (
     <div className="relative">
       <div

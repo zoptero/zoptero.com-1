@@ -9,8 +9,12 @@ import {
   TrendingUp,
   XIcon
 } from "lucide-react";
-import { useId } from "react";
+import { useId, useEffect, useRef, useState } from "react";
+import { useUser } from "@clerk/nextjs";
+import { useQuery, useAction } from "convex/react";
+import { api } from "@/convex/_generated/api";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -31,6 +35,66 @@ import { useProfileStore } from "../store";
 
 const DEFAULT_COVER_URL =
   "https://images.unsplash.com/photo-1735926199195-85b726600751?ixlib=rb-4.1.0&auto=format&fit=crop&q=80&w=1000";
+
+/** Extract the R2 object key from a profileHeaderURL.
+ *  Profile header URLs are stored as:
+ *    {R2_PUBLIC_URL}/{key}  or  {R2_ENDPOINT}/{bucket}/{key}
+ *  where key = "uploads/{clerkId}/header/{filename}.ext"
+ *  We extract by finding "uploads/" — everything from there is the key. */
+function extractR2Key(url: string | undefined | null): string | null {
+  if (!url) return null;
+  const idx = url.indexOf("uploads/");
+  if (idx === -1) return null;
+  return url.slice(idx);
+}
+
+/** Hook that resolves a potentially-private R2 URL into a signed view URL. */
+function useResolvedMediaUrl(
+  rawUrl: string | undefined | null,
+  clerkId: string | undefined | null,
+): string | undefined {
+  const generateViewUrl = useAction(api.media.generateViewUrl);
+  const [resolvedUrl, setResolvedUrl] = useState<string | undefined>(undefined);
+  const lastKeyRef = useRef<string | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    const resolve = async () => {
+      if (!rawUrl) {
+        setResolvedUrl(undefined);
+        return;
+      }
+
+      if (!rawUrl.includes("r2") && !rawUrl.includes("cloudflare")) {
+        setResolvedUrl(rawUrl);
+        return;
+      }
+
+      const key = extractR2Key(rawUrl);
+      if (!key || !clerkId) {
+        setResolvedUrl(rawUrl);
+        return;
+      }
+
+      if (lastKeyRef.current === key && resolvedUrl) return;
+
+      try {
+        const { viewUrl } = await generateViewUrl({ clerkId, key });
+        if (!cancelled) {
+          setResolvedUrl(viewUrl);
+          lastKeyRef.current = key;
+        }
+      } catch {
+        if (!cancelled) setResolvedUrl(rawUrl);
+      }
+    };
+    void resolve();
+    return () => { cancelled = true; };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [rawUrl, clerkId, generateViewUrl]);
+
+  return resolvedUrl;
+}
 
 function EditProfileModal() {
   const id = useId();
@@ -256,13 +320,54 @@ function ProfileAvatar({ initialFiles }: { initialFiles: FileMetadata[] }) {
 }
 
 export function ProfileHeader() {
-  const user = useProfileStore((state) => state.user);
+  const { user: clerkUser } = useUser();
+  const profile = useQuery(api.profiles.getMe);
+  const generateViewUrl = useAction(api.media.generateViewUrl);
+  const storeUser = useProfileStore((state) => state.user);
+
+  const [resolvedAvatarUrl, setResolvedAvatarUrl] = useState<string | undefined>(undefined);
+  const lastResolvedKeyRef = useRef<string | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    const resolve = async () => {
+      if (!profile?.avatarKey || !clerkUser?.id) {
+        setResolvedAvatarUrl(profile?.avatarUrl || undefined);
+        return;
+      }
+      if (lastResolvedKeyRef.current === profile.avatarKey && resolvedAvatarUrl) return;
+      if (!resolvedAvatarUrl && profile.avatarUrl) setResolvedAvatarUrl(profile.avatarUrl);
+      try {
+        const { viewUrl } = await generateViewUrl({ clerkId: clerkUser.id, key: profile.avatarKey });
+        if (!cancelled) {
+          setResolvedAvatarUrl(viewUrl);
+          lastResolvedKeyRef.current = profile.avatarKey;
+        }
+      } catch {
+        if (!cancelled && profile.avatarUrl) setResolvedAvatarUrl(profile.avatarUrl);
+      }
+    };
+    void resolve();
+    return () => { cancelled = true; };
+  }, [profile?.avatarKey, profile?.avatarUrl, clerkUser?.id, generateViewUrl, resolvedAvatarUrl]);
+
+  // Resolve header URL — extract the R2 key and sign it, just like we do for the avatar
+  const resolvedHeaderUrl = useResolvedMediaUrl(profile?.profileHeaderURL, clerkUser?.id);
+
+  const loading = !profile && !clerkUser;
+  const displayName = profile?.displayName || clerkUser?.fullName || storeUser.name;
+  const avatarSrc = resolvedAvatarUrl || profile?.avatarUrl || storeUser.avatar;
+  const fallback = displayName ? displayName.charAt(0) : storeUser.name.charAt(0);
+
+  const headerUrl = resolvedHeaderUrl || profile?.profileHeaderURL || DEFAULT_COVER_URL;
+  const location = profile?.city || storeUser.location;
+  const role = profile?.sector || storeUser.role;
 
   return (
     <div className="relative">
       <div
         className="relative aspect-3/1 w-full rounded-t-md bg-cover bg-center md:max-h-[240px]"
-        style={{ backgroundImage: `url('${user.profileHeaderURL || DEFAULT_COVER_URL}')` }}>
+        style={{ backgroundImage: `url('${headerUrl}')` }}>
         <div className="absolute end-4 top-4">
           <Dialog>
             <DialogTrigger asChild>
@@ -276,28 +381,39 @@ export function ProfileHeader() {
       </div>
 
       <div className="-mt-10 px-4 pb-4 text-center lg:-mt-14">
-        <Avatar className="border-background mx-auto size-20 border-4 lg:size-28">
-          <AvatarImage src={user.avatar} alt={user.name} />
-          <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
-        </Avatar>
-        <div className="flex items-center justify-center gap-2">
-          <h4 className="text-lg font-semibold lg:text-2xl">{user.name}</h4>
-        </div>
+        {loading ? (
+          <>
+            <div className="mx-auto mb-2 flex flex-col items-center">
+              <Skeleton className="size-20 lg:size-28 rounded-full border-4 border-background mb-2" />
+            </div>
+            <Skeleton className="mx-auto mb-2 h-6 w-32 rounded lg:h-8 lg:w-48" />
+          </>
+        ) : (
+          <>
+            <Avatar className="border-background mx-auto size-20 border-4 lg:size-28">
+              <AvatarImage src={avatarSrc} alt={displayName} />
+              <AvatarFallback>{fallback}</AvatarFallback>
+            </Avatar>
+            <div className="flex items-center justify-center gap-2">
+              <h4 className="text-lg font-semibold lg:text-2xl">{displayName}</h4>
+            </div>
 
-        <div className="text-muted-foreground mt-3 flex items-center justify-center gap-6 text-sm">
-          <div className="flex items-center gap-1.5">
-            <TrendingUp className="h-4 w-4" />
-            <span>{user.role}</span>
-          </div>
-          <div className="flex items-center gap-1.5">
-            <MapPin className="h-4 w-4" />
-            <span className="text-blue-500">{user.location}</span>
-          </div>
-          <div className="hidden items-center gap-1.5 lg:flex">
-            <Calendar className="h-4 w-4" />
-            <span>Joined {user.joinedDate}</span>
-          </div>
-        </div>
+            <div className="text-muted-foreground mt-3 flex items-center justify-center gap-6 text-sm">
+              <div className="flex items-center gap-1.5">
+                <TrendingUp className="h-4 w-4" />
+                <span>{role}</span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <MapPin className="h-4 w-4" />
+                <span className="text-blue-500">{location}</span>
+              </div>
+              <div className="hidden items-center gap-1.5 lg:flex">
+                <Calendar className="h-4 w-4" />
+                <span>Joined {storeUser.joinedDate}</span>
+              </div>
+            </div>
+          </>
+        )}
       </div>
     </div>
   );
