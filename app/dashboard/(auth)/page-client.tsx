@@ -274,10 +274,12 @@ export default function DashboardPageClient() {
   });
   const [removeHeaderImage, setRemoveHeaderImage] = useState(false);
   const headerImagePreviewFile = headerImageFiles[0];
-  const headerImagePreviewUrl = headerImagePreviewFile?.preview ?? (removeHeaderImage ? undefined : form.watch("profileHeaderURL"));
+  // form is not defined yet, so headerImagePreviewUrl must be assigned after form is declared
+
   const [removeAvatar, setRemoveAvatar] = useState(false);
   const [removeSeoImage, setRemoveSeoImage] = useState(false);
   const [resolvedAvatarUrl, setResolvedAvatarUrl] = useState<string | undefined>(undefined);
+
   const [resolvedSeoImageUrl, setResolvedSeoImageUrl] = useState<string | undefined>(undefined);
   const [focusedField, setFocusedField] = useState<string | undefined>(undefined);
   const [slugCheckResult, setSlugCheckResult] = useState<{ available: boolean; reserved?: boolean; normalizedSlug: string } | null>(null);
@@ -292,6 +294,8 @@ export default function DashboardPageClient() {
     mode: "onChange",
   });
   const slugValue = form.watch("slug");
+  // Now form is defined, so we can safely assign headerImagePreviewUrl
+  const headerImagePreviewUrl = headerImagePreviewFile?.preview ?? (removeHeaderImage ? undefined : form.watch("profileHeaderURL"));
 
   useEffect(() => {
     form.reset({
