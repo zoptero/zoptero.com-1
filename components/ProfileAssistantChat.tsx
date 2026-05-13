@@ -147,10 +147,11 @@ export default function ProfileAssistantChat({
       <CardHeader className="shrink-0 pb-3">
         <CardTitle className="flex items-center gap-2 text-sm font-semibold">
           <Avatar className="size-7">
-            <AvatarImage src={user?.imageUrl} alt={user?.fullName ?? "User"} />
-            <AvatarFallback className="text-xs">
-              {user?.firstName?.charAt(0) ?? "U"}
-            </AvatarFallback>
+            <AvatarImage 
+              src="https://media.zoptero.com/img/chat-help-avatar.webp" 
+              alt="Palīgs" 
+            />
+            <AvatarFallback className="text-xs">P</AvatarFallback>
           </Avatar>
           Profila palīgs
         </CardTitle>
