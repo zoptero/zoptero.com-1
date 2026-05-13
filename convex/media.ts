@@ -36,7 +36,7 @@ export const generateUploadUrl = action({
     fileSize: v.number(),
     displayName: v.optional(v.string()),
     title: v.optional(v.string()),
-    usage: v.optional(v.union(v.literal("avatar"), v.literal("seo"))),
+    usage: v.optional(v.union(v.literal("avatar"), v.literal("seo"), v.literal("header"))),
   },
   returns: v.object({
     fileKey: v.string(),
@@ -74,6 +74,8 @@ export const generateUploadUrl = action({
     const usage = args.usage || "avatar";
     const fileKey = usage === "seo"
       ? `uploads/${args.clerkId}/seo/${slug}-${Date.now()}.${extension}`
+      : usage === "header"
+      ? `uploads/${args.clerkId}/header/${slug}-${Date.now()}.${extension}`
       : `avatars/${args.clerkId}/${slug}-${Date.now()}.${extension}`;
     const s3 = new S3Client({
       region: "auto",
