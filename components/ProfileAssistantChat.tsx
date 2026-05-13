@@ -3,7 +3,8 @@
 import { useEffect, useRef, useState, type KeyboardEvent } from "react";
 import { useAction } from "convex/react";
 import { useUser } from "@clerk/nextjs";
-import { Send, Bot } from "lucide-react";
+import { Send } from "lucide-react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { api } from "@/convex/_generated/api";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -145,7 +146,12 @@ export default function ProfileAssistantChat({
     <Card className="flex h-full min-h-0 flex-1 flex-col">
       <CardHeader className="shrink-0 pb-3">
         <CardTitle className="flex items-center gap-2 text-sm font-semibold">
-          <Bot className="size-4 text-primary" />
+          <Avatar className="size-5">
+            <AvatarImage src={user?.imageUrl} alt={user?.fullName ?? "User"} />
+            <AvatarFallback className="text-[10px]">
+              {user?.firstName?.charAt(0) ?? "U"}
+            </AvatarFallback>
+          </Avatar>
           Profila palīgs
         </CardTitle>
       </CardHeader>
