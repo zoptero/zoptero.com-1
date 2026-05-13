@@ -146,7 +146,7 @@ export default function ProfileAssistantChat({
     <Card className="flex h-full min-h-0 flex-1 flex-col">
       <CardHeader className="shrink-0 pb-3">
         <CardTitle className="flex items-center gap-2 text-sm font-semibold">
-          <Avatar className="size-7">
+          <Avatar className="size-7 rounded-full">
             <AvatarImage 
               src="https://media.zoptero.com/img/chat-help-avatar.webp" 
               alt="Palīgs" 
