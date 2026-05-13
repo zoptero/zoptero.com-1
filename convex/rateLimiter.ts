@@ -88,9 +88,9 @@ export function sanitizeUserInput(input: string): string {
 }
 
 /**
- * Maximum allowed length for a single user chat message.
+ * Maximum allowed length for a single user chat message (140 characters).
  */
-export const MAX_MESSAGE_LENGTH = 1000;
+export const MAX_MESSAGE_LENGTH = 140;
 
 /**
  * Internal mutation that delegates to checkChatRateLimit.
