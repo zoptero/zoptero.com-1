@@ -809,9 +809,7 @@ export default function DashboardPageClient() {
       paymentCash: values.paymentCash,
       paymentBankTransfer: values.paymentBankTransfer,
       paymentCard: values.paymentCard,
-      ...(profile?.deliveryInfo !== undefined && values.deliveryInfo !== undefined
-        ? { deliveryInfo: values.deliveryInfo }
-        : {}),
+      deliveryInfo: values.deliveryInfo,
     };
 
     try {
