@@ -4,7 +4,6 @@ import { useEffect, useRef, useState, type KeyboardEvent } from "react";
 import { useAction } from "convex/react";
 import { useUser } from "@clerk/nextjs";
 import { Send } from "lucide-react";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { api } from "@/convex/_generated/api";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -146,15 +145,12 @@ export default function ProfileAssistantChat({
     <Card className="flex h-full min-h-0 flex-1 flex-col">
       <CardHeader className="shrink-0 pb-3">
         <CardTitle className="flex items-center gap-2 text-sm font-semibold">
-          <div className="flex size-8 shrink-0 items-center justify-center overflow-hidden rounded-full">
-            <img 
-              src="https://media.zoptero.com/img/chat-help-avatar.webp" 
-              alt="Palīgs" 
-              className="size-full object-cover"
-              width={32}
-              height={32}
-            />
-          </div>
+          <div 
+            className="size-8 shrink-0 rounded-full bg-cover bg-center"
+            style={{ backgroundImage: "url(https://media.zoptero.com/img/chat-help-avatar.webp)" }}
+            role="img"
+            aria-label="Palīgs"
+          />
           Profila palīgs
         </CardTitle>
       </CardHeader>
