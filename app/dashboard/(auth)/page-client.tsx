@@ -140,6 +140,7 @@ const defaultValues: ProfileFormValues = {
   profileVideoUrl: "",
   seoTitle: "",
   seoDescription: "",
+  profileHeaderURL: "",
   whatsapp: "",
   instagram: "",
   tiktok: "",
@@ -295,7 +296,7 @@ export default function DashboardPageClient() {
   });
   const slugValue = form.watch("slug");
   // Now form is defined, so we can safely assign headerImagePreviewUrl
-  const headerImagePreviewUrl = headerImagePreviewFile?.preview ?? (removeHeaderImage ? undefined : form.watch("profileHeaderURL"));
+  const headerImagePreviewUrl = headerImagePreviewFile?.preview ?? (removeHeaderImage ? undefined : form.watch("profileHeaderURL") || profile?.profileHeaderURL);
 
   useEffect(() => {
     form.reset({
@@ -321,6 +322,7 @@ export default function DashboardPageClient() {
       profileVideoUrl: profile?.profileVideoUrl ?? "",
       seoTitle: profile?.seoTitle ?? "",
       seoDescription: profile?.seoDescription ?? "",
+      profileHeaderURL: profile?.profileHeaderURL ?? "",
       whatsapp: profile?.whatsapp ?? "",
       instagram: profile?.instagram ?? "",
       tiktok: profile?.tiktok ?? "",
@@ -555,14 +557,14 @@ export default function DashboardPageClient() {
         return;
       }
       try {
-        const { publicUrl } = await generateUploadUrl({
+        const { uploadUrl, publicUrl } = await generateUploadUrl({
           clerkId: user.id,
           fileType: file.type,
           fileSize: file.size,
           displayName: values.displayName,
           usage: "header",
         });
-        const uploadResponse = await fetch(publicUrl, {
+        const uploadResponse = await fetch(uploadUrl, {
           method: "PUT",
           body: file,
           headers: { "Content-Type": file.type },
@@ -960,7 +962,7 @@ export default function DashboardPageClient() {
                         size="sm"
                         className="btn-cta"
                         disabled={
-                          (!form.formState.isDirty && !previewFile && !removeAvatar && !seoImagePreviewFile && !removeSeoImage) || savingProfile || uploadingAvatar || uploadingSeoImage
+                          (!form.formState.isDirty && !previewFile && !removeAvatar && !seoImagePreviewFile && !removeSeoImage && !headerImagePreviewFile && !removeHeaderImage) || savingProfile || uploadingAvatar || uploadingSeoImage
                         }
                       >
                         {uploadingAvatar || uploadingSeoImage

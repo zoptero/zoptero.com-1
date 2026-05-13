@@ -200,7 +200,10 @@ export default function TabSeo({ form, slugValue, slugCheckResult, profile, seoI
               ) : removeHeaderImage ? (
                 <button
                   type="button"
-                  onClick={() => setRemoveHeaderImage(false)}
+                  onClick={() => {
+                    setRemoveHeaderImage(false);
+                    field.onChange(profile?.profileHeaderURL ?? "");
+                  }}
                   className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground w-full max-w-[280px]"
                 >
                   <X className="size-3" /> Atcelt galvenes attēla dzēšanu
