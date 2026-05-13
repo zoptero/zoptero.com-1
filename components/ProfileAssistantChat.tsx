@@ -146,9 +146,9 @@ export default function ProfileAssistantChat({
     <Card className="flex h-full min-h-0 flex-1 flex-col">
       <CardHeader className="shrink-0 pb-3">
         <CardTitle className="flex items-center gap-2 text-sm font-semibold">
-          <Avatar className="size-5">
+          <Avatar className="size-7">
             <AvatarImage src={user?.imageUrl} alt={user?.fullName ?? "User"} />
-            <AvatarFallback className="text-[10px]">
+            <AvatarFallback className="text-xs">
               {user?.firstName?.charAt(0) ?? "U"}
             </AvatarFallback>
           </Avatar>
