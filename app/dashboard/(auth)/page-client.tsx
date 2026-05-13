@@ -1042,7 +1042,9 @@ export default function DashboardPageClient() {
               </Card>
             </div>
             <div className="hidden shrink-0 xl:flex xl:w-80">
-              <ProfileAssistantChat focusedField={focusedField} />
+              <div className="sticky top-24 h-[calc(100vh-12rem)] w-full">
+                <ProfileAssistantChat focusedField={focusedField} />
+              </div>
             </div>
           </div>
         </div>
