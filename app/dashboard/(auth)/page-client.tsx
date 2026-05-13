@@ -265,6 +265,16 @@ export default function DashboardPageClient() {
     maxFiles: 1,
     maxSize: 5 * 1024 * 1024,
   });
+
+  // Header image upload state
+  const [{ files: headerImageFiles }, { addFiles: addHeaderImageFiles, removeFile: removeHeaderImageFile }] = useFileUpload({
+    accept: "image/jpeg,image/png,image/webp,image/avif",
+    maxFiles: 1,
+    maxSize: 5 * 1024 * 1024,
+  });
+  const [removeHeaderImage, setRemoveHeaderImage] = useState(false);
+  const headerImagePreviewFile = headerImageFiles[0];
+  const headerImagePreviewUrl = headerImagePreviewFile?.preview ?? (removeHeaderImage ? undefined : form.watch("profileHeaderURL"));
   const [removeAvatar, setRemoveAvatar] = useState(false);
   const [removeSeoImage, setRemoveSeoImage] = useState(false);
   const [resolvedAvatarUrl, setResolvedAvatarUrl] = useState<string | undefined>(undefined);
@@ -528,6 +538,49 @@ export default function DashboardPageClient() {
     let avatarUrl: string | undefined;
     let seoImageKey: string | undefined;
     let seoImageUrl: string | undefined;
+    let profileHeaderURL: string | undefined;
+    // Upload new header image to R2 if a file was selected
+    if (headerImagePreviewFile && headerImagePreviewFile.file instanceof File) {
+      const file = headerImagePreviewFile.file;
+      if (!["image/jpeg", "image/png", "image/webp", "image/avif"].includes(file.type)) {
+        toast.error("Neatbalstīts galvenes attēla formāts. Izmantojiet JPG, PNG, WebP vai AVIF.");
+        return;
+      }
+      if (file.size > 5 * 1024 * 1024) {
+        toast.error("Galvenes attēls ir pārāk liels. Maksimālais izmērs ir 5 MB.");
+        return;
+      }
+      try {
+        const { publicUrl } = await generateUploadUrl({
+          clerkId: user.id,
+          fileType: file.type,
+          fileSize: file.size,
+          displayName: values.displayName,
+          usage: "header",
+        });
+        const uploadResponse = await fetch(publicUrl, {
+          method: "PUT",
+          body: file,
+          headers: { "Content-Type": file.type },
+        });
+        if (!uploadResponse.ok) {
+          throw new Error(`Upload failed with status ${uploadResponse.status}`);
+        }
+        profileHeaderURL = publicUrl;
+      } catch (err) {
+        console.error("Header image upload failed", err);
+        toast.error("Neizdevās augšupielādēt galvenes attēlu. Lūdzu, mēģiniet vēlreiz.");
+        return;
+      }
+    }
+
+    // If user explicitly removed existing header image, pass empty string to trigger R2 cleanup
+    const headerImagePayload =
+      profileHeaderURL !== undefined
+        ? { profileHeaderURL }
+        : removeHeaderImage
+          ? { profileHeaderURL: "" }
+          : {};
 
     // Upload new avatar to R2 if a file was selected
     if (previewFile && previewFile.file instanceof File) {
@@ -657,6 +710,7 @@ export default function DashboardPageClient() {
       clerkId: user.id,
       ...avatarDeletePayload,
       ...seoImagePayload,
+      ...headerImagePayload,
       displayName: values.displayName,
       ...(values.email !== currentEmail ? { email: values.email || clerkEmail } : {}),
       phone: values.phone || undefined,
@@ -716,9 +770,12 @@ export default function DashboardPageClient() {
       if (seoImageUrl) {
         setResolvedSeoImageUrl(seoImageUrl);
       }
-
+      if (headerImagePreviewFile) {
+        removeHeaderImageFile(headerImagePreviewFile.id);
+      }
       setRemoveAvatar(false);
       setRemoveSeoImage(false);
+      setRemoveHeaderImage(false);
       toast.success("Izmaiņas saglabātas");
     } catch (error) {
       console.error("Profile update failed", error);
@@ -876,6 +933,12 @@ export default function DashboardPageClient() {
                         setRemoveSeoImage={setRemoveSeoImage}
                         addSeoImageFiles={addSeoImageFiles}
                         removeSeoImageFile={removeSeoImageFile}
+                        headerImagePreviewUrl={headerImagePreviewUrl}
+                        headerImagePreviewFile={headerImagePreviewFile}
+                        removeHeaderImage={removeHeaderImage}
+                        setRemoveHeaderImage={setRemoveHeaderImage}
+                        addHeaderImageFiles={addHeaderImageFiles}
+                        removeHeaderImageFile={removeHeaderImageFile}
                       />
                     </TabsContent>
                     <TabsContent value="payments" className="space-y-4">

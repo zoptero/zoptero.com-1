@@ -60,6 +60,7 @@ export const profileFormSchema = z.object({
   paymentCash: z.boolean(),
   paymentBankTransfer: z.boolean(),
   paymentCard: z.boolean(),
+  profileHeaderURL: z.string().trim().max(250).optional(),
 });
 
 export type ProfileFormValues = z.infer<typeof profileFormSchema>;

@@ -7,7 +7,7 @@ import { Upload, X } from "lucide-react";
 import React from "react";
 import { cn } from "@/lib/utils";
 
-export default function TabSeo({ form, slugValue, slugCheckResult, profile, seoImagePreviewUrl, seoImagePreviewFile, removeSeoImage, setRemoveSeoImage, addSeoImageFiles, removeSeoImageFile }: any) {
+export default function TabSeo({ form, slugValue, slugCheckResult, profile, seoImagePreviewUrl, seoImagePreviewFile, removeSeoImage, setRemoveSeoImage, addSeoImageFiles, removeSeoImageFile, headerImagePreviewUrl, headerImagePreviewFile, removeHeaderImage, setRemoveHeaderImage, addHeaderImageFiles, removeHeaderImageFile }: any) {
   return (
     <>
       <FormField
@@ -163,9 +163,9 @@ export default function TabSeo({ form, slugValue, slugCheckResult, profile, seoI
             </FormDescription>
             <div className="flex flex-col gap-2 md:max-w-[360px]">
               <div className="relative aspect-[3/1] w-full rounded-t-md bg-cover bg-center border md:max-h-[240px]">
-                {field.value ? (
+                {headerImagePreviewUrl ? (
                   <img
-                    src={field.value}
+                    src={headerImagePreviewUrl}
                     alt="Profila galvenes priekšskatījums"
                     className="h-full w-full object-cover rounded-t-md"
                   />
@@ -182,27 +182,41 @@ export default function TabSeo({ form, slugValue, slugCheckResult, profile, seoI
                   type="file"
                   accept="image/jpeg,image/png,image/webp,image/avif"
                   className="sr-only"
-                  onChange={async (event) => {
-                    const file = event.target.files?.[0];
-                    if (!file) return;
-                    // Simple direct upload to a public URL (replace with your upload logic)
-                    const reader = new FileReader();
-                    reader.onload = (e) => {
-                      if (e.target?.result) field.onChange(e.target.result);
-                    };
-                    reader.readAsDataURL(file);
+                  onChange={(event) => {
+                    if (!event.target.files) return;
+                    setRemoveHeaderImage(false);
+                    addHeaderImageFiles(event.target.files);
                   }}
                 />
               </label>
-              {field.value && (
+              {headerImagePreviewFile ? (
                 <button
                   type="button"
-                  onClick={() => field.onChange("")}
+                  onClick={() => removeHeaderImageFile(headerImagePreviewFile.id)}
+                  className="flex items-center gap-1 text-xs text-muted-foreground hover:text-destructive w-full max-w-[280px]"
+                >
+                  <X className="size-3" /> Noņemt jauno galvenes attēlu
+                </button>
+              ) : removeHeaderImage ? (
+                <button
+                  type="button"
+                  onClick={() => setRemoveHeaderImage(false)}
+                  className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground w-full max-w-[280px]"
+                >
+                  <X className="size-3" /> Atcelt galvenes attēla dzēšanu
+                </button>
+              ) : field.value ? (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setRemoveHeaderImage(true);
+                    field.onChange("");
+                  }}
                   className="flex items-center gap-1 text-xs text-muted-foreground hover:text-destructive w-full max-w-[280px]"
                 >
                   <X className="size-3" /> Noņemt galvenes attēlu
                 </button>
-              )}
+              ) : null}
             </div>
             <FormMessage />
           </FormItem>
