@@ -14,7 +14,7 @@ export default function NotFound() {
       <p className="text-center text-muted-foreground mb-8 max-w-md text-[12px]">Atvaino, šī lapa neeksistē vai ir pārvietota. Dažreiz nepareizs ceļš aizved pie interesantākām domām.</p>
       <div className="flex flex-col sm:flex-row gap-2">
         <Button size="lg" asChild>
-          <Link href="/dashboard">Doties uz sākumu</Link>
+          <Link href="/">Doties uz sākumu</Link>
         </Button>
         <Button size="lg" variant="ghost">
           Sazināties ar atbalstu <ArrowRight className="ms-2 h-4 w-4" />
