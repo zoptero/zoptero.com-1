@@ -7,7 +7,7 @@ import React from "react";
 export default function TabContacts({ form }: any) {
   return (
     <>
-      {/* First row: Tālrunis & WhatsApp */}
+      {/* First row: Tālrunis & E-pasts */}
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <FormField
           control={form.control}
@@ -24,27 +24,20 @@ export default function TabContacts({ form }: any) {
         />
         <FormField
           control={form.control}
-          name="whatsapp"
+          name="email"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>WhatsApp</FormLabel>
+              <FormLabel>E-pasts</FormLabel>
               <FormControl>
-                <WebsiteInput
-                  value={field.value}
-                  onChange={field.onChange}
-                  placeholder="37123456789"
-                  id="_r_12_-whatsapp"
-                  prefix="https://wa.me/"
-                />
+                <Input3 type="email" placeholder="you@example.com" helperText="E-pasta adrese saziņai ar cilvēkiem." {...field} />
               </FormControl>
-              <p className="text-muted-foreground text-xs">Saite uz WhatsApp.</p>
               <FormMessage />
             </FormItem>
           )}
         />
       </div>
 
-      {/* Second row: Mājas lapa & E-pasts */}
+      {/* Second row: Mājas lapa & WhatsApp */}
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <FormField
           control={form.control}
@@ -67,13 +60,20 @@ export default function TabContacts({ form }: any) {
         />
         <FormField
           control={form.control}
-          name="email"
+          name="whatsapp"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>E-pasts</FormLabel>
+              <FormLabel>WhatsApp</FormLabel>
               <FormControl>
-                <Input3 type="email" placeholder="you@example.com" helperText="E-pasta adrese saziņai ar cilvēkiem." {...field} />
+                <WebsiteInput
+                  value={field.value}
+                  onChange={field.onChange}
+                  placeholder="37123456789"
+                  id="_r_12_-whatsapp"
+                  prefix="https://wa.me/"
+                />
               </FormControl>
+              <p className="text-muted-foreground text-xs">Saite uz WhatsApp.</p>
               <FormMessage />
             </FormItem>
           )}

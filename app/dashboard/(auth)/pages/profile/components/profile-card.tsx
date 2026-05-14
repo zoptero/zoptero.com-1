@@ -37,14 +37,10 @@ export function ProfileCard() {
           </div>
           <div className="flex flex-col gap-y-4">
             <div className="flex items-center gap-3 text-sm">
-              <Mail className="text-muted-foreground size-4" /> hello@tobybelhome.com
-            </div>
-            <div className="flex items-center gap-3 text-sm">
               <PhoneCall className="text-muted-foreground size-4" /> (+1-876) 8654 239 581
             </div>
             <div className="flex items-center gap-3 text-sm">
-              <MapPin className="text-muted-foreground size-4" />
-              Canada
+              <Mail className="text-muted-foreground size-4" /> hello@tobybelhome.com
             </div>
             <div className="flex items-center gap-3 text-sm">
               <Link2Icon className="text-muted-foreground size-4" />
@@ -54,6 +50,10 @@ export function ProfileCard() {
                 target="_blank">
                 https://shadcnuikit.com
               </a>
+            </div>
+            <div className="flex items-center gap-3 text-sm">
+              <MapPin className="text-muted-foreground size-4" />
+              Canada
             </div>
             <div className="flex items-center gap-3 text-sm">
               <Link2Icon className="text-muted-foreground size-4" />

@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, Smartphone } from "lucide-react";
 import { generateAvatarFallback } from "@/lib/utils";
 
 import { Card, CardAction, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -63,6 +63,9 @@ export function Connections() {
         </CardAction>
       </CardHeader>
       <CardContent className="space-y-4">
+        <div className="flex items-center gap-3 text-sm">
+          <Smartphone className="text-muted-foreground size-4" /> (+1-876) 8654 239 581
+        </div>
         <div className="grid gap-4">
           {connections.map((item, key) => (
             <div key={key} className="flex items-center justify-between">
