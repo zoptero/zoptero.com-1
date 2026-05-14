@@ -11,7 +11,7 @@ export default function NotFound() {
         Informācijas platforma
       </Badge>
       <h1 className="text-center font-bold tracking-tight text-3xl md:text-5xl lg:text-7xl mb-4">404</h1>
-      <p className="text-center text-muted-foreground mb-8 max-w-md text-[12px]">Atvaino, šī lapa neeksistē vai ir pārvietota.</p>
+      <p className="text-center text-muted-foreground mb-8 max-w-md text-[12px]">Atvaino, šī lapa neeksistē vai ir pārvietota. Dažreiz nepareizs ceļš aizved pie interesantākām domām.</p>
       <div className="flex flex-col sm:flex-row gap-2">
         <Button size="lg" asChild>
           <Link href="/dashboard">Doties uz sākumu</Link>
