@@ -393,7 +393,7 @@ export function ProfileHeader() {
             <div className="text-muted-foreground mt-3 flex items-center justify-center gap-6 text-sm">
               <div className="flex items-center gap-1.5">
                 <TrendingUp className="h-4 w-4" />
-                <span>{user.role}</span>
+                <span>{profile?.accountType ? profile.accountType.toUpperCase() : user.role}</span>
               </div>
               <div className="flex items-center gap-1.5">
                 <MapPin className="h-4 w-4" />
