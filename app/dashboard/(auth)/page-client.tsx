@@ -902,14 +902,14 @@ export default function DashboardPageClient() {
               </TabsList>
             </div>
           </div>
-          {/* Left shadow mask — on top so overflowing tabs fade into muted background */}
+          {/* Left shadow mask — on top so overflowing tabs fade into background color */}
           <div
-            className="pointer-events-none absolute inset-y-0 left-0 z-20 w-10 bg-gradient-to-r from-[var(--muted)] to-transparent transition-opacity duration-200"
+            className="pointer-events-none absolute inset-y-0 left-0 z-20 w-10 bg-gradient-to-r from-background to-transparent transition-opacity duration-200"
             style={{ opacity: showLeftShadow ? 1 : 0 }}
           />
-          {/* Right shadow mask — on top so overflowing tabs fade into muted background */}
+          {/* Right shadow mask — on top so overflowing tabs fade into background color */}
           <div
-            className="pointer-events-none absolute inset-y-0 right-0 z-20 w-10 bg-gradient-to-l from-[var(--muted)] to-transparent transition-opacity duration-200"
+            className="pointer-events-none absolute inset-y-0 right-0 z-20 w-10 bg-gradient-to-l from-background to-transparent transition-opacity duration-200"
             style={{ opacity: showRightShadow ? 1 : 0 }}
           />
         </div>
