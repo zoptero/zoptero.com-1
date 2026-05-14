@@ -888,12 +888,12 @@ export default function DashboardPageClient() {
         <div className="relative mb-4">
           {/* Left shadow mask */}
           <div
-            className="pointer-events-none absolute inset-y-0 left-0 z-10 w-10 bg-gradient-to-r from-background to-transparent transition-opacity duration-200"
+            className="pointer-events-none absolute inset-y-0 left-0 z-10 w-10 bg-gradient-to-r from-muted to-transparent transition-opacity duration-200"
             style={{ opacity: showLeftShadow ? 1 : 0 }}
           />
           {/* Right shadow mask */}
           <div
-            className="pointer-events-none absolute inset-y-0 right-0 z-10 w-10 bg-gradient-to-l from-background to-transparent transition-opacity duration-200"
+            className="pointer-events-none absolute inset-y-0 right-0 z-10 w-10 bg-gradient-to-l from-muted to-transparent transition-opacity duration-200"
             style={{ opacity: showRightShadow ? 1 : 0 }}
           />
           {/* Scroll container */}
