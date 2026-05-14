@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+Disallow: /dashboard
+Disallow: /onboarding
+Disallow: /sign-in
+Disallow: /api
+
+Sitemap: https://zoptero.com/sitemap.xml
