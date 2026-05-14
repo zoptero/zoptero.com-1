@@ -7,7 +7,7 @@ export async function generateMetadata() {
   return generateMeta({
     title: "POS System App",
     description:
-      "Product and order management application template for restaurants or online businesses. Built with shadcn/ui, Next.js and Tailwind CSS.",
+      "Product and order management application template for restaurants or online businesses. Built with Next.js and Tailwind CSS.",
     canonical: "/apps/ai-chat"
   });
 }

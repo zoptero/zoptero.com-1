@@ -18,7 +18,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return generateMeta({
     title: "Real Estate Admin Dashboard",
     description:
-      "Manage property listings, sales analytics, and lead tracking. A professional real estate admin page built with React, TypeScript, Tailwind CSS, and shadcn/ui.",
+      "Manage property listings, sales analytics, and lead tracking. A professional real estate admin page built with React, TypeScript, Tailwind CSS.",
     canonical: "/real-estate"
   });
 }

@@ -6,7 +6,7 @@ export async function generateMetadata(): Promise<Metadata> {
     title: "Analytic Widgets",
     additionalTitle: true,
     description:
-      "Interactive components that display key metrics, charts, and insights within a dashboard interface. Built with shadcn/ui, Tailwind CSS, Next.js.",
+      "Interactive components that display key metrics, charts, and insights within a dashboard interface. Built with Tailwind CSS and Next.js.",
     canonical: "/widgets/analytics"
   });
 }

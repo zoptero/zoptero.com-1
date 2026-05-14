@@ -10,7 +10,7 @@ export async function generateMetadata() {
     title: "Chat App",
     additionalTitle: true,
     description:
-      "Manage real-time conversations, media sharing, and contact lists with a modern messaging ui. A professional chat application page built with React, Next.js, TypeScript, Tailwind CSS, and shadcn/ui.",
+      "Manage real-time conversations, media sharing, and contact lists with a modern messaging ui. A professional chat application page built with React, Next.js, TypeScript, Tailwind CSS.",
     canonical: "/apps/chat"
   });
 }

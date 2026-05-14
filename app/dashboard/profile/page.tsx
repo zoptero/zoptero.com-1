@@ -22,7 +22,7 @@ import { ProjectsTable } from "./components/projects-table";
       title: "User Profile Page",
       additionalTitle: true,
       description:
-        "Manage detailed user profiles, activity streams, and projects. A professional dashboard page built with React, TypeScript, Tailwind CSS, and shadcn/ui components.",
+        "Manage detailed user profiles, activity streams, and projects. A professional dashboard page built with React, TypeScript, Tailwind CSS components.",
       canonical: "/profile"
     });
   }

@@ -16,7 +16,7 @@ export async function generateMetadata() {
   return generateMeta({
     title: "Finance Admin Dashboard Template",
     description:
-      "Manage income, expenses, and savings goals with interactive charts. A professional finance admin page built with React, Next.js, TypeScript, Tailwind CSS, and shadcn/ui.",
+      "Manage income, expenses, and savings goals with interactive charts. A professional finance admin page built with React, Next.js, TypeScript, Tailwind CSS.",
     canonical: "/finance"
   });
 }

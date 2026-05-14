@@ -15,7 +15,7 @@ export async function generateMetadata(): Promise<Metadata> {
     title: "Product List",
     additionalTitle: true,
     description:
-      "Manage inventory and track sales metrics on a professional admin page. Built with React, Next.js, TypeScript, Tailwind CSS, shadcn/ui, and Tanstack Table for data handling.",
+      "Manage inventory and track sales metrics on a professional admin page. Built with React, Next.js, TypeScript, Tailwind CSS, and Tanstack Table for data handling.",
     canonical: "/pages/products"
   });
 }

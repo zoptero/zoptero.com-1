@@ -13,7 +13,7 @@ export async function generateMetadata() {
     title: "Users List",
     additionalTitle: true,
     description:
-      "Manage user records and list data efficiently. A professional admin dashboard page built with React, TypeScript, Tailwind CSS, shadcn/ui, and Tanstack Table.",
+      "Manage user records and list data efficiently. A professional admin dashboard page built with React, TypeScript, Tailwind CSS, and Tanstack Table.",
     canonical: "/pages/users"
   });
 }

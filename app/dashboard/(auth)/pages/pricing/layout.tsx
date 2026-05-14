@@ -5,7 +5,7 @@ export async function generateMetadata() {
     title: "Pricing Tables",
     additionalTitle: true,
     description:
-      "Compare subscription plans and pricing models with flexible layout options including columns, tables, and single cards. A professional pricing page built with React, TypeScript, Tailwind CSS, and shadcn/ui.",
+      "Compare subscription plans and pricing models with flexible layout options including columns, tables, and single cards. A professional pricing page built with React, TypeScript, and Tailwind CSS.",
     canonical: "/pages/pricing/column"
   });
 }

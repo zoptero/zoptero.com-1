@@ -17,7 +17,7 @@ export async function generateMetadata() {
     title: "Profile Page",
     additionalTitle: true,
     description:
-      "Manage user profiles, skills, and activity feeds. A comprehensive admin dashboard page built with React, TypeScript, Tailwind CSS, and shadcn/ui components.",
+      "Manage user profiles, skills, and activity feeds. A comprehensive admin dashboard page built with React, TypeScript, Tailwind CSS components.",
     canonical: "/pages/profile"
   });
 }

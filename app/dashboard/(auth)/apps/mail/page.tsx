@@ -9,7 +9,7 @@ export async function generateMetadata() {
     title: "Mail App",
     additionalTitle: true,
     description:
-      "Manage incoming messages, organize folders, and categorize conversations with a responsive multi-pane email interface. A professional mail management application built with React, TypeScript, Tailwind CSS, and shadcn/ui.",
+      "Manage incoming messages, organize folders, and categorize conversations with a responsive multi-pane email interface. A professional mail management application built with React, TypeScript, Tailwind CSS.",
     canonical: "/apps/mail"
   });
 }

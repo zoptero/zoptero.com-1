@@ -8,7 +8,7 @@ export async function generateMetadata(): Promise<Metadata> {
     title: "Settings Page",
     additionalTitle: true,
     description:
-      "Manage account settings and preferences. A professional page built with React, TypeScript, Tailwind CSS, shadcn/ui, react-hook-form, and Zod.",
+      "Manage account settings and preferences. A professional page built with React, TypeScript, Tailwind CSS, react-hook-form, and Zod.",
     canonical: "/pages/settings"
   });
 }

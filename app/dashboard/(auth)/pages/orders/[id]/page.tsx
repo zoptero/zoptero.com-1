@@ -54,7 +54,7 @@ export async function generateMetadata() {
   return generateMeta({
     title: "Order Detail Page",
     description:
-      "Manage order details, customer data, and tracking. A professional admin dashboard page built with React, TypeScript, Tailwind CSS, and shadcn/ui.",
+      "Manage order details, customer data, and tracking. A professional admin dashboard page built with React, TypeScript, Tailwind CSS.",
     canonical: "/pages/orders/detail"
   });
 }

@@ -14,7 +14,7 @@ export async function generateMetadata(): Promise<Metadata> {
     title: "Course App",
     additionalTitle: true,
     description:
-      "Access video lessons, track curriculum progress, and manage learning milestones with an integrated course player and detailed module outlines. A professional e-learning application page built with React, Next.js, TypeScript, Tailwind CSS, and shadcn/ui.",
+      "Access video lessons, track curriculum progress, and manage learning milestones with an integrated course player and detailed module outlines. A professional e-learning application page built with React, Next.js, TypeScript, Tailwind CSS.",
     canonical: "/apps/courses"
   });
 }

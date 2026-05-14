@@ -9,7 +9,7 @@ export async function generateMetadata(): Promise<Metadata> {
     title: "AI Chatbot",
     additionalTitle: true,
     description:
-      "Engage with advanced AI models through a feature-rich chat interface featuring history tracking and contextual quick actions. A professional AI assistant page built with React, TypeScript, Next.js, Tailwind CSS, and shadcn/ui.",
+      "Engage with advanced AI models through a feature-rich chat interface featuring history tracking and contextual quick actions. A professional AI assistant page built with React, TypeScript, Next.js, Tailwind CSS.",
     canonical: "/apps/ai-chat-v2"
   });
 }

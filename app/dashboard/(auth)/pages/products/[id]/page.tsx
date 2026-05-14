@@ -25,7 +25,7 @@ export async function generateMetadata() {
   return generateMeta({
     title: "Product Detail Page",
     description:
-      "Use this shadcn/ui and Tailwind CSS product page template to create great looking pages for each product, with detailed descriptions, images, pricing, and customer reviews.",
+      "Use a Tailwind CSS product page template to create great looking pages for each product, with detailed descriptions, images, pricing, and customer reviews.",
     canonical: "/pages/products/detail"
   });
 }

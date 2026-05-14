@@ -12,7 +12,7 @@ export async function generateMetadata() {
     title: "Notifications Page",
     additionalTitle: true,
     description:
-      "Manage user alerts, mark all as read, and configure notification preferences. A professional notifications page built with React, Next.js, TypeScript, Tailwind CSS, and shadcn/ui.",
+      "Manage user alerts, mark all as read, and configure notification preferences. A professional notifications page built with React, Next.js, TypeScript, Tailwind CSS.",
     canonical: "/pages/notifications"
   });
 }

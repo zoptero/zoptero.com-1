@@ -8,7 +8,7 @@ export async function generateMetadata(): Promise<Metadata> {
     title: "Real Estate Property List",
     additionalTitle: true,
     description:
-      "Manage real estate inventory with advanced filtering and sorting. A professional property list page built with React, TypeScript, Tailwind CSS, shadcn/ui, and Tanstack Table.",
+      "Manage real estate inventory with advanced filtering and sorting. A professional property list page built with React, TypeScript, Tailwind CSS, and Tanstack Table.",
     canonical: "/real-estate/list"
   });
 }

@@ -6,7 +6,7 @@ export async function generateMetadata() {
   return generateMeta({
     title: "Zoptero - vadības panelis",
     description:
-      "Track tasks, deadlines, and team efficiency with interactive charts. A professional dashboard page built with React, TypeScript, Tailwind CSS, and shadcn/ui.",
+      "Track tasks, deadlines, and team efficiency with interactive charts. A professional dashboard page built with React, TypeScript, Tailwind CSS.",
     canonical: "/dashboard",
   });
 }

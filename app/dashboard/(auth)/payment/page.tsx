@@ -7,7 +7,7 @@ export async function generateMetadata() {
   return generateMeta({
     title: "Payment Admin Dashboard",
     description:
-      "Track balances, transaction history, and exchange rates. A professional payment admin page built with React, TypeScript, Tailwind CSS, and shadcn/ui.",
+      "Track balances, transaction history, and exchange rates. A professional payment admin page built with React, TypeScript, Tailwind CSS.",
     canonical: "/payment"
   });
 }

@@ -12,7 +12,7 @@ export async function generateMetadata() {
     title: "Api Keys",
     additionalTitle: true,
     description:
-      "Securely manage API keys, track usage analytics, and monitor conversion success rates with real-time metrics. A professional API management dashboard built with React, Next.js, TypeScript, Tailwind CSS, and shadcn/ui.",
+      "Securely manage API keys, track usage analytics, and monitor conversion success rates with real-time metrics. A professional API management dashboard built with React, Next.js, TypeScript, Tailwind CSS.",
     canonical: "/apps/api-keys"
   });
 }

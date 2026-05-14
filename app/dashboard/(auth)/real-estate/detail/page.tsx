@@ -39,7 +39,7 @@ export async function generateMetadata(): Promise<Metadata> {
     title: "Real Estate Detail",
     additionalTitle: true,
     description:
-      "View property details, photo galleries, and listing analytics. A professional real estate admin page built with React, TypeScript, Tailwind CSS, and shadcn/ui.",
+      "View property details, photo galleries, and listing analytics. A professional real estate admin page built with React, TypeScript, Tailwind CSS.",
     canonical: "/real-estate/detail"
   });
 }

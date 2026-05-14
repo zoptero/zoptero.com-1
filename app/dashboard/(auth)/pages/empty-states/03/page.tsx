@@ -16,7 +16,7 @@ export async function generateMetadata() {
     title: "Empty State 03",
     additionalTitle: true,
     description:
-      "Empty states show placeholder content when no data is available. Built with shadcn/ui, Tailwind CSS, Next.js and React.",
+      "Empty states show placeholder content when no data is available. Built with Tailwind CSS, Next.js and React.",
     canonical: "/pages/empty-states/03"
   });
 }

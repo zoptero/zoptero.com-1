@@ -19,7 +19,7 @@ export async function generateMetadata() {
   return generateMeta({
     title: "Website Analytics Admin Dashboard",
     description:
-      "Analyze website analytics, earnings, and user data with real-time reports. A professional admin page built with React, TypeScript, Tailwind CSS, and shadcn/ui.",
+      "Analyze website analytics, earnings, and user data with real-time reports. A professional admin page built with React, TypeScript, Tailwind CSS.",
     canonical: "/website-analytics"
   });
 }

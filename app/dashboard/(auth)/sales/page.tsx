@@ -17,7 +17,7 @@ export async function generateMetadata() {
   return generateMeta({
     title: "Sales Admin Dashboard",
     description:
-      "Analyze sales metrics, track revenue, and monitor order status. A professional admin dashboard page built with React, TypeScript, Tailwind CSS, and shadcn/ui.",
+      "Analyze sales metrics, track revenue, and monitor order status. A professional admin dashboard page built with React, TypeScript, Tailwind CSS.",
     canonical: "/sales"
   });
 }

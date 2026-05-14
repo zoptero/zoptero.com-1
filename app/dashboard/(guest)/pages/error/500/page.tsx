@@ -4,7 +4,7 @@ export async function generateMetadata() {
   return generateMeta({
     title: "500 Page",
     description:
-      "This is an example of a template for 500 error pages. Built with shadcn/ui, Tailwind CSS and Next.js.",
+      "This is an example of a template for 500 error pages. Built with Tailwind CSS and Next.js.",
     canonical: "/pages/error/500"
   });
 }

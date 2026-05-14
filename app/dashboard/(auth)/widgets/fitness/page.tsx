@@ -18,7 +18,7 @@ export async function generateMetadata(): Promise<Metadata> {
     title: "Fitness Widgets",
     additionalTitle: true,
     description:
-      "Monitor health metrics, daily workouts, and sleep activity. A professional fitness dashboard page built with React, TypeScript, Tailwind CSS, and shadcn/ui.",
+      "Monitor health metrics, daily workouts, and sleep activity. A professional fitness dashboard page built with React, TypeScript, Tailwind CSS.",
     canonical: "/widgets/fitness"
   });
 }

@@ -6,7 +6,7 @@ export async function generateMetadata() {
     title: "AI Chat App",
     additionalTitle: true,
     description:
-      "Interact with AI-powered conversational interfaces using a modern, responsive chat interface. A professional AI chat application page built with React, TypeScript, Next.js, Tailwind CSS, and shadcn/ui.",
+      "Interact with AI-powered conversational interfaces using a modern, responsive chat interface. A professional AI chat application page built with React, TypeScript, Next.js, Tailwind CSS.",
     canonical: "/apps/ai-chat"
   });
 }

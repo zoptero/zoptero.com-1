@@ -7,7 +7,7 @@ export async function generateMetadata() {
     title: "403 Page",
     additionalTitle: true,
     description:
-      "The unauthorized 403 page template. Built with shadcn/ui, Tailwind CSS and Next.js.",
+      "The unauthorized 403 page template. Built with Tailwind CSS and Next.js.",
     canonical: "/pages/error/403"
   });
 }

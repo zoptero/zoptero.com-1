@@ -14,7 +14,7 @@ export async function generateMetadata(): Promise<Metadata> {
     title: "Orders Page",
     additionalTitle: true,
     description:
-      "Orders Page for shadcn/ui built with React, Tailwind CSS, and TypeScript. Manage order history, status, and tracking using responsive data tables and filtering components.",
+      "Orders Page built with React, Tailwind CSS, and TypeScript. Manage order history, status, and tracking using responsive data tables and filtering components.",
     canonical: "/pages/orders"
   });
 }

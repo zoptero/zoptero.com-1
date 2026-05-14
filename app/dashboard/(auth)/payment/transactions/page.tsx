@@ -11,7 +11,7 @@ export async function generateMetadata() {
   return generateMeta({
     title: "Transactions",
     description:
-      "Monitor payment history, withdrawals, and transaction statuses. A professional admin dashboard page built with React, TypeScript, Tailwind CSS, and shadcn/ui.",
+      "Monitor payment history, withdrawals, and transaction statuses. A professional admin dashboard page built with React, TypeScript, Tailwind CSS.",
     canonical: "/payment/transactions"
   });
 }
