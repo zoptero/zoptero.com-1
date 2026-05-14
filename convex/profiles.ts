@@ -18,6 +18,16 @@ import {
   isReservedProfileSlug,
   normalizePublicProfileSlug,
 } from "./lib/profileslug";
+import {
+  checkProfileUpdateRateLimit,
+  stripHtmlTags,
+  sanitizeUserInput,
+  FIELD_MAX_LENGTHS,
+  MAX_STRONG_KEYWORDS,
+  MAX_MY_SERVICES_ITEMS,
+  MAX_FAQS_ITEMS,
+  MAX_PROFILE_PAYLOAD_BYTES,
+} from "./rateLimiter";
 
 const userMediaKeyPattern = /^(avatars|uploads)\//;
 
@@ -148,6 +158,137 @@ function pickPreferredSector(profiles: Array<{ sector?: string; _creationTime: n
   return "";
 }
 
+/**
+ * Server-side validation of profile update fields to prevent:
+ * - Field flooding (excessively large strings)
+ * - Array flooding (excessively large arrays)
+ * - HTML injection / XSS / prompt injection
+ *
+ * Throws a ConvexError with a descriptive message on any violation.
+ */
+function validateProfileUpdateFields(args: Record<string, unknown>): void {
+  // Validate max payload size
+  const payloadJson = JSON.stringify(args);
+  if (payloadJson.length > MAX_PROFILE_PAYLOAD_BYTES) {
+    throw new Error("Payload too large. Please reduce the amount of data being sent.");
+  }
+
+  // Validate string field lengths
+  for (const [key, value] of Object.entries(args)) {
+    if (typeof value === "string" && FIELD_MAX_LENGTHS[key] !== undefined) {
+      if (value.length > FIELD_MAX_LENGTHS[key]) {
+        throw new Error(`Field "${key}" exceeds maximum length of ${FIELD_MAX_LENGTHS[key]} characters.`);
+      }
+    }
+  }
+
+  // Validate array fields sizes
+  if (Array.isArray(args.strongKeywords) && args.strongKeywords.length > MAX_STRONG_KEYWORDS) {
+    throw new Error(`Strong keywords must not exceed ${MAX_STRONG_KEYWORDS} items.`);
+  }
+  if (Array.isArray(args.MyServices) && args.MyServices.length > MAX_MY_SERVICES_ITEMS) {
+    throw new Error(`My services must not exceed ${MAX_MY_SERVICES_ITEMS} items.`);
+  }
+  if (Array.isArray(args.faqs) && args.faqs.length > MAX_FAQS_ITEMS) {
+    throw new Error(`FAQs must not exceed ${MAX_FAQS_ITEMS} items.`);
+  }
+
+  // Validate individual keyword/service item lengths
+  if (Array.isArray(args.strongKeywords)) {
+    for (const keyword of args.strongKeywords) {
+      if (typeof keyword === "string" && keyword.length > 100) {
+        throw new Error("Each strong keyword must not exceed 100 characters.");
+      }
+    }
+  }
+  if (Array.isArray(args.MyServices)) {
+    for (const service of args.MyServices) {
+      if (typeof service === "string" && service.length > 200) {
+        throw new Error("Each service must not exceed 200 characters.");
+      }
+    }
+  }
+  if (Array.isArray(args.faqs)) {
+    for (const faq of args.faqs) {
+      if (typeof faq.question === "string" && faq.question.length > 500) {
+        throw new Error("Each FAQ question must not exceed 500 characters.");
+      }
+      if (typeof faq.answer === "string" && faq.answer.length > 2000) {
+        throw new Error("Each FAQ answer must not exceed 2000 characters.");
+      }
+    }
+  }
+}
+
+/**
+ * Sanitizes all string fields in the profile update args against XSS / HTML injection.
+ * Applies stripHtmlTags to most fields, sanitizeUserInput (entity escaping) to rich-text-capable fields.
+ */
+function sanitizeProfileFields(args: Record<string, unknown>): Record<string, unknown> {
+  const sanitized: Record<string, unknown> = { ...args };
+
+  // Fields that should have HTML tags stripped entirely
+  const stripFields = [
+    "displayName",
+    "bio",
+    "city",
+    "workingEnvironment",
+    "startDate",
+    "slug",
+    "seoTitle",
+    "seoDescription",
+    "phone",
+    "whatsapp",
+    "instagram",
+    "tiktok",
+    "telegram",
+    "facebook",
+    "threads",
+    "youtube",
+    "linkedin",
+    "pinterest",
+    "linktree",
+    "etsy",
+    "deliveryInfo",
+    "email",
+    "hourPrice",
+    "profileVideoUrl",
+    "profileHeaderURL",
+    "mediaUrl",
+  ];
+
+  for (const field of stripFields) {
+    if (typeof sanitized[field] === "string") {
+      sanitized[field] = stripHtmlTags(sanitized[field] as string);
+    }
+  }
+
+  // aboutMe may allow some formatting, but use entity escape for safety
+  if (typeof sanitized.aboutMe === "string") {
+    sanitized.aboutMe = sanitizeUserInput(sanitized.aboutMe);
+  }
+
+  // Sanitize array items
+  if (Array.isArray(sanitized.strongKeywords)) {
+    sanitized.strongKeywords = (sanitized.strongKeywords as string[]).map((kw) =>
+      stripHtmlTags(kw)
+    );
+  }
+  if (Array.isArray(sanitized.MyServices)) {
+    sanitized.MyServices = (sanitized.MyServices as string[]).map((svc) =>
+      stripHtmlTags(svc)
+    );
+  }
+  if (Array.isArray(sanitized.faqs)) {
+    sanitized.faqs = (sanitized.faqs as Array<{ question: string; answer: string }>).map((faq) => ({
+      question: stripHtmlTags(faq.question),
+      answer: stripHtmlTags(faq.answer),
+    }));
+  }
+
+  return sanitized;
+}
+
 export const get = query({
   args: { clerkId: v.string() },
   handler: async (ctx, args) => {
@@ -254,6 +395,15 @@ export const update = mutation({
       throw new Error("Not authorized");
     }
 
+    // Enforce rate limiting for profile updates
+    await checkProfileUpdateRateLimit(ctx, args.clerkId);
+
+    // Validate field lengths, array sizes, and payload size
+    validateProfileUpdateFields(args as unknown as Record<string, unknown>);
+
+    // Sanitize all string fields against XSS / HTML injection
+    const sanitizedArgs = sanitizeProfileFields(args as unknown as Record<string, unknown>);
+
     const profilesByClerkId = await ctx.db
       .query("profiles")
       .withIndex("by_clerk_id", (q) => q.eq("clerkId", args.clerkId))
@@ -342,7 +492,7 @@ export const update = mutation({
       }
     }
 
-    const { clerkId, slug, onlineStatus, strongKeywords, ...fieldsToUpdate } = args;
+    const { clerkId, slug, onlineStatus, strongKeywords, ...fieldsToUpdate } = sanitizedArgs;
 
     // Sanitize text fields from HTML entities like &nbsp;
     const sanitizedFields: any = { ...fieldsToUpdate };
@@ -998,40 +1148,32 @@ export const backfillMissingSlugs = internalMutation({
         emailLocalPart ||
         profile.clerkId;
 
-      const initial = normalizePublicProfileSlug(baseInput);
-      if (!initial) {
-        continue;
+      let candidateSlug = normalizePublicProfileSlug(baseInput);
+      if (!candidateSlug) {
+        candidateSlug = `user-${profile.clerkId.slice(0, 8)}`;
       }
 
-      const baseSlug = initial;
-      let candidateSlug = initial;
-      let counter = 2;
-
-      while (usedSlugs.has(candidateSlug) || isReservedProfileSlug(candidateSlug)) {
-        candidateSlug = normalizePublicProfileSlug(`${baseSlug}-${counter}`);
-        counter += 1;
+      if (isReservedProfileSlug(candidateSlug)) {
+        candidateSlug = `user-${profile.clerkId.slice(0, 8)}`;
       }
 
-      usedSlugs.add(candidateSlug);
+      let slugAttempt = candidateSlug;
+      let attempt = 1;
+      while (usedSlugs.has(slugAttempt)) {
+        slugAttempt = `${candidateSlug}-${attempt}`;
+        attempt++;
+      }
+
+      usedSlugs.add(slugAttempt);
 
       if (!dryRun) {
-        await ctx.db.patch(profile._id, { slug: candidateSlug });
+        await ctx.db.patch(profile._id, { slug: slugAttempt });
       }
 
-      updated += 1;
-      if (restored.length < 25) {
-        restored.push({ clerkId: profile.clerkId, slug: candidateSlug });
-      }
+      updated++;
+      restored.push({ clerkId: profile.clerkId, slug: slugAttempt });
     }
 
-    return {
-      dryRun,
-      scanned: allProfiles.length,
-      missingBefore: allProfiles.filter((profile) => !profile.slug).length,
-      processed: candidates.length,
-      updated,
-      restored,
-      hasMore: allProfiles.filter((profile) => !profile.slug).length > candidates.length,
-    };
+    return { dryRun, updated, restored };
   },
 });

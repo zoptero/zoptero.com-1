@@ -11,9 +11,12 @@ export default defineSchema({
     onboardingComplete: v.optional(v.boolean()),
     isPro: v.optional(v.boolean()),
     createdAt: v.number(),
-    // Rate-limiting fields for abuse prevention
+    // Rate-limiting fields for chat abuse prevention
     lastMessageTimestamp: v.optional(v.number()),
     messageCount: v.optional(v.number()),
+    // Rate-limiting fields for profile update abuse prevention
+    lastProfileUpdateTimestamp: v.optional(v.number()),
+    profileUpdateCount: v.optional(v.number()),
   })
     .index("by_clerk_id", ["clerkId"])
     .index("by_email", ["email"]),
