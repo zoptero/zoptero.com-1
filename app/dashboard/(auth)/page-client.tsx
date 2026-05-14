@@ -24,7 +24,6 @@ import { useFileUpload } from "@/hooks/use-file-upload";
 
 import { api } from "@/convex/_generated/api";
 import { Button } from "@/components/ui/button";
-import { AnimatedUnderline } from "@/components/ui/tabs-animated";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -251,7 +250,6 @@ export default function DashboardPageClient() {
   const lastResolvedAvatarKeyRef = useRef<string | null>(null);
   const lastResolvedSeoImageKeyRef = useRef<string | null>(null);
   const [activeTab, setActiveTab] = useState("profile");
-  const [underlinePosition, setUnderlinePosition] = useState({ left: 0, width: 0 });
   const [showLeftShadow, setShowLeftShadow] = useState(false);
   const [showRightShadow, setShowRightShadow] = useState(false);
   const [profileCardHeight, setProfileCardHeight] = useState<number | null>(null);
@@ -488,8 +486,8 @@ export default function DashboardPageClient() {
   }, [headerImagePreviewFile, removeHeaderImage, form.watch("profileHeaderURL"), profile?.profileHeaderURL, user?.id, resolvedHeaderUrl, generateViewUrl]);
 
   useEffect(() => {
-    const updateUnderlineAndScroll = () => {
-      if (!tabsListRef.current) return;
+    const scrollToActiveTab = () => {
+      if (!tabsListRef.current || !scrollContainerRef.current) return;
 
       const activeTrigger = tabsListRef.current.querySelector(
         `[data-state="active"]`
@@ -497,24 +495,17 @@ export default function DashboardPageClient() {
 
       if (!activeTrigger) return;
 
-      setUnderlinePosition({
-        left: activeTrigger.offsetLeft,
-        width: activeTrigger.offsetWidth,
-      });
-
-      if (scrollContainerRef.current) {
-        const el = scrollContainerRef.current;
-        const scrollTo =
-          activeTrigger.offsetLeft - el.clientWidth / 2 + activeTrigger.offsetWidth / 2;
-        el.scrollTo({ left: Math.max(0, scrollTo), behavior: "smooth" });
-      }
+      const el = scrollContainerRef.current;
+      const scrollTo =
+        activeTrigger.offsetLeft - el.clientWidth / 2 + activeTrigger.offsetWidth / 2;
+      el.scrollTo({ left: Math.max(0, scrollTo), behavior: "smooth" });
     };
 
-    updateUnderlineAndScroll();
-    window.addEventListener("resize", updateUnderlineAndScroll);
+    scrollToActiveTab();
+    window.addEventListener("resize", scrollToActiveTab);
 
     return () => {
-      window.removeEventListener("resize", updateUnderlineAndScroll);
+      window.removeEventListener("resize", scrollToActiveTab);
     };
   }, [activeTab]);
 
@@ -886,16 +877,6 @@ export default function DashboardPageClient() {
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4 lg:pl-2.5">
         <div className="relative mb-4">
-          {/* Left shadow mask */}
-          <div
-            className="pointer-events-none absolute inset-y-0 left-0 z-10 w-10 bg-gradient-to-r from-muted to-transparent transition-opacity duration-200"
-            style={{ opacity: showLeftShadow ? 1 : 0 }}
-          />
-          {/* Right shadow mask */}
-          <div
-            className="pointer-events-none absolute inset-y-0 right-0 z-10 w-10 bg-gradient-to-l from-muted to-transparent transition-opacity duration-200"
-            style={{ opacity: showRightShadow ? 1 : 0 }}
-          />
           {/* Scroll container */}
           <div
             ref={scrollContainerRef}
@@ -919,15 +900,18 @@ export default function DashboardPageClient() {
                 <TabsTrigger value="atsauksmes">Atsauksmes</TabsTrigger>
                 <TabsTrigger value="qr">QR</TabsTrigger>
               </TabsList>
-              <AnimatedUnderline
-                orientation="horizontal"
-                style={{
-                  left: underlinePosition.left,
-                  width: underlinePosition.width,
-                }}
-              />
             </div>
           </div>
+          {/* Left shadow mask — on top so overflowing tabs fade into muted background */}
+          <div
+            className="pointer-events-none absolute inset-y-0 left-0 z-20 w-10 bg-gradient-to-r from-muted to-transparent transition-opacity duration-200"
+            style={{ opacity: showLeftShadow ? 1 : 0 }}
+          />
+          {/* Right shadow mask — on top so overflowing tabs fade into muted background */}
+          <div
+            className="pointer-events-none absolute inset-y-0 right-0 z-20 w-10 bg-gradient-to-l from-muted to-transparent transition-opacity duration-200"
+            style={{ opacity: showRightShadow ? 1 : 0 }}
+          />
         </div>
 
         <div className="w-full">
