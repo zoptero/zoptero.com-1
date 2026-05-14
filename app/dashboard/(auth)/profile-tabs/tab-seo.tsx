@@ -105,7 +105,7 @@ export default function TabSeo({ form, slugValue, slugCheckResult, profile, seoI
             )}
           </div>
           <FormDescription className="text-xs">
-            Profila saites priekšskatījuma attēls līdz 5 MB.
+            Attēls līdz 5 MB.
           </FormDescription>
           <label className="flex cursor-pointer items-center justify-center gap-2 rounded-md border px-3 py-2 text-sm transition-colors hover:bg-accent w-full max-w-[280px] text-center" style={{ width: '100%' }}>
             <Upload className="size-4" />
@@ -168,7 +168,7 @@ export default function TabSeo({ form, slugValue, slugCheckResult, profile, seoI
             )}
           </div>
           <FormDescription className="text-xs">
-            Profila saites priekšskatījuma attēls līdz 5 MB.
+            Attēls līdz 5 MB.
           </FormDescription>
           <label className="flex cursor-pointer items-center justify-center gap-2 rounded-md border px-3 py-2 text-sm transition-colors hover:bg-accent w-full max-w-[280px] text-center">
             <Upload className="size-4" />
