@@ -49,6 +49,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Skeleton } from "@/components/ui/skeleton";
 import ProfileAssistantChat from "@/components/ProfileAssistantChat";
+import SpinnerComponent from "@/components/spinner1";
 import { Input25 } from "@/components/input25";
 import { Select14 } from "@/components/select14";
 import { Input7 } from "@/components/input7";
@@ -1008,16 +1009,17 @@ export default function DashboardPageClient() {
                             (!form.formState.isDirty && !previewFile && !removeAvatar && !seoImagePreviewFile && !removeSeoImage && !headerImagePreviewFile && !removeHeaderImage) || savingProfile || uploadingAvatar || uploadingSeoImage
                           }
                         >
-                          {uploadingAvatar || uploadingSeoImage
-                            ? "Augšupielādē attēlu..."
-                            : savingProfile
-                            ? "Saglabā..."
-                            : (
-                                <>
-                                  Saglabāt
-                                  <ArrowRight className="ms-2 h-4 w-4 inline" />
-                                </>
-                              )}
+                          {uploadingAvatar || uploadingSeoImage || savingProfile ? (
+                            <>
+                              <SpinnerComponent />
+                              {uploadingAvatar || uploadingSeoImage ? "Augšupielādē attēlu..." : "Saglabā..."}
+                            </>
+                          ) : (
+                            <>
+                              Saglabāt
+                              <ArrowRight className="ms-2 h-4 w-4 inline" />
+                            </>
+                          )}
                         </Button>
                       </div>
                     </form>
