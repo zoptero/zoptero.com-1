@@ -15,7 +15,7 @@ export function HeroUserMenu() {
             size="icon"
             asChild
             aria-label="Uz sākumlapu"
-            className="h-8 w-8 rounded-lg transition-colors hover:bg-accent hover:text-primary"
+            className="h-7 w-7 rounded-full transition-colors hover:bg-accent hover:text-primary"
           >
             <Link href="/dashboard">
               <Grip className="w-5 h-5" />

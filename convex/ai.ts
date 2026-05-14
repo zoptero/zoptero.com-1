@@ -247,7 +247,29 @@ export const searchProfiles = action({
     })
   ),
   handler: async (ctx, args): Promise<SearchProfileResult[]> => {
-    const cleanedQuery = normalizeSearchText(args.query);
+    // --- SECURITY: Input validation ---
+    if (args.query.length > MAX_MESSAGE_LENGTH) {
+      return [];
+    }
+
+    // --- SECURITY: Input sanitization ---
+    const sanitizedQuery = sanitizeUserInput(args.query);
+
+    // --- SECURITY: Rate limiting ---
+    const identity = await ctx.auth.getUserIdentity();
+    if (identity) {
+      try {
+        await ctx.runMutation(internal.rateLimiter.checkChatRateLimitInternal, {
+          clerkId: identity.subject,
+        });
+      } catch (error) {
+        if (error instanceof ConvexError) {
+          return [];
+        }
+      }
+    }
+
+    const cleanedQuery = normalizeSearchText(sanitizedQuery);
     if (!cleanedQuery) {
       return [];
     }
