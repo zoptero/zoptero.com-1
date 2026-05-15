@@ -90,14 +90,11 @@ export const navItems: NavGroup[] = [
   {
     title: "Vadības panelis",
     items: [
-      // E-commerce removed
-      // Payment Dashboard removed
       {
         title: "Profils",
         href: "/dashboard",
         icon: FolderDotIcon,
       },
-      // Statistika moved as locked, gray, standalone item after Settings
       {
         title: "Publiskais profils",
         href: "/dashboard/pages/user-profile",
@@ -122,24 +119,11 @@ export const navItems: NavGroup[] = [
         icon: GaugeIcon,
         lock: true
       },
-      // Real Estate removed
-      // Sales removed
-      // CRM removed
-      // Crypto removed
-      // Academy/School removed
-      // Hospital Management removed
-      // Finance Dashboard removed
-    ]
-  },
-  {
-    title: "Rīki",
-    items: [
-      // Notes app removed
       { title: "POS App", href: "/dashboard/apps/pos-system", icon: CookieIcon },
       {
         title: "Chats",
         icon: MessageSquareIcon,
-        lock: true // Custom property to indicate lock icon usage
+        lock: true
       },
       {
         title: "Social",
@@ -149,13 +133,8 @@ export const navItems: NavGroup[] = [
       },
        { title: "Mail", href: "/dashboard/apps/mail", icon: MailIcon, lock: true },
        { title: "Calendar", href: "/dashboard/apps/calendar", icon: CalendarIcon, lock: true },
-       { title: "Kursi", href: "/dashboard/apps/courses", icon: BookAIcon, lock: true }
-    ]
-  },
-  {
-    title: "MI rīki",
-    items: [
-      {
+       { title: "Kursi", href: "/dashboard/apps/courses", icon: BookAIcon, lock: true },
+       {
         title: "Attēlu veidotājs",
         href: "/dashboard/apps/ai-image-generator",
         icon: ImagesIcon,
@@ -163,8 +142,6 @@ export const navItems: NavGroup[] = [
       }
     ]
   },
-  // Removed Settings from Pages and moved under Publiskais profils
-  // Others section removed
 ];
 
 export function NavMain() {
