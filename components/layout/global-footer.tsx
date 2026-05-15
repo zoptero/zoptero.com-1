@@ -17,8 +17,6 @@ export function GlobalFooter({ className }: GlobalFooterProps) {
     >
       <div className="flex w-full flex-col items-center justify-center gap-1 text-center md:gap-1.5">
         <div className="flex flex-wrap items-center justify-center gap-x-2 gap-y-1 mb-3" style={{ marginBottom: 2 }}>
-          <span>&copy; Zoptero</span>
-          <span className="hidden md:inline">·</span>
           <Link href="/dashboard/contacts" className="hover:text-primary no-underline">
             Kontakti
           </Link>
@@ -30,7 +28,7 @@ export function GlobalFooter({ className }: GlobalFooterProps) {
           <Link href="/dashboard/terms-of-services" className="hover:text-primary no-underline">
             Lietošanas noteikumi
           </Link>
-          <ThemeSwitch />
+          <ThemeSwitch className="h-7 w-7 rounded-full" />
         </div>
       </div>
     </footer>

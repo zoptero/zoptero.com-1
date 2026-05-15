@@ -5,8 +5,13 @@ import { useTheme } from "next-themes";
 import { MoonIcon, SunIcon } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
-export default function ThemeSwitch() {
+type ThemeSwitchProps = {
+  className?: string;
+};
+
+export default function ThemeSwitch({ className }: ThemeSwitchProps) {
   const [mounted, setMounted] = useState(false);
   const { theme, setTheme } = useTheme();
 
@@ -22,7 +27,7 @@ export default function ThemeSwitch() {
     <Button
       size="icon-sm"
       variant="ghost"
-      className="relative"
+      className={cn("relative", className)}
       onClick={() => setTheme(theme === "light" ? "dark" : "light")}>
       {theme === "light" ? <MoonIcon /> : <SunIcon />}
       <span className="sr-only">Toggle theme</span>
