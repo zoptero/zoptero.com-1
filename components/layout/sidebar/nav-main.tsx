@@ -106,39 +106,53 @@ export const navItems: NavGroup[] = [
         icon: SettingsIcon,
         items: [
           { title: "Profile", href: "/dashboard/pages/settings" },
-          { title: "Account", href: "/dashboard/pages/settings/account" },
           { title: "Billing", href: "/dashboard/pages/settings/billing" },
           { title: "Appearance", href: "/dashboard/pages/settings/appearance" },
           { title: "Notifications", href: "/dashboard/pages/settings/notifications" },
           { title: "Display", href: "/dashboard/pages/settings/display" },
-          { title: "Pricing", href: "/dashboard/pages/pricing/column", icon: BadgeDollarSignIcon, isComing: true }
+          { title: "Pricing", href: "/dashboard/pages/pricing/column", icon: BadgeDollarSignIcon, isComing: true },
+          { title: "Statistika", icon: GaugeIcon, lock: true }
         ]
       },
       {
-        title: "Statistika",
-        icon: GaugeIcon,
-        lock: true
-      },
-      { title: "POS App", href: "/dashboard/apps/pos-system", icon: CookieIcon },
-      {
-        title: "Chats",
-        icon: MessageSquareIcon,
-        lock: true
-      },
-      {
-        title: "Social",
-        href: "/dashboard/apps/social-media",
-        icon: MessageSquareHeartIcon,
-        lock: true
-      },
-       { title: "Mail", href: "/dashboard/apps/mail", icon: MailIcon, lock: true },
-       { title: "Calendar", href: "/dashboard/apps/calendar", icon: CalendarIcon, lock: true },
-       { title: "Kursi", href: "/dashboard/apps/courses", icon: BookAIcon, lock: true },
-       {
-        title: "Attēlu veidotājs",
-        href: "/dashboard/apps/ai-image-generator",
-        icon: ImagesIcon,
-        lock: true
+        title: "Instrumenti",
+        icon: ClipboardCheckIcon,
+        items: [
+          {
+            title: "Rēķini",
+            icon: ClipboardMinusIcon,
+            lock: true,
+            items: [
+              { title: "POS App", href: "/dashboard/apps/pos-system", icon: CookieIcon }
+            ]
+          },
+          {
+            title: "Rezervācija",
+            icon: CalendarIcon,
+            lock: true
+          },
+          { title: "POS App", href: "/dashboard/apps/pos-system", icon: CookieIcon },
+          {
+            title: "Chats",
+            icon: MessageSquareIcon,
+            lock: true
+          },
+          {
+            title: "Social",
+            href: "/dashboard/apps/social-media",
+            icon: MessageSquareHeartIcon,
+            lock: true
+          },
+          { title: "Mail", href: "/dashboard/apps/mail", icon: MailIcon, lock: true },
+          { title: "Calendar", href: "/dashboard/apps/calendar", icon: CalendarIcon, lock: true },
+          { title: "Kursi", href: "/dashboard/apps/courses", icon: BookAIcon, lock: true },
+          {
+            title: "Attēlu veidotājs",
+            href: "/dashboard/apps/ai-image-generator",
+            icon: ImagesIcon,
+            lock: true
+          }
+        ]
       }
     ]
   },
@@ -157,8 +171,8 @@ export function NavMain() {
             <SidebarMenu>
               {nav.items.map((item) => (
                 <SidebarMenuItem key={item.title}>
-                  {/* If lock property is set, show lock icon instead of link or badge */}
-                  {item.lock ? (
+                  {/* If lock property is set, show lock icon (with or without submenu) */}
+                  {item.lock && (!Array.isArray(item.items) || item.items.length === 0) ? (
                     <SidebarMenuButton
                       className="opacity-60 cursor-not-allowed hover:text-foreground active:text-foreground hover:bg-[var(--primary)]/10 active:bg-[var(--primary)]/10"
                       tooltip="Locked"
@@ -206,26 +220,38 @@ export function NavMain() {
                             <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
                           </SidebarMenuButton>
                         </CollapsibleTrigger>
-                        <CollapsibleContent>
-                          <SidebarMenuSub>
-                            {item?.items?.map((subItem, key) => (
-                              <SidebarMenuSubItem key={key}>
-                                <SidebarMenuSubButton
-                                  className="hover:text-foreground active:text-foreground hover:bg-[var(--primary)]/10 active:bg-[var(--primary)]/10"
-                                  isActive={pathname === subItem.href}
-                                  asChild={!!subItem.href}>
-                                  {subItem.href ? (
-                                    <Link href={subItem.href} target={subItem.newTab ? "_blank" : ""}>
+                          <CollapsibleContent>
+                            <SidebarMenuSub>
+                              {item?.items?.map((subItem, key) => (
+                                <SidebarMenuSubItem key={key}>
+                                  {subItem.lock ? (
+                                    <SidebarMenuSubButton
+                                      className="opacity-60 cursor-not-allowed hover:text-foreground active:text-foreground hover:bg-[var(--primary)]/10 active:bg-[var(--primary)]/10"
+                                      isActive={pathname === subItem.href}
+                                    >
                                       <span>{subItem.title}</span>
-                                    </Link>
+                                      <LockIcon className="ml-auto w-3 h-3 text-muted-foreground" />
+                                    </SidebarMenuSubButton>
                                   ) : (
-                                    <span>{subItem.title}</span>
+                                    <SidebarMenuSubButton
+                                      className="hover:text-foreground active:text-foreground hover:bg-[var(--primary)]/10 active:bg-[var(--primary)]/10"
+                                      isActive={pathname === subItem.href}
+                                      asChild={!!subItem.href}>
+                                      {subItem.href ? (
+                                        <Link href={subItem.href} target={subItem.newTab ? "_blank" : ""}>
+                                          <span>{subItem.title}</span>
+                                        </Link>
+                                      ) : (
+                                        <span>
+                                          <span>{subItem.title}</span>
+                                        </span>
+                                      )}
+                                    </SidebarMenuSubButton>
                                   )}
-                                </SidebarMenuSubButton>
-                              </SidebarMenuSubItem>
-                            ))}
-                          </SidebarMenuSub>
-                        </CollapsibleContent>
+                                </SidebarMenuSubItem>
+                              ))}
+                            </SidebarMenuSub>
+                          </CollapsibleContent>
                       </Collapsible>
                     </>
                   ) : (
