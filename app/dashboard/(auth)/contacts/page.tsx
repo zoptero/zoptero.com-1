@@ -26,10 +26,8 @@ export default function ContactsPage() {
           <div className="space-y-2">
             <h2 className="text-base font-semibold text-foreground">E-pasts</h2>
             <p className="text-muted-foreground text-sm leading-relaxed">
-              Vispārīgiem jautājumiem un atbalstam:
-            </p>
-            <p className="text-sm font-medium text-foreground">
-              <a href="mailto:sos@zoptero.com" className="text-primary hover:underline">
+              Vispārīgiem jautājumiem un atbalstam:{" "}
+              <a href="mailto:sos@zoptero.com" className="text-primary font-medium hover:underline">
                 sos@zoptero.com
               </a>
             </p>
