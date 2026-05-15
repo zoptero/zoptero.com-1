@@ -19,7 +19,7 @@ export function GlobalFooter({ className }: GlobalFooterProps) {
         <div className="flex flex-wrap items-center justify-center gap-x-2 gap-y-1 mb-3" style={{ marginBottom: 2 }}>
           <span>&copy; Zoptero</span>
           <span className="hidden md:inline">·</span>
-          <Link href="#" className="hover:text-primary no-underline">
+          <Link href="/dashboard/contacts" className="hover:text-primary no-underline">
             Kontakti
           </Link>
           <span className="hidden md:inline">·</span>
