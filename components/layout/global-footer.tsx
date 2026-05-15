@@ -20,19 +20,15 @@ export function GlobalFooter({ className }: GlobalFooterProps) {
           <span>&copy; Zoptero</span>
           <span className="hidden md:inline">·</span>
           <Link href="#" className="hover:text-primary no-underline">
-            Par mums
-          </Link>
-          <span className="hidden md:inline">·</span>
-          <Link href="#" className="hover:text-primary no-underline">
             Kontakti
           </Link>
           <span className="hidden md:inline">·</span>
-          <Link href="#" className="hover:text-primary no-underline">
+          <Link href="/dashboard/privacy-policy" className="hover:text-primary no-underline">
             Privātuma politika
           </Link>
           <span className="hidden md:inline">·</span>
-          <Link href="#" className="hover:text-primary no-underline">
-            Sīkdatņu politika
+          <Link href="/dashboard/terms-of-services" className="hover:text-primary no-underline">
+            Lietošanas noteikumi
           </Link>
           <ThemeSwitch />
         </div>
