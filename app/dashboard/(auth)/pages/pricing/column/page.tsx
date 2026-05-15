@@ -65,7 +65,7 @@ export default function PricingPage() {
         <div className="mb-4 flex flex-row items-center justify-between lg:pl-2.5">
           <div className="space-y-1">
             <h1 className="text-2xl font-bold tracking-tight">Abonements</h1>
-            <p className="text-muted-foreground text-sm">Izvēlies savām vajadzībām atbilstošāko plānu.</p>
+            <p className="text-muted-foreground text-sm">Izvēlies piemērotāko</p>
           </div>
           <div className="flex shrink-0 items-center space-x-2">
             <span className={`text-sm ${!isYearly ? "font-bold text-foreground" : "text-muted-foreground"}`}>Mēnesis</span>
