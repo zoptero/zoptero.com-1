@@ -75,55 +75,67 @@ export default function Page() {
   }
 
   return (
-    <Card>
-      <CardContent>
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-            <FormField
-              control={form.control}
-              name="items"
-              render={() => (
-                <FormItem>
-                  <div className="mb-4">
-                    <FormLabel className="text-base">Sidebar</FormLabel>
-                    <FormDescription>
-                      Select the items you want to display in the sidebar.
-                    </FormDescription>
-                  </div>
-                  {items.map((item) => (
-                    <FormField
-                      key={item.id}
-                      control={form.control}
-                      name="items"
-                      render={({ field }) => {
-                        return (
-                          <FormItem key={item.id} className="flex flex-row items-start">
-                            <FormControl>
-                              <Checkbox
-                                checked={field.value?.includes(item.id)}
-                                onCheckedChange={(checked) => {
-                                  return checked
-                                    ? field.onChange([...field.value, item.id])
-                                    : field.onChange(
-                                        field.value?.filter((value) => value !== item.id)
-                                      );
-                                }}
-                              />
-                            </FormControl>
-                            <FormLabel className="font-normal">{item.label}</FormLabel>
-                          </FormItem>
-                        );
-                      }}
-                    />
-                  ))}
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <Button type="submit">Update display</Button>
-          </form>
-        </Form>
-      </CardContent>
-    </Card>
+    <>
+      <div className="mb-4 flex flex-row items-center justify-between space-y-2 lg:pl-2.5">
+        <div className="space-y-1">
+          <h1 className="text-2xl font-bold tracking-tight">Izskats</h1>
+          <p className="text-muted-foreground text-sm">
+            Pielāgo saskarnes izskatu un izkārtojumu.
+          </p>
+        </div>
+      </div>
+      <div className="lg:pl-2.5">
+        <Card>
+          <CardContent>
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+                <FormField
+                  control={form.control}
+                  name="items"
+                  render={() => (
+                    <FormItem>
+                      <div className="mb-4">
+                        <FormLabel className="text-base">Sidebar</FormLabel>
+                        <FormDescription>
+                          Select the items you want to display in the sidebar.
+                        </FormDescription>
+                      </div>
+                      {items.map((item) => (
+                        <FormField
+                          key={item.id}
+                          control={form.control}
+                          name="items"
+                          render={({ field }) => {
+                            return (
+                              <FormItem key={item.id} className="flex flex-row items-start">
+                                <FormControl>
+                                  <Checkbox
+                                    checked={field.value?.includes(item.id)}
+                                    onCheckedChange={(checked) => {
+                                      return checked
+                                        ? field.onChange([...field.value, item.id])
+                                        : field.onChange(
+                                            field.value?.filter((value) => value !== item.id)
+                                          );
+                                    }}
+                                  />
+                                </FormControl>
+                                <FormLabel className="font-normal">{item.label}</FormLabel>
+                              </FormItem>
+                            );
+                          }}
+                        />
+                      ))}
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <Button type="submit">Update display</Button>
+              </form>
+            </Form>
+          </CardContent>
+        </Card>
+      </div>
+    </>
   );
 }

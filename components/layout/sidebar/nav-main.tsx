@@ -91,26 +91,15 @@ export const navItems: NavGroup[] = [
     title: "Vadības panelis",
     items: [
       {
-        title: "Profils",
-        href: "/dashboard",
-        icon: FolderDotIcon,
-      },
-      {
-        title: "Publiskais profils",
-        href: "/dashboard/pages/user-profile",
-        icon: UserIcon
-      },
-      {
         title: "Iestatījumi",
         href: "/dashboard/pages/settings",
         icon: SettingsIcon,
         items: [
-          { title: "Profile", href: "/dashboard/pages/settings" },
-          { title: "Billing", href: "/dashboard/pages/settings/billing" },
-          { title: "Appearance", href: "/dashboard/pages/settings/appearance" },
-          { title: "Notifications", href: "/dashboard/pages/settings/notifications" },
-          { title: "Display", href: "/dashboard/pages/settings/display" },
-          { title: "Pricing", href: "/dashboard/pages/pricing/column", icon: BadgeDollarSignIcon, isComing: true },
+          { title: "Profils", href: "/dashboard" },
+          { title: "Publiskais profils", href: "/dashboard/pages/user-profile" },
+          { title: "Paziņojumi", href: "/dashboard/pages/settings/notifications" },
+          { title: "Izskats", href: "/dashboard/pages/settings/display" },
+          { title: "Abonements", href: "/dashboard/pages/pricing/column", icon: BadgeDollarSignIcon, isComing: true },
           { title: "Statistika", icon: GaugeIcon, lock: true }
         ]
       },
@@ -133,7 +122,7 @@ export const navItems: NavGroup[] = [
           },
           { title: "POS App", href: "/dashboard/apps/pos-system", icon: CookieIcon },
           {
-            title: "Chats",
+            title: "Chat",
             icon: MessageSquareIcon,
             lock: true
           },
