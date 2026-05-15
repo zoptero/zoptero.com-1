@@ -101,7 +101,7 @@ export const navItems: NavGroup[] = [
         icon: UserIcon
       },
       {
-        title: "Settings",
+        title: "Iestatījumi",
         href: "/dashboard/pages/settings",
         icon: SettingsIcon,
         items: [
