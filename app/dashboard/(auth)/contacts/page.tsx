@@ -42,17 +42,6 @@ export default function ContactsPage() {
             </p>
           </div>
 
-          <div className="space-y-2">
-            <h2 className="text-base font-semibold text-foreground">Pārkāpumu ziņošana</h2>
-            <p className="text-muted-foreground text-sm leading-relaxed">
-              Ja esat pamanījis platformas noteikumu pārkāpumu, lūdzu, ziņojiet uz:
-            </p>
-            <p className="text-sm font-medium text-foreground">
-              <a href="mailto:sos@zoptero.com" className="text-primary hover:underline">
-                sos@zoptero.com
-              </a>
-            </p>
-          </div>
         </div>
       </div>
     </>
