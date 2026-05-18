@@ -90,6 +90,26 @@ export default function TabServices({ form, SECTOR_OPTIONS }: any) {
             </FormItem>
           )}
         />
+        <FormField
+          control={form.control}
+          name="workingEnvironment"
+          render={({ field }) => (
+            <FormItem>
+              <div className="flex items-center justify-between">
+                <FormLabel>Pakalpojumu specifika</FormLabel>
+                <span className="text-muted-foreground text-xs">{(field.value ?? "").length}/120</span>
+              </div>
+              <FormControl>
+                <Input3
+                  placeholder="Piem., biroja darbi, remonts, u.tml."
+                  {...field}
+                />
+              </FormControl>
+              <FormDescription className="text-xs">Norādi, kāda ir pakalpojumu specifika un kurā vidē tie tiek veikti.</FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
       </div>
     </>
   );
