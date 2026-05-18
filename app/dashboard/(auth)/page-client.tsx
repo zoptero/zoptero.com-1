@@ -58,6 +58,8 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { cn } from "@/lib/utils";
 
 import TabProfile from "./profile-tabs/tab-profile";
+import TabProfileB2C from "./profile-tabs/tab-profile-b2c";
+import TabProfileB2B from "./profile-tabs/tab-profile-b2b";
 import TabContacts from "./profile-tabs/tab-contacts";
 import TabServices from "./profile-tabs/tab-services";
 import TabTasks from "./profile-tabs/tab-tasks";
@@ -72,6 +74,48 @@ import TabClassfields from "./profile-tabs/tab-classfields";
 import TabShop from "./profile-tabs/tab-shop";
 import TabBlog from "./profile-tabs/tab-blog";
 import TabDelivery from "./profile-tabs/tab-delivery";
+
+type TabDefinition = {
+  value: string;
+  label: string;
+  component: React.ReactNode;
+};
+
+const B2C_TABS: TabDefinition[] = [
+  { value: "profile",     label: "Profils",        component: null },
+  { value: "business",    label: "Pakalpojumi",    component: null },
+  { value: "contact",     label: "Kontakti",       component: null },
+  { value: "uzdevumi",    label: "Uzdevumi",       component: null },
+  { value: "foto",        label: "Foto",           component: null },
+  { value: "video",       label: "Video",          component: null },
+  { value: "blogs",       label: "Blogs",          component: null },
+  { value: "veikals",     label: "Veikals",        component: null },
+  { value: "sludinajumi", label: "Sludinājumi",    component: null },
+  { value: "buj",         label: "BUJ",            component: null },
+  { value: "seo",         label: "SEO",            component: null },
+  { value: "payments",    label: "Apmaksa",        component: null },
+  { value: "delivery",    label: "Piegāde",        component: null },
+  { value: "atsauksmes",  label: "Atsauksmes",     component: null },
+  { value: "qr",          label: "QR",             component: null },
+];
+
+const B2B_TABS: TabDefinition[] = [
+  { value: "profile",     label: "Profils",        component: null },
+  { value: "business",    label: "Pakalpojumi",    component: null },
+  { value: "contact",     label: "Kontakti",       component: null },
+  { value: "uzdevumi",    label: "Uzdevumi",       component: null },
+  { value: "foto",        label: "Foto",           component: null },
+  { value: "video",       label: "Video",          component: null },
+  { value: "blogs",       label: "Blogs",          component: null },
+  { value: "veikals",     label: "Veikals",        component: null },
+  { value: "sludinajumi", label: "Sludinājumi",    component: null },
+  { value: "buj",         label: "BUJ",            component: null },
+  { value: "seo",         label: "SEO",            component: null },
+  { value: "payments",    label: "Apmaksa",        component: null },
+  { value: "delivery",    label: "Piegāde",        component: null },
+  { value: "atsauksmes",  label: "Atsauksmes",     component: null },
+  { value: "qr",          label: "QR",             component: null },
+];
 
 const urlOrEmptySchema = z
   .string()
@@ -122,6 +166,10 @@ const SECTOR_OPTIONS = [
 
 const defaultValues: ProfileFormValues = {
   displayName: "",
+  companyName: "",
+  regNr: "",
+  vatNr: "",
+  legalAddress: "",
   email: "",
   phone: "",
   city: "",
@@ -160,6 +208,8 @@ const defaultValues: ProfileFormValues = {
 
 const TAB_VALIDATION_FIELDS: Partial<Record<string, Array<keyof ProfileFormValues>>> = {
   profile: ["displayName", "bio"],
+  profileB2c: ["displayName", "bio"],
+  profileB2b: ["companyName", "regNr", "vatNr", "legalAddress"],
   business: ["myServicesText", "workingEnvironment", "startDate", "strongKeywords", "hourPrice", "sector"],
   contact: [
     "phone",
@@ -304,6 +354,10 @@ export default function DashboardPageClient() {
   useEffect(() => {
     form.reset({
       displayName: profile?.displayName ?? user?.fullName ?? "",
+      companyName: profile?.companyName ?? "",
+      regNr: profile?.regNr ?? "",
+      vatNr: profile?.vatNr ?? "",
+      legalAddress: profile?.legalAddress ?? "",
       email: profile?.email || user?.primaryEmailAddress?.emailAddress || "",
       phone: profile?.phone ?? "",
       city: profile?.city ?? "",
@@ -756,6 +810,10 @@ export default function DashboardPageClient() {
     const currentThreads = profile?.threads ?? "";
     const currentLinktree = profile?.linktree ?? "";
     const currentEtsy = profile?.etsy ?? "";
+    const currentCompanyName = profile?.companyName ?? "";
+    const currentRegNr = profile?.regNr ?? "";
+    const currentVatNr = profile?.vatNr ?? "";
+    const currentLegalAddress = profile?.legalAddress ?? "";
 
     const payload = {
       clerkId: user.id,
@@ -802,6 +860,10 @@ export default function DashboardPageClient() {
       paymentBankTransfer: values.paymentBankTransfer,
       paymentCard: values.paymentCard,
       deliveryInfo: values.deliveryInfo,
+      ...(values.companyName !== currentCompanyName ? { companyName: values.companyName || "" } : {}),
+      ...(values.regNr !== currentRegNr ? { regNr: values.regNr || "" } : {}),
+      ...(values.vatNr !== currentVatNr ? { vatNr: values.vatNr || "" } : {}),
+      ...(values.legalAddress !== currentLegalAddress ? { legalAddress: values.legalAddress || "" } : {}),
     };
 
     try {
@@ -852,6 +914,72 @@ export default function DashboardPageClient() {
     await saveProfile(form.getValues());
   };
 
+  const accountType = profile?.accountType ?? "b2c";
+  const tabComponents: Record<string, React.ReactNode> = {
+    profile: accountType === "b2b"
+      ? <TabProfileB2B
+          form={form}
+          previewUrl={previewUrl}
+          previewFile={previewFile}
+          removeAvatar={removeAvatar}
+          profile={profile}
+          addFiles={addFiles}
+          removeFile={removeFile}
+          setRemoveAvatar={setRemoveAvatar}
+          setFocusedField={setFocusedField}
+        />
+      : <TabProfileB2C
+          form={form}
+          previewUrl={previewUrl}
+          previewFile={previewFile}
+          removeAvatar={removeAvatar}
+          profile={profile}
+          addFiles={addFiles}
+          removeFile={removeFile}
+          setRemoveAvatar={setRemoveAvatar}
+          setFocusedField={setFocusedField}
+        />,
+    contact: <TabContacts form={form} />,
+    business: <TabServices
+              form={form}
+              SECTOR_OPTIONS={SECTOR_OPTIONS}
+              parseDateFromInput={parseDateFromInput}
+              getTodayStart={getTodayStart}
+              format={format}
+            />,
+    uzdevumi: <TabTasks />,
+    foto: <TabPhoto form={form} />,
+    video: <TabVideo form={form} />,
+    blogs: <TabBlog />,
+    veikals: <TabShop />,
+    sludinajumi: <TabClassfields />,
+    buj: <TabFaq />,
+    seo: <TabSeo
+          form={form}
+          slugValue={slugValue}
+          slugCheckResult={slugCheckResult}
+          profile={profile}
+          seoImagePreviewUrl={seoImagePreviewUrl}
+          seoImagePreviewFile={seoImagePreviewFile}
+          removeSeoImage={removeSeoImage}
+          setRemoveSeoImage={setRemoveSeoImage}
+          addSeoImageFiles={addSeoImageFiles}
+          removeSeoImageFile={removeSeoImageFile}
+          headerImagePreviewUrl={headerImagePreviewUrl}
+          headerImagePreviewFile={headerImagePreviewFile}
+          removeHeaderImage={removeHeaderImage}
+          setRemoveHeaderImage={setRemoveHeaderImage}
+          addHeaderImageFiles={addHeaderImageFiles}
+          removeHeaderImageFile={removeHeaderImageFile}
+        />,
+    payments: <TabPayments form={form} />,
+    delivery: <TabDelivery form={form} />,
+    atsauksmes: <TabReviews />,
+    qr: <TabQr slugValue={slugValue} />,
+  };
+
+  const activeTabs = accountType === "b2b" ? B2B_TABS : B2C_TABS;
+
   if (profile === undefined) {
     return (
       <>
@@ -885,21 +1013,9 @@ export default function DashboardPageClient() {
           >
             <div ref={tabsListRef} className="relative w-max">
               <TabsList className="z-10">
-                <TabsTrigger value="profile">Profils</TabsTrigger>
-                <TabsTrigger value="business">Pakalpojumi</TabsTrigger>
-                <TabsTrigger value="contact">Kontakti</TabsTrigger>
-                <TabsTrigger value="uzdevumi">Uzdevumi</TabsTrigger>
-                <TabsTrigger value="foto">Foto</TabsTrigger>
-                <TabsTrigger value="video">Video</TabsTrigger>
-                <TabsTrigger value="blogs">Blogs</TabsTrigger>
-                <TabsTrigger value="veikals">Veikals</TabsTrigger>
-                <TabsTrigger value="sludinajumi">Sludinājumi</TabsTrigger>
-                <TabsTrigger value="buj">BUJ</TabsTrigger>
-                <TabsTrigger value="seo">SEO</TabsTrigger>
-                <TabsTrigger value="payments">Apmaksa</TabsTrigger>
-                <TabsTrigger value="delivery">Piegāde</TabsTrigger>
-                <TabsTrigger value="atsauksmes">Atsauksmes</TabsTrigger>
-                <TabsTrigger value="qr">QR</TabsTrigger>
+                {activeTabs.map((tab) => (
+                  <TabsTrigger key={tab.value} value={tab.value}>{tab.label}</TabsTrigger>
+                ))}
               </TabsList>
             </div>
           </div>
@@ -922,84 +1038,11 @@ export default function DashboardPageClient() {
                 <CardContent className="pt-6">
                   <Form {...form}>
                     <form onSubmit={handleSaveCurrentTab} className="space-y-6">
-                      <TabsContent value="profile" className="space-y-4">
-                        <TabProfile
-                          form={form}
-                          previewUrl={previewUrl}
-                          previewFile={previewFile}
-                          removeAvatar={removeAvatar}
-                          profile={profile}
-                          addFiles={addFiles}
-                          removeFile={removeFile}
-                          setRemoveAvatar={setRemoveAvatar}
-                          setFocusedField={setFocusedField}
-                        />
-                      </TabsContent>
-                      <TabsContent value="contact" className="space-y-4">
-                        <TabContacts form={form} />
-                      </TabsContent>
-                      <TabsContent value="business" className="space-y-4">
-                        <TabServices
-                          form={form}
-                          SECTOR_OPTIONS={SECTOR_OPTIONS}
-                          parseDateFromInput={parseDateFromInput}
-                          getTodayStart={getTodayStart}
-                          format={format}
-                        />
-                      </TabsContent>
-                      <TabsContent value="uzdevumi" className="space-y-4">
-                        <TabTasks />
-                      </TabsContent>
-                      <TabsContent value="foto" className="space-y-4">
-                        <TabPhoto form={form} />
-                      </TabsContent>
-                      <TabsContent value="video" className="space-y-4">
-                        <TabVideo form={form} />
-                      </TabsContent>
-                      <TabsContent value="blogs" className="space-y-4">
-                        <TabBlog />
-                      </TabsContent>
-                      <TabsContent value="veikals" className="space-y-4">
-                        <TabShop />
-                      </TabsContent>
-                      <TabsContent value="sludinajumi" className="space-y-4">
-                        <TabClassfields />
-                      </TabsContent>
-                      <TabsContent value="buj" className="space-y-4">
-                        <TabFaq />
-                      </TabsContent>
-                      <TabsContent value="seo" className="space-y-4">
-                        <TabSeo
-                          form={form}
-                          slugValue={slugValue}
-                          slugCheckResult={slugCheckResult}
-                          profile={profile}
-                          seoImagePreviewUrl={seoImagePreviewUrl}
-                          seoImagePreviewFile={seoImagePreviewFile}
-                          removeSeoImage={removeSeoImage}
-                          setRemoveSeoImage={setRemoveSeoImage}
-                          addSeoImageFiles={addSeoImageFiles}
-                          removeSeoImageFile={removeSeoImageFile}
-                          headerImagePreviewUrl={headerImagePreviewUrl}
-                          headerImagePreviewFile={headerImagePreviewFile}
-                          removeHeaderImage={removeHeaderImage}
-                          setRemoveHeaderImage={setRemoveHeaderImage}
-                          addHeaderImageFiles={addHeaderImageFiles}
-                          removeHeaderImageFile={removeHeaderImageFile}
-                        />
-                      </TabsContent>
-                      <TabsContent value="payments" className="space-y-4">
-                        <TabPayments form={form} />
-                      </TabsContent>
-                      <TabsContent value="delivery" className="space-y-4">
-                        <TabDelivery form={form} />
-                      </TabsContent>
-                      <TabsContent value="atsauksmes" className="space-y-4">
-                        <TabReviews />
-                      </TabsContent>
-                      <TabsContent value="qr" className="space-y-4">
-                        <TabQr slugValue={slugValue} />
-                      </TabsContent>
+                      {activeTabs.map((tab) => (
+                        <TabsContent key={tab.value} value={tab.value} className="space-y-4">
+                          {tabComponents[tab.value]}
+                        </TabsContent>
+                      ))}
                       <div className="flex justify-center md:justify-end mt-6">
                         <Button
                           type="submit"

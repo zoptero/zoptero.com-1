@@ -12,6 +12,10 @@ const httpsUrlOrEmptySchema = z
 
 export const profileFormSchema = z.object({
   displayName: z.string().trim().min(3, "Vārdam nepieciešams vismaz 3 simboli.").max(80),
+  companyName: z.string().trim().max(120).optional().or(z.literal("")),
+  regNr: z.string().trim().max(50).optional().or(z.literal("")),
+  vatNr: z.string().trim().max(50).optional().or(z.literal("")),
+  legalAddress: z.string().trim().max(200).optional().or(z.literal("")),
   email: z.string().trim().email("Enter a valid email.").or(z.literal("")),
   phone: z
     .string()

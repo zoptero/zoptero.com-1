@@ -384,6 +384,10 @@ export const update = mutation({
     paymentBankTransfer: v.optional(v.boolean()),
     paymentCard: v.optional(v.boolean()),
     faqs: v.optional(v.array(v.object({ question: v.string(), answer: v.string() })) ),
+    companyName: v.optional(v.string()),
+    regNr: v.optional(v.string()),
+    vatNr: v.optional(v.string()),
+    legalAddress: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();

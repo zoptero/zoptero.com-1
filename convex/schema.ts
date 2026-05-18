@@ -67,6 +67,11 @@ export default defineSchema({
     paymentCard: v.optional(v.boolean()),
     faqs: v.optional(v.array(v.object({ question: v.string(), answer: v.string() }))),
     embedding: v.optional(v.array(v.float64())),
+    // B2B company fields
+    companyName: v.optional(v.string()),
+    regNr: v.optional(v.string()),
+    vatNr: v.optional(v.string()),
+    legalAddress: v.optional(v.string()),
   })
     .index("by_clerk_id", ["clerkId"])
     .index("by_slug", ["slug"])
