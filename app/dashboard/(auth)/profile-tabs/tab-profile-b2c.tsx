@@ -37,7 +37,7 @@ export default function TabProfileB2C({ form, previewUrl, previewFile, removeAva
             <FormItem>
               <FormLabel>Pilsēta</FormLabel>
               <FormControl>
-                <Input3 placeholder="Rīga" helperText="Norādi pilsētu, kurā piedāvā savus pakalpojumus." {...field} />
+                <Input3 helperText="Norādi pilsētu, kurā piedāvā savus pakalpojumus. Neobligāti." {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
