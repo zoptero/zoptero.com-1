@@ -144,19 +144,10 @@ export default function PricingPage() {
       <FadeInSlide delay={0.6}>
         <div className="space-y-4 lg:pl-2.5">
           {/* Profila tips - maza info karte */}
-          <div className="flex items-center justify-between rounded-lg border p-4 bg-card">
-            <div className="flex items-center gap-3">
-              <div className="flex size-10 items-center justify-center rounded-full bg-primary/10">
-                {accountType === "b2b" ? (
-                  <Building2 className="h-5 w-5 text-primary" />
-                ) : (
-                  <UserCircle2 className="h-5 w-5 text-primary" />
-                )}
-              </div>
-              <span className="text-sm font-semibold uppercase tracking-wider">
-                {accountType === "b2b" ? "B2B" : "B2C"}
-              </span>
-            </div>
+          <div className="rounded-lg border p-4 bg-card">
+            <span className="text-sm font-semibold uppercase tracking-wider">
+              {accountType === "b2b" ? "B2B" : "B2C"}
+            </span>
           </div>
 
         </div>
