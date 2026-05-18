@@ -13,12 +13,6 @@ import {
 import { Switch } from "@/components/ui/switch";
 import FadeInSlide from "@/components/FadeInSlide";
 import { Check, ArrowRight } from "lucide-react";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger
-} from "@/components/ui/accordion";
 
 export default function PricingPage() {
   const [isYearly, setIsYearly] = useState(false);
@@ -133,18 +127,11 @@ export default function PricingPage() {
 
       {/* FAQ sadaļa */}
       <FadeInSlide delay={0.5}>
-      <div className="mt-8 max-w-(--breakpoint-sm) space-y-4 lg:pl-2.5">
-        <h2 className="text-xl font-semibold">Biežāk uzdotie jautājumi</h2>
-        <Card className="border-none shadow-none bg-transparent">
-          <Accordion type="single" collapsible className="w-full text-sm">
-            <AccordionItem value="item-1" className="border rounded-lg px-4 bg-card">
-              <AccordionTrigger className="hover:no-underline">Kā notiek apmaksa?</AccordionTrigger>
-              <AccordionContent className="text-muted-foreground">
-                Mēs atbalstām bankas kartes un pārskaitījumus. Gada plānam tiek sagatavots viens rēķins par visu periodu.
-              </AccordionContent>
-            </AccordionItem>
-          </Accordion>
-        </Card>
+      <div className="mb-4 mt-8 flex flex-row items-center justify-between lg:pl-2.5">
+        <div className="space-y-1">
+          <h2 className="text-xl font-semibold">Biežāk uzdotie jautājumi</h2>
+          <p className="text-muted-foreground text-sm">Atbildes uz biežāk uzdotajiem jautājumiem</p>
+        </div>
       </div>
       </FadeInSlide>
     </div>

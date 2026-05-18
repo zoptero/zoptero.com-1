@@ -64,7 +64,7 @@ export default function Page() {
         <div className="space-y-1">
           <h1 className="text-2xl font-bold tracking-tight">Paziņojumi</h1>
           <p className="text-muted-foreground text-sm">
-            Pārvaldi savus paziņojumu iestatījumus.
+            Pārvaldi savus paziņojumus.
           </p>
         </div>
       </div>
