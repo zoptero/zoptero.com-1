@@ -5,7 +5,6 @@ import { cn } from "@/lib/utils";
 import { usePathname } from "next/navigation";
 import {
   BellIcon,
-  ContrastIcon,
   CreditCardIcon,
   PaletteIcon,
   ShieldIcon,
@@ -41,11 +40,6 @@ const sidebarNavItems = [
     href: "/dashboard/pages/settings/notifications",
     icon: BellIcon
   },
-  {
-    title: "Display",
-    href: "/dashboard/pages/settings/display",
-    icon: ContrastIcon
-  }
 ];
 
 export function SidebarNav() {
