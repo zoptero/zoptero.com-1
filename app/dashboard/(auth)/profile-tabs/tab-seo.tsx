@@ -15,17 +15,21 @@ export default function TabSeo({ form, slugValue, slugCheckResult, profile, seoI
         name="slug"
         render={({ field, fieldState }) => (
           <FormItem>
-            <FormLabel>Saite uz profilu</FormLabel>
+            <div className="flex items-center justify-between">
+              <FormLabel>Saite uz profilu</FormLabel>
+              <span className="text-muted-foreground text-xs">{(field.value ?? "").length}/30</span>
+            </div>
             <FormControl>
               <WebsiteInput
                 value={field.value ?? ""}
                 onChange={(url) => {
                   const slug = url
                     .replace(/^https?:\/\/zoptero\.com\//i, "")
+                    .replace(/[^a-z0-9]/g, "")
                     .trim();
                   field.onChange(slug);
                 }}
-                placeholder="mans-profils"
+                placeholder="mansprofils"
                 prefix="https://zoptero.com/"
               />
             </FormControl>

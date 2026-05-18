@@ -33,8 +33,8 @@ export const profileFormSchema = z.object({
   slug: z
     .string()
     .trim()
-    .max(80)
-    .regex(/^[a-z0-9-]*$/, "Use lowercase letters, numbers, and hyphens only.")
+    .max(30, "Maksimāli 30 simboli.")
+    .regex(/^[a-z0-9]*$/, "Atļauti tikai mazie burti un cipari.")
     .refine((value) => value === "" || value.length >= 3, "Vismaz 3 simboli."),
   workingEnvironment: z.string().trim().max(120),
   onlineStatus: z.boolean(),
