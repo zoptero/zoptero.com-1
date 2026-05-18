@@ -45,10 +45,10 @@ export function ProfileCard() {
             <div className="flex items-center gap-3 text-sm">
               <Link2Icon className="text-muted-foreground size-4" />
               <a
-                href="https://shadcnuikit.com"
+                href="https://zoptero.com"
                 className="hover:text-primary hover:underline"
                 target="_blank">
-                https://shadcnuikit.com
+                https://zoptero.com
               </a>
             </div>
             <div className="flex items-center gap-3 text-sm">

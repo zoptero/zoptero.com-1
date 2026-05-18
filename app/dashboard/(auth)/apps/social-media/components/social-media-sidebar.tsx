@@ -170,7 +170,7 @@ const ProBanner = () => {
               Dismiss
             </Button>
             <Button size="sm" asChild>
-              <Link href="https://shadcnuikit.com/pricing" target="_blank">
+              <Link href="https://zoptero.com/pricing" target="_blank">
                 Go Pro
               </Link>
             </Button>

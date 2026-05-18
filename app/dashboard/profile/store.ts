@@ -70,7 +70,7 @@ export const useProfileStore = create<ProfileState>(() => ({
     role: "Developer",
     location: "San Francisco, US",
     joinedDate: "March 2025",
-    email: "hi@shadcnuikit.com",
+    email: "hi@zoptero.com",
     phone: "+1 (609) 972-22-22",
     department: "No department",
     teams: 7,

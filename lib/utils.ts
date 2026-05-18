@@ -27,7 +27,7 @@ export function generateMeta({
   return {
     title: `${title}${additionalTitle ? " – Zoptero vadības panelis" : ""}`,
     description: description,
-    metadataBase: new URL(`https://shadcnuikit.com`),
+    metadataBase: new URL(`https://zoptero.com`),
     alternates: {
       canonical: `/dashboard${canonical}`
     },
