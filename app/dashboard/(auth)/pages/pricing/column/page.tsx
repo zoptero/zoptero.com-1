@@ -135,8 +135,8 @@ export default function PricingPage() {
       <FadeInSlide delay={0.5}>
         <div className="mb-4 mt-8 flex flex-row items-center justify-between lg:pl-2.5">
           <div className="space-y-1">
-            <h2 className="text-xl font-semibold">Biežāk uzdotie jautājumi</h2>
-            <p className="text-muted-foreground text-sm">Atbildes uz biežāk uzdotajiem jautājumiem</p>
+            <h2 className="text-xl font-semibold">Profila tips</h2>
+            <p className="text-muted-foreground text-sm">Platformas lietošanas formāts</p>
           </div>
         </div>
       </FadeInSlide>
