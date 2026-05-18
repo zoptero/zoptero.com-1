@@ -68,7 +68,7 @@ export default function TabContacts({ form }: any) {
                 <WebsiteInput
                   value={field.value}
                   onChange={field.onChange}
-                  placeholder="37123456789"
+                  placeholder="371..."
                   id="_r_12_-whatsapp"
                   prefix="https://wa.me/"
                 />
