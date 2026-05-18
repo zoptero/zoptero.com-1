@@ -151,7 +151,7 @@ export default function TabProfileB2B({ form, previewUrl, previewFile, removeAva
       />
 
       <FormItem>
-        <FormLabel>Logo</FormLabel>
+        <FormLabel>Uzņēmuma logo</FormLabel>
         <FormControl>
           <div className="flex items-center gap-4">
             <Avatar className="size-20 shrink-0">
