@@ -371,10 +371,7 @@ export default function DashboardPageClient() {
       onlineStatus: profile?.onlineStatus ?? true,
       strongKeywords: profile?.strongKeywords ?? [],
       hourPrice: profile?.hourPrice ?? "",
-      myServicesText: (
-        profile?.MyServices ??
-        ((profile as unknown as { searchTriggers?: string[] })?.searchTriggers ?? [])
-      ).join(", "),
+      myServicesText: (profile?.MyServices ?? []).join(", "),
       mediaUrl: profile?.mediaUrl ?? "",
       profileVideoUrl: profile?.profileVideoUrl ?? "",
       seoTitle: profile?.seoTitle ?? "",
