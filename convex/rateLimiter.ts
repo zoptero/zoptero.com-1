@@ -71,6 +71,11 @@ export const FIELD_MAX_LENGTHS: Record<string, number> = {
   avatarKey: 500,
   avatarUrl: 500,
   seoImageKey: 500,
+  companyName: 120,
+  regNr: 50,
+  vatNr: 50,
+  legalAddress: 200,
+  actualAddress: 200,
 };
 
 /**

@@ -254,6 +254,7 @@ function sanitizeProfileFields(args: Record<string, unknown>): Record<string, un
     "profileVideoUrl",
     "profileHeaderURL",
     "mediaUrl",
+    "actualAddress",
   ];
 
   for (const field of stripFields) {
@@ -380,6 +381,7 @@ export const update = mutation({
     regNr: v.optional(v.string()),
     vatNr: v.optional(v.string()),
     legalAddress: v.optional(v.string()),
+    actualAddress: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();

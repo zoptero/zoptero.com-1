@@ -107,6 +107,26 @@ export default function TabProfileB2B({ form, previewUrl, previewFile, removeAva
 
       <FormField
         control={form.control}
+        name="actualAddress"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>Faktiskā adrese</FormLabel>
+            <FormControl>
+              <Input3
+                placeholder="Piem., Ielas iela 1, Rīga, LV-1001"
+                helperText="Uzņēmums faktiskā adrese."
+                onFocus={() => setFocusedField("Faktiskā adrese")}
+                {...field}
+                onBlur={() => { field.onBlur(); setFocusedField(undefined); }}
+              />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+
+      <FormField
+        control={form.control}
         name="bio"
         render={({ field }) => (
           <FormItem>

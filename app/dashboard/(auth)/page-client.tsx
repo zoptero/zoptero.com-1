@@ -354,6 +354,7 @@ export default function DashboardPageClient() {
       regNr: profile?.regNr ?? "",
       vatNr: profile?.vatNr ?? "",
       legalAddress: profile?.legalAddress ?? "",
+      actualAddress: profile?.actualAddress ?? "",
       email: profile?.email || user?.primaryEmailAddress?.emailAddress || "",
       phone: profile?.phone ?? "",
       city: profile?.city ?? "",
@@ -805,6 +806,7 @@ export default function DashboardPageClient() {
     const currentRegNr = profile?.regNr ?? "";
     const currentVatNr = profile?.vatNr ?? "";
     const currentLegalAddress = profile?.legalAddress ?? "";
+    const currentActualAddress = profile?.actualAddress ?? "";
 
     const payload = {
       clerkId: user.id,
@@ -853,6 +855,7 @@ export default function DashboardPageClient() {
       ...(values.regNr !== currentRegNr ? { regNr: values.regNr || "" } : {}),
       ...(values.vatNr !== currentVatNr ? { vatNr: values.vatNr || "" } : {}),
       ...(values.legalAddress !== currentLegalAddress ? { legalAddress: values.legalAddress || "" } : {}),
+      ...(values.actualAddress !== currentActualAddress ? { actualAddress: values.actualAddress || "" } : {}),
     };
 
     try {

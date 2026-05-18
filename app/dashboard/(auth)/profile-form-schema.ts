@@ -16,6 +16,7 @@ export const profileFormSchema = z.object({
   regNr: z.string().trim().max(50).optional().or(z.literal("")),
   vatNr: z.string().trim().max(50).optional().or(z.literal("")),
   legalAddress: z.string().trim().max(200).optional().or(z.literal("")),
+  actualAddress: z.string().trim().max(200).optional().or(z.literal("")),
   email: z.string().trim().email("Enter a valid email.").or(z.literal("")),
   phone: z
     .string()
