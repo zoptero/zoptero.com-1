@@ -36,7 +36,6 @@ export default defineSchema({
     latitude: v.optional(v.number()),
     longitude: v.optional(v.number()),
     workingEnvironment: v.optional(v.string()),
-    startDate: v.optional(v.string()),
     mediaUrl: v.optional(v.string()),
     seoTitle: v.optional(v.string()),
     seoDescription: v.optional(v.string()),

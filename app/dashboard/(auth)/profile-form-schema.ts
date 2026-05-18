@@ -37,7 +37,6 @@ export const profileFormSchema = z.object({
     .regex(/^[a-z0-9-]*$/, "Use lowercase letters, numbers, and hyphens only.")
     .refine((value) => value === "" || value.length >= 3, "Vismaz 3 simboli."),
   workingEnvironment: z.string().trim().max(120),
-  startDate: z.string().optional(),
   onlineStatus: z.boolean(),
   strongKeywords: z.array(z.string().min(2, "Vismaz 2 simboli.").max(24, "Maksimāli 24 simboli.")).max(5, "Maksimāli 5 atslēgvārdi."),
   hourPrice: z

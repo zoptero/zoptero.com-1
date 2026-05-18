@@ -9,14 +9,11 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { profileFormSchema, ProfileFormValues } from "./profile-form-schema";
 import { toast } from "sonner";
-import { format } from "date-fns";
 import {
   isValidUrl,
   normalizeSlug,
   parseCsv,
-  parseDateFromInput,
   hasExactImageDimensions,
-  getTodayStart,
   isValidPhoneNumber,
 } from "./profile-utils";
 import { CalendarIcon, Upload, X, ArrowRight } from "lucide-react";
@@ -179,7 +176,6 @@ const defaultValues: ProfileFormValues = {
   sector: "",
   slug: "",
   workingEnvironment: "",
-  startDate: "",
   onlineStatus: true,
   strongKeywords: [],
   hourPrice: "",
@@ -210,7 +206,7 @@ const TAB_VALIDATION_FIELDS: Partial<Record<string, Array<keyof ProfileFormValue
   profile: ["displayName", "bio"],
   profileB2c: ["displayName", "bio"],
   profileB2b: ["companyName", "regNr", "vatNr", "legalAddress"],
-  business: ["myServicesText", "workingEnvironment", "startDate", "strongKeywords", "hourPrice", "sector"],
+  business: ["myServicesText", "workingEnvironment", "strongKeywords", "hourPrice", "sector"],
   contact: [
     "phone",
     "email",
@@ -367,7 +363,6 @@ export default function DashboardPageClient() {
       sector: profile?.sector ?? "",
       slug: profile?.slug ?? "",
       workingEnvironment: profile?.workingEnvironment ?? "",
-      startDate: profile?.startDate ?? "",
       onlineStatus: profile?.onlineStatus ?? true,
       strongKeywords: profile?.strongKeywords ?? [],
       hourPrice: profile?.hourPrice ?? "",
@@ -787,7 +782,6 @@ export default function DashboardPageClient() {
           ? { seoImageKey: "" }
           : {};
 
-    const currentStartDate = profile?.startDate ?? "";
     const currentWorkingEnvironment = profile?.workingEnvironment ?? "";
     const currentBio = profile?.bio ?? "";
     const currentCity = profile?.city ?? "";
@@ -828,7 +822,6 @@ export default function DashboardPageClient() {
       ...(values.workingEnvironment !== currentWorkingEnvironment
         ? { workingEnvironment: values.workingEnvironment || "" }
         : {}),
-      ...(values.startDate !== currentStartDate ? { startDate: values.startDate || "" } : {}),
       onlineStatus: values.onlineStatus,
       strongKeywords: values.strongKeywords,
       ...(values.hourPrice !== currentHourPrice ? { hourPrice: values.hourPrice || "" } : {}),
@@ -939,9 +932,6 @@ export default function DashboardPageClient() {
     business: <TabServices
               form={form}
               SECTOR_OPTIONS={SECTOR_OPTIONS}
-              parseDateFromInput={parseDateFromInput}
-              getTodayStart={getTodayStart}
-              format={format}
             />,
     uzdevumi: <TabTasks />,
     foto: <TabPhoto form={form} />,

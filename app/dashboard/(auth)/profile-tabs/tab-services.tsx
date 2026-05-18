@@ -5,14 +5,9 @@ import { Input3 } from "@/components/input3";
 import { Input25 } from "@/components/input25";
 import { Select14 } from "@/components/select14";
 import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/button";
-import { Calendar } from "@/components/ui/calendar";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { CalendarIcon } from "lucide-react";
-import { cn } from "@/lib/utils";
 import React from "react";
 
-export default function TabServices({ form, SECTOR_OPTIONS, parseDateFromInput, getTodayStart, format }: any) {
+export default function TabServices({ form, SECTOR_OPTIONS }: any) {
   return (
     <>
       <FormField
@@ -47,65 +42,6 @@ export default function TabServices({ form, SECTOR_OPTIONS, parseDateFromInput, 
                   {...field}
                 />
               </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="startDate"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Pakalpojumu sniegšanas datums</FormLabel>
-              <FormControl>
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <Button
-                      type="button"
-                      variant="outline"
-                      className={cn(
-                        "w-full justify-between text-left font-normal",
-                        !field.value && "text-muted-foreground",
-                      )}
-                    >
-                      {field.value ? format(parseDateFromInput(field.value) ?? new Date(field.value), "PPP") : "Izvēlies datumu"}
-                      <CalendarIcon className="ml-2 size-4 opacity-60" />
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-2" align="start">
-                    {(() => {
-                      const todayStart = getTodayStart();
-                      return (
-                        <Calendar
-                          mode="single"
-                          selected={parseDateFromInput(field.value)}
-                          onSelect={(date) => {
-                            if (!date) {
-                              form.setValue("startDate", "", {
-                                shouldDirty: true,
-                                shouldTouch: true,
-                                shouldValidate: true,
-                              });
-                              return;
-                            }
-                            if (date < todayStart) {
-                              return;
-                            }
-                            form.setValue("startDate", format(date, "yyyy-MM-dd"), {
-                              shouldDirty: true,
-                              shouldTouch: true,
-                              shouldValidate: true,
-                            });
-                          }}
-                          disabled={(date) => date < todayStart}
-                          captionLayout="dropdown"
-                        />
-                      );
-                    })()}
-                  </PopoverContent>
-                </Popover>
-              </FormControl>
-              <FormDescription className="text-xs">No kura datuma varat sniegt pakalpojumus. Neobligāti.</FormDescription>
               <FormMessage />
             </FormItem>
           )}
