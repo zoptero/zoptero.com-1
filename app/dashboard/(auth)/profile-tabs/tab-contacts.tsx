@@ -16,7 +16,7 @@ export default function TabContacts({ form }: any) {
             <FormItem>
               <FormLabel>Tālrunis</FormLabel>
               <FormControl>
-                <Input3 placeholder="+371 ..." helperText="Tālruņa numurs saziņai." {...field} />
+                <Input3 placeholder="371..." helperText="Tālruņa numurs saziņai." {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
