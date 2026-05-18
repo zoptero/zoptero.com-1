@@ -58,21 +58,6 @@ export default function PricingPage() {
     }
   ];
 
-  const faqItems = [
-    {
-      question: "Kāda ir jūsu atcelšanas politika?",
-      answer: "Jūs varat atcelt abonementu jebkurā laikā. Piekļuve saglabājas līdz apmaksātā perioda beigām."
-    },
-    {
-      question: "Vai ir iespējama starptautiskā norēķinu sistēma?",
-      answer: "Jā, mēs atbalstām gan vietējos, gan starptautiskos maksājumu veidus."
-    },
-    {
-      question: "Kā es varu jaunināt savu plānu?",
-      answer: "Jūs varat jaunināt savu plānu jebkurā laikā no sava konta iestatījumiem."
-    }
-  ];
-
   return (
     <div className="flex flex-col pb-10">
       {/* Virsraksts un Toggle */}
@@ -180,17 +165,6 @@ export default function PricingPage() {
             </span>
           </div>
 
-          {/* FAQ jautājumi */}
-          {faqItems.map((item, index) => (
-            <Card key={index}>
-              <CardHeader>
-                <CardTitle className="text-base">{item.question}</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm text-muted-foreground">{item.answer}</p>
-              </CardContent>
-            </Card>
-          ))}
         </div>
       </FadeInSlide>
     </div>
