@@ -22,8 +22,8 @@ export const profileFormSchema = z.object({
     .trim()
     .max(30)
     .refine(
-      (value) => value === "" || /^\+[1-9]\d{7,14}$/.test(value.replace(/[\s()-]/g, "")),
-      "Norādi derīgu numuru, piemēram, +37120000000."
+      (value) => value === "" || /^(\+[1-9]\d{7,14}|371\d{7,8})$/.test(value.replace(/[\s()-]/g, "")),
+      "Norādi derīgu numuru, piemēram, 37120000000."
     ),
   city: z.string().trim().max(80),
   aboutMe: z.string().trim().max(2000),
