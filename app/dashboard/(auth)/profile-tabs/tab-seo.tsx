@@ -17,7 +17,7 @@ export default function TabSeo({ form, slugValue, slugCheckResult, profile, seoI
           <FormItem>
             <div className="flex items-center justify-between">
               <FormLabel>Saite uz profilu</FormLabel>
-              <span className="text-muted-foreground text-xs">{(field.value ?? "").length}/30</span>
+              <span className={cn("text-xs", (field.value ?? "").length >= 30 ? "text-destructive font-semibold" : "text-muted-foreground")}>{(field.value ?? "").length}/30</span>
             </div>
             <FormControl>
               <WebsiteInput
@@ -26,7 +26,8 @@ export default function TabSeo({ form, slugValue, slugCheckResult, profile, seoI
                   const slug = url
                     .replace(/^https?:\/\/zoptero\.com\//i, "")
                     .replace(/[^a-z0-9]/g, "")
-                    .trim();
+                    .trim()
+                    .slice(0, 30);
                   field.onChange(slug);
                 }}
                 placeholder="mansprofils"
