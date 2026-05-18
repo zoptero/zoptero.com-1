@@ -20,9 +20,12 @@ export default function TabServices({ form, SECTOR_OPTIONS, parseDateFromInput, 
         name="myServicesText"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Pakalpojumu veidi</FormLabel>
+            <div className="flex items-center justify-between">
+              <FormLabel>Pakalpojumu veidi</FormLabel>
+              <span className="text-muted-foreground text-xs">{(field.value ?? "").length}/1000</span>
+            </div>
             <FormControl>
-              <Textarea placeholder="Norādi galvenos darbu veidus un specializāciju." {...field} />
+              <Textarea placeholder="Norādi galvenos darbu veidus un specializāciju." maxLength={1000} {...field} />
             </FormControl>
             <FormDescription className="text-xs">Pievieno aprakstu brīvā formā, kādus pakalpojumus piedāvā un ko klients var sagaidīt</FormDescription>
             <FormMessage />
