@@ -4,7 +4,7 @@ import { HeroUserMenu } from "@/components/HeroUserMenu";
 import { GlobalFooter } from "@/components/layout/global-footer";
 import { HeroTitleRotator } from "@/components/hero-title-rotator";
 import { Badge } from "@/components/ui/badge";
-import { Plus, ArrowRight } from "lucide-react";
+import { Locate, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import FadeInSlide from "@/components/FadeInSlide";
@@ -56,7 +56,7 @@ export default function HeroSection() {
                 />
                 <div className="flex items-center justify-between px-3 pb-3">
                   <Button variant="outline" size="icon-sm" className="rounded-full h-8 w-8">
-                    <Plus className="h-4 w-4" />
+                    <Locate className="h-4 w-4" />
                   </Button>
                   <Button size="icon-sm" className="rounded-full h-8 w-8">
                     <ArrowRight className="h-4 w-4" />
