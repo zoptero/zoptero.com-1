@@ -106,6 +106,31 @@ export default function TabProfileB2B({ form, previewUrl, previewFile, removeAva
         )}
       />
 
+      <FormField
+        control={form.control}
+        name="bio"
+        render={({ field }) => (
+          <FormItem>
+            <div className="flex items-center justify-between">
+              <FormLabel>Īss apraksts par uzņēmumu</FormLabel>
+              <span className="text-muted-foreground text-xs">{(field.value ?? "").length}/140</span>
+            </div>
+            <FormControl>
+              <Textarea
+                placeholder="Dažos vārdos pastāsti par uzņēmumu..."
+                className="min-h-24 resize-y"
+                maxLength={140}
+                onFocus={() => setFocusedField("Īss apraksts par uzņēmumu")}
+                {...field}
+                onBlur={() => { field.onBlur(); setFocusedField(undefined); }}
+              />
+            </FormControl>
+            <div className="text-xs text-muted-foreground">Apraksts būs redzams profilā.</div>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+
       <FormItem>
         <FormLabel>Logo</FormLabel>
         <FormControl>
@@ -159,31 +184,6 @@ export default function TabProfileB2B({ form, previewUrl, previewFile, removeAva
           </div>
         </FormControl>
       </FormItem>
-
-      <FormField
-        control={form.control}
-        name="bio"
-        render={({ field }) => (
-          <FormItem>
-            <div className="flex items-center justify-between">
-              <FormLabel>Īss apraksts par uzņēmumu</FormLabel>
-              <span className="text-muted-foreground text-xs">{(field.value ?? "").length}/140</span>
-            </div>
-            <FormControl>
-              <Textarea
-                placeholder="Dažos vārdos pastāsti par uzņēmumu..."
-                className="min-h-24 resize-y"
-                maxLength={140}
-                onFocus={() => setFocusedField("Īss apraksts par uzņēmumu")}
-                {...field}
-                onBlur={() => { field.onBlur(); setFocusedField(undefined); }}
-              />
-            </FormControl>
-            <div className="text-xs text-muted-foreground">Apraksts būs redzams profilā.</div>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
 
     </>
   );
