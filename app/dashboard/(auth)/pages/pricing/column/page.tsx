@@ -153,16 +153,10 @@ export default function PricingPage() {
                   <UserCircle2 className="h-5 w-5 text-primary" />
                 )}
               </div>
-              <div>
-                <p className="text-sm font-medium">Mans profila tips</p>
-                <p className="text-xs text-muted-foreground">
-                  {accountType === "b2b" ? "B2B - Uzņēmuma profils" : "B2C - Personīgais profils"}
-                </p>
-              </div>
+              <span className="text-sm font-semibold uppercase tracking-wider">
+                {accountType === "b2b" ? "B2B" : "B2C"}
+              </span>
             </div>
-            <span className="text-xs font-semibold uppercase tracking-wider text-primary">
-              {accountType === "b2b" ? "B2B" : "B2C"}
-            </span>
           </div>
 
         </div>
