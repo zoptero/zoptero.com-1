@@ -225,7 +225,6 @@ export const getMe = query({
       avatarUrl: v.optional(v.string()),
       accountType: v.optional(v.union(v.literal("b2c"), v.literal("b2b"))),
       onboardingComplete: v.optional(v.boolean()),
-      createdAt: v.number(),
     })
   ),
   handler: async (ctx) => {
@@ -250,7 +249,6 @@ export const getMe = query({
       avatarUrl: row.avatarUrl,
       accountType: row.accountType,
       onboardingComplete: row.onboardingComplete,
-      createdAt: row.createdAt,
     };
   },
 });
@@ -428,7 +426,6 @@ export const ensureCurrentUser = mutation({
       name,
       avatarUrl,
       onboardingComplete: false,
-      createdAt: Date.now(),
     });
 
     return { onboardingComplete: false };
@@ -495,7 +492,6 @@ export const setAccountType = mutation({
       avatarUrl,
       accountType: args.accountType,
       onboardingComplete: true,
-      createdAt: Date.now(),
     });
 
     // Sync to Clerk metadata (non-blocking)
@@ -706,7 +702,6 @@ export const syncUser = internalMutation({
         avatarUrl: args.avatarUrl,
         onboardingComplete: false, // Default to false for new users
         accountType: args.accountType,
-        createdAt: Date.now(),
       });
     }
     // Upsert profile in profiles table

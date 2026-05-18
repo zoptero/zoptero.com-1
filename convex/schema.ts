@@ -10,7 +10,6 @@ export default defineSchema({
     accountType: v.optional(v.union(v.literal("b2c"), v.literal("b2b"))),
     onboardingComplete: v.optional(v.boolean()),
     isPro: v.optional(v.boolean()),
-    createdAt: v.number(),
     // Rate-limiting fields for chat abuse prevention
     lastMessageTimestamp: v.optional(v.number()),
     messageCount: v.optional(v.number()),

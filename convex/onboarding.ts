@@ -88,7 +88,6 @@ export const setAccountTypeForUserAndProfile = mutation({
         avatarUrl: args.avatarUrl,
         accountType: args.accountType,
         onboardingComplete: true,
-        createdAt: Date.now(),
       });
     }
 
