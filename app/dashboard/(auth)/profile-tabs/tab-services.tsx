@@ -42,7 +42,7 @@ export default function TabServices({ form, SECTOR_OPTIONS }: any) {
                 <Input25
                   value={field.value}
                   onChange={field.onChange}
-                  placeholder="Piem., elektriķis, seo, galdnieks"
+                  placeholder=""
                 />
               </FormControl>
               <FormDescription className="text-xs">Norādi atslēgvārdus, kuri palīdzētu MI atrast profilu. Spied Enter vai komatu, lai pievienotu piecus svarīgākos.</FormDescription>
