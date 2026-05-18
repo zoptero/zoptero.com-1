@@ -17,7 +17,6 @@ type SearchProfileResult = {
   _score: number;
   slug?: string;
   displayName?: string;
-  aboutMe?: string;
   bio?: string;
   sector?: string;
   MyServices?: string[];
@@ -39,7 +38,6 @@ type HydratedSearchDoc = {
   _id: Id<"profiles">;
   slug?: string;
   displayName?: string;
-  aboutMe?: string;
   bio?: string;
   sector?: string;
   MyServices?: string[];
@@ -95,7 +93,6 @@ function hasTokenOverlap(queryTokens: string[], candidateText: string): boolean 
 
 function buildProfileEmbeddingInput(source: {
   displayName?: string;
-  aboutMe?: string;
   bio?: string;
   sector?: string;
   MyServices?: string[];
@@ -122,13 +119,12 @@ function buildProfileEmbeddingInput(source: {
   const faqText = source.faqs?.map((faq) => `${normalizeSearchText(faq.question)} ${normalizeSearchText(faq.answer)}`).join(" | ");
   const blocks = [
     source.displayName ? `Name: ${normalizeSearchText(source.displayName)}` : "",
-    source.aboutMe ? `About: ${normalizeSearchText(source.aboutMe)}` : "",
+    source.workingEnvironment ? `Working environment: ${normalizeSearchText(source.workingEnvironment)}` : "",
+    source.seoTitle ? `SEO title: ${normalizeSearchText(source.seoTitle)}` : "",
     source.city ? `City: ${normalizeSearchText(source.city)}` : "",
     source.phone ? `Phone: ${normalizeSearchText(source.phone)}` : "",
     source.email ? `Email: ${normalizeSearchText(source.email)}` : "",
-    source.workingEnvironment ? `Working environment: ${normalizeSearchText(source.workingEnvironment)}` : "",
     source.sector ? `Sector: ${normalizeSearchText(source.sector)}` : "",
-    source.seoTitle ? `SEO title: ${normalizeSearchText(source.seoTitle)}` : "",
     source.seoDescription ? `SEO description: ${normalizeSearchText(source.seoDescription)}` : "",
     source.bio ? `Bio: ${normalizeSearchText(source.bio)}` : "",
     source.whatsapp ? `WhatsApp: ${normalizeSearchText(source.whatsapp)}` : "",
@@ -228,7 +224,6 @@ export const searchProfiles = action({
       _score: v.number(),
       slug: v.optional(v.string()),
       displayName: v.optional(v.string()),
-      aboutMe: v.optional(v.string()),
       bio: v.optional(v.string()),
       sector: v.optional(v.string()),
       MyServices: v.optional(v.array(v.string())),
@@ -312,7 +307,7 @@ export const searchProfiles = action({
       const faqText = doc.faqs?.map((faq) => `${faq.question} ${faq.answer}`).join(" ");
       const candidateText = [
         doc.displayName,
-        doc.aboutMe,
+        doc.seoTitle,
         doc.bio,
         doc.sector,
         doc.city,
@@ -347,7 +342,6 @@ export const searchProfiles = action({
         _score: hit._score,
         slug: doc.slug,
         displayName: doc.displayName,
-        aboutMe: doc.aboutMe,
         bio: doc.bio,
         sector: doc.sector,
         MyServices: doc.MyServices,
@@ -380,7 +374,6 @@ export const searchProfiles = action({
         _score: entry._score,
         slug: entry.slug,
         displayName: entry.displayName,
-        aboutMe: entry.aboutMe,
         bio: entry.bio,
         sector: entry.sector,
         MyServices: entry.MyServices,
@@ -414,7 +407,6 @@ function profileAssistantFallbackFromRag(fallbackMarkdown: string | null): strin
 function buildProfileSnapshotText(profile: {
   displayName?: string;
   bio?: string;
-  aboutMe?: string;
   slug?: string;
   email?: string;
   phone?: string;
@@ -435,7 +427,8 @@ function buildProfileSnapshotText(profile: {
   const rows = [
     ["Vārds Uzvārds", profile.displayName],
     ["Īss apraksts", profile.bio],
-    ["Par mani", profile.aboutMe],
+    ["SEO virsraksts", profile.seoTitle],
+    ["Darba vide", profile.workingEnvironment],
     ["URL identifikators", profile.slug],
     ["E-pasts", profile.email],
     ["Tālrunis", profile.phone],
@@ -447,8 +440,6 @@ function buildProfileSnapshotText(profile: {
     ["Threads", profile.threads],
     ["Pilsēta", profile.city],
     ["Nozare", profile.sector],
-    ["Darba vide", profile.workingEnvironment],
-    ["SEO virsraksts", profile.seoTitle],
     ["SEO apraksts", profile.seoDescription],
     ["Atslēgas vārdi", profile.strongKeywords?.join(", ")],
     ["Meklēšanas trigeri", profile.MyServices?.join(", ")],
@@ -733,7 +724,8 @@ export const profileAssistantChat = action({
       ? buildProfileSnapshotText({
           displayName: currentProfile.displayName,
           bio: currentProfile.bio,
-          aboutMe: currentProfile.aboutMe,
+          seoTitle: currentProfile.seoTitle,
+          workingEnvironment: currentProfile.workingEnvironment,
           slug: currentProfile.slug,
           email: currentProfile.email,
           phone: currentProfile.phone,
@@ -745,8 +737,6 @@ export const profileAssistantChat = action({
           threads: currentProfile.threads,
           city: currentProfile.city,
           sector: currentProfile.sector,
-          workingEnvironment: currentProfile.workingEnvironment,
-          seoTitle: currentProfile.seoTitle,
           seoDescription: currentProfile.seoDescription,
           strongKeywords: currentProfile.strongKeywords,
           MyServices: currentProfile.MyServices,
