@@ -1,11 +1,11 @@
 
 import { FormField, FormItem, FormLabel, FormControl, FormDescription, FormMessage } from "@/components/ui/form";
 import { Input3 } from "@/components/input3";
-import { Input7 } from "@/components/input7";
 import { Textarea } from "@/components/ui/textarea";
 import { Upload, X } from "lucide-react";
 import React from "react";
 import { cn } from "@/lib/utils";
+import { WebsiteInput } from "@/components/website-input";
 
 export default function TabSeo({ form, slugValue, slugCheckResult, profile, seoImagePreviewUrl, seoImagePreviewFile, removeSeoImage, setRemoveSeoImage, addSeoImageFiles, removeSeoImageFile, headerImagePreviewUrl, headerImagePreviewFile, removeHeaderImage, setRemoveHeaderImage, addHeaderImageFiles, removeHeaderImageFile }: any) {
   return (
@@ -17,16 +17,16 @@ export default function TabSeo({ form, slugValue, slugCheckResult, profile, seoI
           <FormItem>
             <FormLabel>Saite uz profilu</FormLabel>
             <FormControl>
-              <Input7
+              <WebsiteInput
                 value={field.value ?? ""}
-                onChange={(nextValue) => {
-                  const normalized = nextValue
+                onChange={(url) => {
+                  const slug = url
                     .replace(/^https?:\/\/zoptero\.com\//i, "")
                     .trim();
-                  field.onChange(normalized);
+                  field.onChange(slug);
                 }}
                 placeholder="mans-profils"
-                baseUrl="https://zoptero.com/"
+                prefix="https://zoptero.com/"
               />
             </FormControl>
             <FormDescription
