@@ -60,7 +60,6 @@ export default function TabSeo({ form, slugValue, slugCheckResult, profile, seoI
             </div>
             <FormControl>
               <Input3
-                placeholder="Piem., Grāmatvedis Rīgā | Jānis Bērziņš"
                 helperText="Virsraksts būs redzams meklēšanas rezultātos. Ieteicams līdz 60 simboliem."
                 helperTextClassName={(field.value ?? "").length > 60 ? "text-destructive" : undefined}
                 {...field}
@@ -80,7 +79,7 @@ export default function TabSeo({ form, slugValue, slugCheckResult, profile, seoI
               <span className="text-muted-foreground text-xs">{(field.value ?? "").length}/160</span>
             </div>
             <FormControl>
-              <Textarea placeholder="Įss apraksts, ko redzēs Google meklēšanas rezultātos..." {...field} />
+              <Textarea {...field} />
             </FormControl>
             <FormDescription className={cn("text-xs", (field.value ?? "").length > 160 && "text-destructive")}>Apraksts būs redzams meklēšanas rezultātos. Ieteicams līdz 160 simboliem.</FormDescription>
             <FormMessage />
