@@ -25,14 +25,14 @@ export default function PricingPage() {
 
   const pricingTiers = [
     {
-      name: "Pamata",
+      name: "A komplekts",
       description: "Būtiskākās funkcijas individuālam darbam",
       monthlyPrice: 10,
       yearlyPrice: 100,
       features: ["1 lietotājs", "5GB krātuve", "E-pasta atbalsts", "Pamata integrācijas"]
     },
     {
-      name: "Biznesa",
+      name: "B komplekts",
       description: "Universāls risinājums augošiem uzņēmumiem",
       monthlyPrice: 30,
       yearlyPrice: 300,
@@ -45,7 +45,7 @@ export default function PricingPage() {
       ]
     },
     {
-      name: "Enterprise",
+      name: "C komplekts",
       description: "Pielāgota sistēma lielām komandām",
       monthlyPrice: 60,
       yearlyPrice: 600,
