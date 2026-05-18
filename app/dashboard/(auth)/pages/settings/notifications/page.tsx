@@ -78,9 +78,9 @@ export default function Page() {
                       render={({ field }) => (
                         <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
                           <div className="space-y-0.5">
-                            <FormLabel className="text-base">Communication emails</FormLabel>
+                            <FormLabel className="text-base">Komunikācijas e-pasti</FormLabel>
                             <FormDescription>
-                              Receive emails about your account activity.
+                              Saņemiet e-pastus par sava konta aktivitātēm.
                             </FormDescription>
                           </div>
                           <FormControl>
@@ -95,9 +95,9 @@ export default function Page() {
                       render={({ field }) => (
                         <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
                           <div className="space-y-0.5">
-                            <FormLabel className="text-base">Marketing emails</FormLabel>
+                            <FormLabel className="text-base">Mārketinga e-pasti</FormLabel>
                             <FormDescription>
-                              Receive emails about new products, features, and more.
+                              Saņemiet e-pastus par jauniem produktiem, funkcijām un vairāk.
                             </FormDescription>
                           </div>
                           <FormControl>
@@ -112,9 +112,9 @@ export default function Page() {
                       render={({ field }) => (
                         <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
                           <div className="space-y-0.5">
-                            <FormLabel className="text-base">Social emails</FormLabel>
+                            <FormLabel className="text-base">Sociālie e-pasti</FormLabel>
                             <FormDescription>
-                              Receive emails for friend requests, follows, and more.
+                              Saņemiet e-pastus par draugu pieprasījumiem, sekošanu un vairāk.
                             </FormDescription>
                           </div>
                           <FormControl>
@@ -129,9 +129,9 @@ export default function Page() {
                       render={({ field }) => (
                         <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
                           <div className="space-y-0.5">
-                            <FormLabel className="text-base">Security emails</FormLabel>
+                            <FormLabel className="text-base">Drošības e-pasti</FormLabel>
                             <FormDescription>
-                              Receive emails about your account activity and security.
+                              Saņemiet e-pastus par sava konta aktivitātēm un drošību.
                             </FormDescription>
                           </div>
                           <FormControl>
@@ -147,7 +147,7 @@ export default function Page() {
                     />
                   </div>
                 </div>
-                <Button type="submit">Update notifications</Button>
+                <Button type="submit">Atjaunināt paziņojumus</Button>
               </form>
             </Form>
           </CardContent>
