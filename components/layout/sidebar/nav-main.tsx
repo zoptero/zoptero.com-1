@@ -98,7 +98,6 @@ export const navItems: NavGroup[] = [
           { title: "Profils", href: "/dashboard" },
           { title: "Publiskais profils", href: "/dashboard/pages/user-profile" },
           { title: "Paziņojumi", href: "/dashboard/pages/settings/notifications" },
-          { title: "Izskats", href: "/dashboard/pages/settings/display" },
           { title: "Abonements", href: "/dashboard/pages/pricing/column", icon: BadgeDollarSignIcon, isComing: true },
           { title: "Statistika", icon: GaugeIcon, lock: true }
         ]
