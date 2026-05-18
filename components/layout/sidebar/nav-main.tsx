@@ -139,6 +139,11 @@ export const navItems: NavGroup[] = [
             href: "/dashboard/apps/ai-image-generator",
             icon: ImagesIcon,
             lock: true
+          },
+          {
+            title: "UR",
+            icon: RedoDotIcon,
+            lock: true
           }
         ]
       }
