@@ -27,7 +27,7 @@ export default function TabServices({ form, SECTOR_OPTIONS, parseDateFromInput, 
             <FormControl>
               <Textarea placeholder="Norādi galvenos darbu veidus un specializāciju." maxLength={1000} {...field} />
             </FormControl>
-            <FormDescription className="text-xs">Pievieno aprakstu brīvā formā, kādus pakalpojumus piedāvā un ko klients var sagaidīt</FormDescription>
+            <FormDescription className="text-xs">Pievieno aprakstu brīvā formā, kādus pakalpojumus piedāvā un ko klients var sagaidīt.</FormDescription>
             <FormMessage />
           </FormItem>
         )}
