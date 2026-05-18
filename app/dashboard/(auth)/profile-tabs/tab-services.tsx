@@ -28,27 +28,7 @@ export default function TabServices({ form, SECTOR_OPTIONS }: any) {
         )}
       />
 
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-        <FormField
-          control={form.control}
-          name="workingEnvironment"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Pakalpojumu specifika</FormLabel>
-              <FormControl>
-                <Input3
-                  placeholder="Attālināti, klātienē, hibrīds..."
-                  helperText="Kāds šobrīd ir vēlamais veicamo pakalpojumu formāts."
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-      </div>
-
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:grid-rows-2">
         <FormField
           control={form.control}
           name="strongKeywords"
@@ -89,29 +69,28 @@ export default function TabServices({ form, SECTOR_OPTIONS }: any) {
             </FormItem>
           )}
         />
+        <FormField
+          control={form.control}
+          name="sector"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Nozare</FormLabel>
+              <FormControl>
+                <Select14
+                  options={SECTOR_OPTIONS}
+                  value={field.value ?? ""}
+                  onChange={field.onChange}
+                  placeholder="Izvēlies nozari"
+                  searchPlaceholder="Meklē nozari..."
+                  emptyLabel="Nozare nav atrasta"
+                />
+              </FormControl>
+              <FormDescription className="text-xs">Norādi pakalpojumu nozari, lai vieglāk MI būtu atrast informāciju.</FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
       </div>
-
-      <FormField
-        control={form.control}
-        name="sector"
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>Nozare</FormLabel>
-            <FormControl>
-              <Select14
-                options={SECTOR_OPTIONS}
-                value={field.value ?? ""}
-                onChange={field.onChange}
-                placeholder="Izvēlies nozari"
-                searchPlaceholder="Meklē nozari..."
-                emptyLabel="Nozare nav atrasta"
-              />
-            </FormControl>
-            <FormDescription className="text-xs">Norādi pakalpojumu nozari, lai vieglāk MI būtu atrast informāciju.</FormDescription>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
     </>
   );
 }
