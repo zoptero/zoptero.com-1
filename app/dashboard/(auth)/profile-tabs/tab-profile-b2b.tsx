@@ -19,7 +19,6 @@ export default function TabProfileB2B({ form, previewUrl, previewFile, removeAva
               <FormLabel>Uzņēmuma nosaukums</FormLabel>
               <FormControl>
                 <Input3
-                  placeholder="Piem., SIA Zoptero"
                   helperText="Uzņēmuma nosaukums būs redzams profilā."
                   onFocus={() => setFocusedField("Uzņēmuma nosaukums")}
                   {...field}
