@@ -26,7 +26,6 @@ export default defineSchema({
     avatarKey: v.optional(v.string()),
     avatarUrl: v.optional(v.string()),
     displayName: v.optional(v.string()),
-    aboutMe: v.optional(v.string()),
     bio: v.optional(v.string()),
     sector: v.optional(v.string()),
     onlineStatus: v.optional(v.boolean()),

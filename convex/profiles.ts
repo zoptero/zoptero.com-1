@@ -263,11 +263,6 @@ function sanitizeProfileFields(args: Record<string, unknown>): Record<string, un
     }
   }
 
-  // aboutMe may allow some formatting, but use entity escape for safety
-  if (typeof sanitized.aboutMe === "string") {
-    sanitized.aboutMe = sanitizeUserInput(sanitized.aboutMe);
-  }
-
   // Sanitize array items
   if (Array.isArray(sanitized.strongKeywords)) {
     sanitized.strongKeywords = (sanitized.strongKeywords as string[]).map((kw) =>
@@ -347,7 +342,6 @@ export const update = mutation({
     avatarKey: v.optional(v.string()),
     avatarUrl: v.optional(v.string()),
     displayName: v.optional(v.string()),
-    aboutMe: v.optional(v.string()),
     bio: v.optional(v.string()),
     sector: v.optional(v.string()),
     MyServices: v.optional(v.array(v.string())),
@@ -503,9 +497,6 @@ export const update = mutation({
     // removed industryCategory
     if (onlineStatus !== undefined) sanitizedFields.onlineStatus = onlineStatus;
     if (strongKeywords !== undefined) sanitizedFields.strongKeywords = strongKeywords;
-    if (typeof sanitizedFields.aboutMe === "string") {
-      sanitizedFields.aboutMe = sanitizedFields.aboutMe.replace(/&nbsp;/g, " ");
-    }
     if (typeof sanitizedFields.displayName === "string") {
       sanitizedFields.displayName = sanitizedFields.displayName.replace(/&nbsp;/g, " ");
     }
@@ -615,7 +606,7 @@ export const getEmbeddingSource = internalQuery({
       profileId: profile._id,
       clerkId: profile.clerkId,
       displayName: profile.displayName ?? user?.name,
-      aboutMe: profile.aboutMe ?? profile.seoTitle ?? profile.workingEnvironment,
+      aboutMe: profile.seoTitle ?? profile.workingEnvironment,
       bio: profile.bio,
       MyServices: profile.MyServices,
       city: profile.city,
@@ -722,7 +713,7 @@ export const getProfilesByIdsForSearch = internalQuery({
         _id: doc._id,
         slug: doc.slug,
         displayName: doc.displayName ?? userByClerkId.get(doc.clerkId)?.name,
-        aboutMe: doc.aboutMe ?? doc.seoTitle ?? doc.workingEnvironment,
+        aboutMe: doc.seoTitle ?? doc.workingEnvironment,
         bio: doc.bio,
         sector: doc.sector,
         MyServices: doc.MyServices,
@@ -873,7 +864,7 @@ async function searchProfilesByTextImpl(
   const scored = allProfiles
     .map((profile) => {
       const linkedUser = userByClerkId.get(profile.clerkId);
-      const aboutMe = profile.aboutMe ?? profile.seoTitle ?? profile.workingEnvironment;
+      const aboutMe = profile.seoTitle ?? profile.workingEnvironment;
       const phoneFields = [profile.phone, profile.whatsapp, profile.telegram]
         .filter(Boolean)
         .map((entry) => String(entry));
@@ -967,7 +958,7 @@ async function searchProfilesByTextImpl(
         _distanceKm: typeof distanceKm === "number" ? Number(distanceKm.toFixed(2)) : undefined,
         slug: profile.slug,
         displayName: profile.displayName ?? userName,
-        aboutMe: profile.aboutMe,
+        aboutMe: profile.seoTitle ?? profile.workingEnvironment,
         bio: profile.bio,
         sector: profile.sector,
         MyServices: profile.MyServices,

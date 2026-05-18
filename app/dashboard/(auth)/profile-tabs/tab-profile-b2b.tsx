@@ -185,30 +185,6 @@ export default function TabProfileB2B({ form, previewUrl, previewFile, removeAva
         )}
       />
 
-      <FormField
-        control={form.control}
-        name="aboutMe"
-        render={({ field }) => (
-          <FormItem>
-            <div className="flex items-center justify-between">
-              <FormLabel>Par uzņēmumu</FormLabel>
-              <span className="text-muted-foreground text-xs">{(field.value ?? "").length}/2000</span>
-            </div>
-            <FormControl>
-              <Textarea
-                placeholder="Detalizēts apraksts par uzņēmumu..."
-                className="min-h-24 resize-y"
-                maxLength={2000}
-                onFocus={() => setFocusedField("Par uzņēmumu")}
-                {...field}
-                onBlur={() => { field.onBlur(); setFocusedField(undefined); }}
-              />
-            </FormControl>
-            <div className="text-xs text-muted-foreground">Detalizēts apraksts būs redzams profilā.</div>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
     </>
   );
 }
