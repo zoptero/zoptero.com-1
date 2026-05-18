@@ -1,6 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import { useUser } from "@clerk/nextjs";
+import { useQuery } from "convex/react";
+import { api } from "@/convex/_generated/api";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -12,10 +15,13 @@ import {
 } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
 import FadeInSlide from "@/components/FadeInSlide";
-import { Check, ArrowRight } from "lucide-react";
+import { Check, ArrowRight, UserCircle2, Building2 } from "lucide-react";
 
 export default function PricingPage() {
+  const { user } = useUser();
+  const profile = useQuery(api.profiles.getMe);
   const [isYearly, setIsYearly] = useState(false);
+  const accountType = profile?.accountType ?? "b2c";
 
   const pricingTiers = [
     {
@@ -49,6 +55,21 @@ export default function PricingPage() {
         "API piekļuve",
         "Personīgais menedžeris"
       ]
+    }
+  ];
+
+  const faqItems = [
+    {
+      question: "Kāda ir jūsu atcelšanas politika?",
+      answer: "Jūs varat atcelt abonementu jebkurā laikā. Piekļuve saglabājas līdz apmaksātā perioda beigām."
+    },
+    {
+      question: "Vai ir iespējama starptautiskā norēķinu sistēma?",
+      answer: "Jā, mēs atbalstām gan vietējos, gan starptautiskos maksājumu veidus."
+    },
+    {
+      question: "Kā es varu jaunināt savu plānu?",
+      answer: "Jūs varat jaunināt savu plānu jebkurā laikā no sava konta iestatījumiem."
     }
   ];
 
@@ -127,12 +148,50 @@ export default function PricingPage() {
 
       {/* FAQ sadaļa */}
       <FadeInSlide delay={0.5}>
-      <div className="mb-4 mt-8 flex flex-row items-center justify-between lg:pl-2.5">
-        <div className="space-y-1">
-          <h2 className="text-xl font-semibold">Biežāk uzdotie jautājumi</h2>
-          <p className="text-muted-foreground text-sm">Atbildes uz biežāk uzdotajiem jautājumiem</p>
+        <div className="mb-4 mt-8 flex flex-row items-center justify-between lg:pl-2.5">
+          <div className="space-y-1">
+            <h2 className="text-xl font-semibold">Biežāk uzdotie jautājumi</h2>
+            <p className="text-muted-foreground text-sm">Atbildes uz biežāk uzdotajiem jautājumiem</p>
+          </div>
         </div>
-      </div>
+      </FadeInSlide>
+
+      <FadeInSlide delay={0.6}>
+        <div className="space-y-4 lg:pl-2.5">
+          {/* Profila tips - maza info karte */}
+          <div className="flex items-center justify-between rounded-lg border p-4 bg-card">
+            <div className="flex items-center gap-3">
+              <div className="flex size-10 items-center justify-center rounded-full bg-primary/10">
+                {accountType === "b2b" ? (
+                  <Building2 className="h-5 w-5 text-primary" />
+                ) : (
+                  <UserCircle2 className="h-5 w-5 text-primary" />
+                )}
+              </div>
+              <div>
+                <p className="text-sm font-medium">Mans profila tips</p>
+                <p className="text-xs text-muted-foreground">
+                  {accountType === "b2b" ? "B2B - Uzņēmuma profils" : "B2C - Personīgais profils"}
+                </p>
+              </div>
+            </div>
+            <span className="text-xs font-semibold uppercase tracking-wider text-primary">
+              {accountType === "b2b" ? "B2B" : "B2C"}
+            </span>
+          </div>
+
+          {/* FAQ jautājumi */}
+          {faqItems.map((item, index) => (
+            <Card key={index}>
+              <CardHeader>
+                <CardTitle className="text-base">{item.question}</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-muted-foreground">{item.answer}</p>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
       </FadeInSlide>
     </div>
   );
