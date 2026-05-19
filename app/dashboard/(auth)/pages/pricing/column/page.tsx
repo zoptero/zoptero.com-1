@@ -13,9 +13,88 @@ import {
   CardHeader,
   CardTitle
 } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Switch } from "@/components/ui/switch";
 import FadeInSlide from "@/components/FadeInSlide";
 import { Check, ArrowRight, UserCircle2, Building2 } from "lucide-react";
+
+function PricingSkeleton() {
+  return (
+    <div className="flex flex-col pb-10">
+      {/* Header skeleton */}
+      <div className="mb-4 flex flex-row items-center justify-between lg:pl-2.5">
+        <div className="space-y-1">
+          <Skeleton className="h-8 w-40" />
+          <Skeleton className="h-4 w-32" />
+        </div>
+        <div className="flex shrink-0 items-center space-x-2">
+          <Skeleton className="h-4 w-14" />
+          <Skeleton className="h-6 w-10 rounded-full" />
+          <Skeleton className="h-4 w-10" />
+        </div>
+      </div>
+
+      {/* Pricing cards skeleton */}
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-3 lg:pl-2.5">
+        {[0, 1, 2].map((i) => (
+          <Card key={i} className="relative flex flex-col">
+            <CardHeader className="pb-0">
+              <Skeleton className="h-6 w-28" />
+              <Skeleton className="h-4 w-44 mt-1" />
+            </CardHeader>
+            <CardContent className="grow pt-1">
+              <div className="h-[45px] flex flex-col justify-end mb-4">
+                <Skeleton className="h-3 w-24 mb-1" />
+                <div className="flex items-baseline gap-1">
+                  <Skeleton className="h-8 w-16" />
+                  <Skeleton className="h-3 w-10" />
+                </div>
+              </div>
+              <ul className="space-y-2 border-t pt-4">
+                {[0, 1, 2, 3].map((j) => (
+                  <li key={j} className="flex items-start">
+                    <Skeleton className="mr-2 h-4 w-4 shrink-0" />
+                    <Skeleton className="h-3 flex-1" />
+                  </li>
+                ))}
+              </ul>
+            </CardContent>
+            <CardFooter>
+              <Skeleton className="h-9 w-full" />
+            </CardFooter>
+          </Card>
+        ))}
+      </div>
+
+      {/* Profile type section skeleton */}
+      <div className="mb-4 mt-8 flex flex-row items-center justify-between lg:pl-2.5">
+        <div className="space-y-1">
+          <Skeleton className="h-6 w-24" />
+          <Skeleton className="h-4 w-44" />
+        </div>
+      </div>
+
+      <div className="space-y-4 lg:pl-2.5">
+        <div className="rounded-lg border p-4 bg-card">
+          <Skeleton className="h-5 w-12" />
+        </div>
+      </div>
+
+      {/* Delete section skeleton */}
+      <div className="mb-4 mt-8 flex flex-row items-center justify-between lg:pl-2.5">
+        <div className="space-y-1">
+          <Skeleton className="h-6 w-32" />
+          <Skeleton className="h-4 w-52" />
+        </div>
+      </div>
+
+      <div className="space-y-2 lg:pl-2.5">
+        <Skeleton className="h-10 w-full max-w-xl" />
+        <Skeleton className="h-9 w-20 mt-1" />
+      </div>
+    </div>
+  );
+}
 
 export default function PricingPage() {
   const { user } = useUser();
@@ -77,6 +156,11 @@ export default function PricingPage() {
       ]
     }
   ];
+
+  // Show skeleton while profile query is loading
+  if (profile === undefined) {
+    return <PricingSkeleton />;
+  }
 
   return (
     <div className="flex flex-col pb-10">

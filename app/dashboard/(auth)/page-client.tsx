@@ -234,16 +234,28 @@ const TAB_VALIDATION_FIELDS: Partial<Record<string, Array<keyof ProfileFormValue
 function DashboardProfileSkeleton() {
   return (
     <div className="space-y-4 lg:pl-2.5">
-      <div className="mb-4">
-        <div className="flex w-max items-center gap-2 rounded-lg border p-1">
-          <Skeleton className="h-8 w-24" />
+      {/* Tabs list skeleton */}
+      <div className="relative mb-4">
+        <div className="flex items-center gap-2">
+          <Skeleton className="h-9 w-24 rounded-md" />
+          <Skeleton className="h-9 w-28 rounded-md" />
+          <Skeleton className="h-9 w-24 rounded-md" />
+          <Skeleton className="h-9 w-28 rounded-md" />
+          <Skeleton className="h-9 w-20 rounded-md" />
+          <Skeleton className="h-9 w-20 rounded-md" />
         </div>
       </div>
+
       <div className="flex w-full items-stretch gap-4">
         <div className="min-w-0 flex-1">
           <Card>
             <CardContent className="space-y-6 pt-6">
+              {/* Profile form fields skeleton */}
               <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                <div className="flex flex-col gap-2">
+                  <Skeleton className="h-4 w-28 mb-2" />
+                  <Skeleton className="h-10 w-full" />
+                </div>
                 <div className="flex flex-col gap-2">
                   <Skeleton className="h-4 w-28 mb-2" />
                   <Skeleton className="h-10 w-full" />
