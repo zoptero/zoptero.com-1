@@ -51,7 +51,7 @@ export default function HeroSection() {
                               border border-input transition-colors duration-200
                               focus-within:border-muted-foreground/40 focus-within:ring-0">
                 <Textarea
-                  placeholder="Kas nepieciešams atrast?"
+                  placeholder="Ko meklēsim ?"
                   rows={3}
                   className="min-h-24 resize-none border-0 bg-transparent px-4 pt-4 pb-0 shadow-none focus-visible:ring-0 text-sm"
                 />
