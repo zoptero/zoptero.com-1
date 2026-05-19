@@ -39,21 +39,21 @@ export default function RequestsFeed() {
   return (
     <FadeInSlide delay={0.3} className="w-full">
       <div className="w-full px-4 flex justify-center">
-        <div className="w-full max-w-2xl mx-auto space-y-1.5">
+        <div className="w-full max-w-2xl mx-auto space-y-0.5">
           {requests.map((req) => (
             <div
               key={req._id}
-              className="flex items-center gap-2 px-4 py-2 rounded-lg bg-muted/50 border border-input/40 text-xs text-muted-foreground"
+              className="flex items-baseline gap-1.5 text-xs text-muted-foreground leading-relaxed"
             >
-              <span className="tabular-nums shrink-0 text-[11px] text-muted-foreground/60 font-mono">
+              <span className="tabular-nums shrink-0 text-[11px] text-muted-foreground/50 font-mono">
                 {formatDate(req._creationTime)}
               </span>
-              <span className="truncate font-medium text-foreground/80">
+              <span className="truncate text-foreground/70">
                 {req.requestTaskTitle}
               </span>
               {req.requestLocation && (
-                <span className="shrink-0 text-muted-foreground/50 hidden sm:inline">
-                  · {req.requestLocation}
+                <span className="shrink-0 text-muted-foreground/40 hidden sm:inline">
+                  ({req.requestLocation})
                 </span>
               )}
             </div>
