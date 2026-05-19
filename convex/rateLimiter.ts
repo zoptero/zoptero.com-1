@@ -76,6 +76,7 @@ export const FIELD_MAX_LENGTHS: Record<string, number> = {
   vatNr: 50,
   legalAddress: 200,
   actualAddress: 200,
+  requestTask: 3000,
 };
 
 /**
