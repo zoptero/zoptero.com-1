@@ -75,7 +75,7 @@ export default function UnifiedAuthPage() {
 
               <FadeInSlide delay={0.2} className='text-xs leading-relaxed text-zinc-500 text-center'>
                 <span className='block'>
-                  Profesionāla speciālistu, pakalpojumu, veikalu un dažādu rīku platforma. Piemērota individuālai un biznesa lietošanai. Pievienojies!
+                  Profesionāla informācijas meklēšanas un MI rīku platforma. Piemērota individuālai un biznesa lietošanai. Pievienojies!
                 </span>
               </FadeInSlide>
 
