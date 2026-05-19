@@ -618,6 +618,44 @@ export const deleteUserCascadeInternal = internalAction({
   },
 });
 
+export const deleteMyAccount = action({
+  args: {},
+  returns: v.object({ success: v.boolean() }),
+  handler: async (ctx) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      throw new ConvexError("Not authenticated");
+    }
+    const clerkId = identity.subject;
+
+    // 1. Delete user from Clerk
+    try {
+      await clerkClientInstance.users.deleteUser(clerkId);
+    } catch (err) {
+      console.error("[Convex] Clerk user deletion failed for clerkId", clerkId, err);
+      throw new ConvexError("Failed to delete account from authentication system");
+    }
+
+    // 2. Delete all R2 media (avatars, uploads)
+    try {
+      await ctx.runAction(internal.media.deleteUserR2Folder, { clerkId });
+    } catch (err) {
+      console.error("[Convex] R2 media deletion failed for clerkId", clerkId, err);
+      // Swallow — don't block account deletion if media cleanup fails
+    }
+
+    // 3. Delete Convex records (users + profiles)
+    try {
+      await ctx.runMutation(internal.users.deleteUserCompletelyInternal, { clerkId });
+    } catch (err) {
+      console.error("[Convex] Database records deletion failed for clerkId", clerkId, err);
+      throw new ConvexError("Failed to delete account data");
+    }
+
+    return { success: true };
+  },
+});
+
 export const deleteUsersMissingInClerkInternal = internalMutation({
   args: {
     activeClerkIds: v.array(v.string()),

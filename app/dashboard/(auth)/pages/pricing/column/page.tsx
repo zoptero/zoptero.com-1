@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { useUser } from "@clerk/nextjs";
-import { useQuery } from "convex/react";
+import { useQuery, useAction } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Button } from "@/components/ui/button";
 import {
@@ -21,7 +21,27 @@ export default function PricingPage() {
   const { user } = useUser();
   const profile = useQuery(api.profiles.getMe);
   const [isYearly, setIsYearly] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
   const accountType = profile?.accountType ?? "b2c";
+  const deleteMyAccount = useAction(api.users.deleteMyAccount);
+
+  const handleDeleteAccount = useCallback(async () => {
+    const confirmed = window.confirm(
+      "Vai tiešām vēlaties dzēst savu profilu? Šī darbība ir neatgriezeniska – visi dati, profils, augšupielādētie faili un autentifikācija tiks pilnībā dzēsti."
+    );
+    if (!confirmed) return;
+
+    setIsDeleting(true);
+    try {
+      await deleteMyAccount();
+      // After successful deletion, redirect to sign-in
+      window.location.href = "/sign-in";
+    } catch (error) {
+      console.error("Konta dzēšana neizdevās:", error);
+      alert("Neizdevās dzēst kontu. Lūdzu, mēģiniet vēlreiz vai sazinieties ar atbalstu.");
+      setIsDeleting(false);
+    }
+  }, [deleteMyAccount]);
 
   const pricingTiers = [
     {
@@ -148,6 +168,35 @@ export default function PricingPage() {
             <span className="text-sm font-semibold uppercase tracking-wider">
               {accountType === "b2b" ? "B2B" : "B2C"}
             </span>
+          </div>
+        </div>
+      </FadeInSlide>
+
+      {/* Profila dzēšana */}
+      <FadeInSlide delay={0.7}>
+        <div className="mb-4 mt-8 flex flex-row items-center justify-between lg:pl-2.5">
+          <div className="space-y-1">
+            <h2 className="text-xl font-semibold">Profila dzēšana</h2>
+            <p className="text-muted-foreground text-sm">Datu dzēšana no platformas</p>
+          </div>
+        </div>
+      </FadeInSlide>
+
+      <FadeInSlide delay={0.8}>
+        <div className="space-y-4 lg:pl-2.5">
+          <div className="rounded-lg border p-4 bg-card">
+            <p className="text-xs text-muted-foreground mb-3 leading-relaxed">
+              Dzēšot profilu, tiks neatgriezeniski izdzēsti visi jūsu dati: profila informācija,
+              augšupielādētie attēli un faili, kā arī jūsu autentifikācijas profils.
+            </p>
+            <Button
+              variant="destructive"
+              size="sm"
+              onClick={handleDeleteAccount}
+              disabled={isDeleting}
+            >
+              {isDeleting ? "Dzēš..." : "Dzēst profilu"}
+            </Button>
           </div>
 
         </div>
