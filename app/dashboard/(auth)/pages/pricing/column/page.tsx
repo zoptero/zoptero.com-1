@@ -256,11 +256,11 @@ export default function PricingPage() {
         </div>
       </FadeInSlide>
 
-      {/* Profila dzēšana */}
+      {/* Bīstamā zona */}
       <FadeInSlide delay={0.7}>
         <div className="mb-4 mt-8 flex flex-row items-center justify-between lg:pl-2.5">
           <div className="space-y-1">
-            <h2 className="text-xl font-semibold">Profila dzēšana</h2>
+            <h2 className="text-xl font-semibold">Bīstamā zona</h2>
             <p className="text-muted-foreground text-sm">Datu dzēšana no platformas</p>
           </div>
         </div>
