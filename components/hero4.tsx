@@ -8,6 +8,7 @@ import { Locate, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import FadeInSlide from "@/components/FadeInSlide";
+import RequestsFeed from "@/components/requests-feed";
 
 export default function HeroSection() {
   return (
@@ -65,6 +66,9 @@ export default function HeroSection() {
               </div>
             </div>
           </FadeInSlide>
+
+          {/* Jaunākie pieprasījumi */}
+          <RequestsFeed />
 
         </div>
       </div>

@@ -546,7 +546,32 @@ export const update = mutation({
       });
     }
 
-    return { success: true };
+  return { success: true };
+  },
+});
+
+export const getLatestRequests = query({
+  args: { limit: v.optional(v.number()) },
+  handler: async (ctx, args) => {
+    const maxResults = Math.min(args.limit ?? 10, 50);
+    const allProfiles = await ctx.db.query("profiles").collect();
+    const allUsers = await ctx.db.query("users").collect();
+    const userByClerkId = new Map(allUsers.map((user) => [user.clerkId, user]));
+
+    const results = allProfiles
+      .filter((p) => p.requestTaskTitle && p.requestTaskTitle.trim().length > 0)
+      .map((p) => ({
+        _id: p._id,
+        requestTaskTitle: p.requestTaskTitle!,
+        requestLocation: p.requestLocation ?? "",
+        requestTask: p.requestTask ?? "",
+        displayName: p.displayName ?? userByClerkId.get(p.clerkId)?.name ?? "",
+        _creationTime: p._creationTime,
+      }))
+      .sort((a, b) => b._creationTime - a._creationTime)
+      .slice(0, maxResults);
+
+    return results;
   },
 });
 
