@@ -68,7 +68,9 @@ export default defineSchema({
     vatNr: v.optional(v.string()),
     legalAddress: v.optional(v.string()),
     actualAddress: v.optional(v.string()),
+    requestTaskTitle: v.optional(v.string()),
     requestTask: v.optional(v.string()),
+    requestLocation: v.optional(v.string()),
   })
     .index("by_clerk_id", ["clerkId"])
     .index("by_slug", ["slug"])

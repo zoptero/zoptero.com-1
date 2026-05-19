@@ -66,7 +66,9 @@ export const profileFormSchema = z.object({
   paymentCard: z.boolean(),
   deliveryInfo: z.string().trim().max(1000),
   profileHeaderURL: z.string().trim().max(250).optional(),
-  requestTask: z.string().trim().max(3000),
+  requestTaskTitle: z.string().trim().max(60, "Maksimāli 60 simboli."),
+  requestTask: z.string().trim().max(500, "Maksimāli 500 simboli."),
+  requestLocation: z.string().trim().max(200, "Maksimāli 200 simboli."),
 });
 
 export type ProfileFormValues = z.infer<typeof profileFormSchema>;

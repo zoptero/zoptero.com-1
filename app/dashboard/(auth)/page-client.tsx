@@ -200,7 +200,9 @@ const defaultValues: ProfileFormValues = {
   paymentBankTransfer: false,
   paymentCard: false,
   deliveryInfo: "",
+  requestTaskTitle: "",
   requestTask: "",
+  requestLocation: "",
 };
 
 const TAB_VALIDATION_FIELDS: Partial<Record<string, Array<keyof ProfileFormValues>>> = {
@@ -387,7 +389,9 @@ export default function DashboardPageClient() {
       paymentBankTransfer: profile?.paymentBankTransfer ?? false,
       paymentCard: profile?.paymentCard ?? false,
       deliveryInfo: profile?.deliveryInfo ?? "",
+      requestTaskTitle: profile?.requestTaskTitle ?? "",
       requestTask: profile?.requestTask ?? "",
+      requestLocation: profile?.requestLocation ?? "",
     });
   }, [profile, user, form]);
 
@@ -853,7 +857,9 @@ export default function DashboardPageClient() {
       paymentBankTransfer: values.paymentBankTransfer,
       paymentCard: values.paymentCard,
       deliveryInfo: values.deliveryInfo,
+      requestTaskTitle: values.requestTaskTitle,
       requestTask: values.requestTask,
+      requestLocation: values.requestLocation,
       ...(values.companyName !== currentCompanyName ? { companyName: values.companyName || "" } : {}),
       ...(values.regNr !== currentRegNr ? { regNr: values.regNr || "" } : {}),
       ...(values.vatNr !== currentVatNr ? { vatNr: values.vatNr || "" } : {}),
