@@ -183,22 +183,19 @@ export default function PricingPage() {
       </FadeInSlide>
 
       <FadeInSlide delay={0.8}>
-        <div className="space-y-4 lg:pl-2.5">
-          <div className="rounded-lg border p-4 bg-card">
-            <p className="text-xs text-muted-foreground mb-3 leading-relaxed">
-              Dzēšot profilu, tiks neatgriezeniski izdzēsti visi jūsu dati: profila informācija,
-              augšupielādētie attēli un faili, kā arī jūsu autentifikācijas profils.
-            </p>
-            <Button
-              variant="destructive"
-              size="sm"
-              onClick={handleDeleteAccount}
-              disabled={isDeleting}
-            >
-              {isDeleting ? "Dzēš..." : "Dzēst profilu"}
-            </Button>
-          </div>
-
+        <div className="space-y-2 lg:pl-2.5">
+          <p className="text-xs text-muted-foreground leading-relaxed max-w-xl">
+            Dzēšot profilu, tiks neatgriezeniski izdzēsti visi jūsu dati: profila informācija, augšupielādētie attēli un faili, kā arī jūsu autentifikācijas profils.
+          </p>
+          <Button
+            variant="destructive"
+            size="sm"
+            onClick={handleDeleteAccount}
+            disabled={isDeleting}
+            className="mt-1"
+          >
+            {isDeleting ? "Dzēš..." : "Dzēst profilu"}
+          </Button>
         </div>
       </FadeInSlide>
     </div>
