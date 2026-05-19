@@ -194,7 +194,7 @@ export default function PricingPage() {
             disabled={isDeleting}
             className="mt-1"
           >
-            {isDeleting ? "Dzēš..." : "Dzēst profilu"}
+              {isDeleting ? "Dzēšam..." : "Dzēst"}
           </Button>
         </div>
       </FadeInSlide>
