@@ -67,8 +67,7 @@ export default function HeroSection() {
             </div>
           </FadeInSlide>
 
-          {/* Jaunākie pieprasījumi */}
-          <RequestsFeed />
+          {/* Jaunākie pieprasījumi (RequestsFeed) removed 2026-05-19, see archive/hero4-requestsfeed-removed.tsx for code */}
 
         </div>
       </div>
